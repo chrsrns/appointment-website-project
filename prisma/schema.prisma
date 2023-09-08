@@ -6,6 +6,59 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+model Student {
+  id        Int        @id @default(autoincrement())
+  name      String     @db.VarChar(255)
+  addr      String     @db.VarChar(255)
+  cnum      String     @db.VarChar(50)
+  emailaddr String     @db.VarChar(50)
+  bdate     DateTime   @db.Date
+  rating    Int        @db.TinyInt
+  createdAt DateTime   @default(now()) @db.Timestamp(3)
+  updatedAt DateTime   @updatedAt @db.Timestamp(3)
+  schedules Schedule[]
+}
+
+model Staff {
+  id             Int        @id @default(autoincrement())
+  name           String     @db.VarChar(255)
+  login_username String     @db.VarChar(50)
+  login_password String     @db.VarChar(50)
+  type           staff_type
+  schedules      Schedule[]
+}
+
+model Schedule {
+  id        Int            @id @default(autoincrement())
+  state     schedule_state
+  date      DateTime       @db.Timestamp(3)
+  createdAt DateTime       @default(now()) @db.Timestamp(3)
+  updatedAt DateTime       @updatedAt @db.Timestamp(3)
+  students  Student[]
+  staffs    Staff[]
+  messages  Message[]
+}
+
+model Message {
+  id         Int       @id @default(autoincrement())
+  createdAt  DateTime  @default(now()) @db.Timestamp(3)
+  content    String    @db.VarChar(3000)
+  Schedule   Schedule? @relation(fields: [scheduleId], references: [id])
+  scheduleId Int?
+}
+
+enum staff_type {
+  Teacher
+  Guidance
+  Clinic
+}
+
+enum schedule_state {
+  Pending
+  Ongoing
+  Completed
 }
