@@ -10,9 +10,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Name {
+  id      Int      @id @default(autoincrement())
+  fname   String   @db.VarChar(30)
+  mname   String   @db.VarChar(30)
+  lname   String   @db.VarChar(30)
+  Student Student?
+  Staff   Staff?
+
+  @@unique([fname, mname, lname])
+}
+
 model Student {
   id        Int        @id @default(autoincrement())
-  name      String     @db.VarChar(255)
+  name      Name       @relation(fields: [nameId], references: [id])
+  nameId    Int
   addr      String     @db.VarChar(255)
   cnum      String     @db.VarChar(50)
   emailaddr String     @db.VarChar(50)
@@ -21,15 +33,20 @@ model Student {
   createdAt DateTime   @default(now()) @db.Timestamp(3)
   updatedAt DateTime   @updatedAt @db.Timestamp(3)
   schedules Schedule[]
+
+  @@unique([nameId])
 }
 
 model Staff {
   id             Int        @id @default(autoincrement())
-  name           String     @db.VarChar(255)
+  name           Name       @relation(fields: [nameId], references: [id])
+  nameId         Int
   login_username String     @db.VarChar(50)
   login_password String     @db.VarChar(50)
   type           staff_type
   schedules      Schedule[]
+
+  @@unique([nameId])
 }
 
 model Schedule {
