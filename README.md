@@ -1,46 +1,34 @@
-# Getting Started with Create React App
+# JB Website
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Installation
 
-## Available Scripts
+### Install required Nodejs dependencies
 
-In the project directory, you can run:
+1. > npm i
 
-### `npm start`
+### Setting up the Prisma database
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+1. Create the MySQL server in a Podman container.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+		podman run -d --name=mysql1 -p 3306:3306 -v ./mysqldata:/var/lib/mysql:Z -e MYSQL_ROOT_PASSWORD=Jeybee0987 -e MYSQL_ROOT_HOST=% -e MYSQL_USER=infodb_user -e MYSQL_PASSWORD=JB123 -e MYSQL_DATABASE=infodb mysql/mysql-server
 
-### `npm test`
+2. Start the MySQL Podman container.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+		podman start mysql1
 
-### `npm run build`
+3. _Only run this if the user did not generate_
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+		podman exec -it mysql1 mysql -uroot -p
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+		CREATE USER 'infodb_user'@'%' INDENTIFIED BY 'JB123';
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+4. Grant access to the database and to creating [shadow databases](https://www.prisma.io/docs/concepts/components/prisma-migrate/shadow-database).
 
-### `npm run eject`
+		GRANT CREATE, ALTER, DROP, REFERENCES ON *.* TO 'infodb_user'@'%';
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+		GRANT ALL PRIVILEGES ON infodb.* TO 'infodb_user'@'%';
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+5. Create the database structure using Prisma.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+		npx prisma db push
+		npx prisma migrate dev --name init
