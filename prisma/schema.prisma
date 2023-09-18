@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,21 +7,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Name {
-  id      Int      @id @default(autoincrement())
-  fname   String   @db.VarChar(30)
-  mname   String   @db.VarChar(30)
-  lname   String   @db.VarChar(30)
-  Student Student?
-  Staff   Staff?
+model Person {
+  id       Int      @id @default(autoincrement())
+  fname    String   @db.VarChar(30)
+  mname    String   @db.VarChar(30)
+  lname    String   @db.VarChar(30)
+  isOnline Boolean
+  Staff    Staff?
+  Student  Student?
 
   @@unique([fname, mname, lname])
+  @@map("Name")
 }
 
 model Student {
   id        Int        @id @default(autoincrement())
-  name      Name       @relation(fields: [nameId], references: [id])
-  nameId    Int
+  nameId    Int        @unique
   addr      String     @db.VarChar(255)
   cnum      String     @db.VarChar(50)
   emailaddr String     @db.VarChar(50)
@@ -32,21 +30,18 @@ model Student {
   rating    Int        @db.TinyInt
   createdAt DateTime   @default(now()) @db.Timestamp(3)
   updatedAt DateTime   @updatedAt @db.Timestamp(3)
-  schedules Schedule[]
-
-  @@unique([nameId])
+  name      Person     @relation(fields: [nameId], references: [id])
+  schedules Schedule[] @relation("ScheduleToStudent")
 }
 
 model Staff {
   id             Int        @id @default(autoincrement())
-  name           Name       @relation(fields: [nameId], references: [id])
-  nameId         Int
+  nameId         Int        @unique
   login_username String     @db.VarChar(50)
   login_password String     @db.VarChar(50)
   type           staff_type
-  schedules      Schedule[]
-
-  @@unique([nameId])
+  name           Person     @relation(fields: [nameId], references: [id])
+  schedules      Schedule[] @relation("ScheduleToStaff")
 }
 
 model Schedule {
@@ -55,17 +50,25 @@ model Schedule {
   date      DateTime       @db.Timestamp(3)
   createdAt DateTime       @default(now()) @db.Timestamp(3)
   updatedAt DateTime       @updatedAt @db.Timestamp(3)
-  students  Student[]
-  staffs    Staff[]
   messages  Message[]
+  staffs    Staff[]        @relation("ScheduleToStaff")
+  students  Student[]      @relation("ScheduleToStudent")
 }
 
 model Message {
   id         Int       @id @default(autoincrement())
   createdAt  DateTime  @default(now()) @db.Timestamp(3)
   content    String    @db.VarChar(3000)
-  Schedule   Schedule? @relation(fields: [scheduleId], references: [id])
   scheduleId Int?
+  Schedule   Schedule? @relation(fields: [scheduleId], references: [id])
+
+  @@index([scheduleId], map: "Message_scheduleId_fkey")
+}
+
+model Announcement {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @db.Timestamp(3)
+  content   String   @db.VarChar(3000)
 }
 
 enum staff_type {
