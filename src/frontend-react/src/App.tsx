@@ -19,6 +19,10 @@ import {
   ToggleButton,
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import DragAndDrop from "./components/DragAndDrop/DragAndDropCalendar";
+
+import { momentLocalizer } from "react-big-calendar";
+import moment from "moment";
 
 const TopBar = () => {
   return (
@@ -139,6 +143,7 @@ const Dashboard = ({ sidebarbtn_onClick }) => {
   );
 };
 
+const localizer = momentLocalizer(moment);
 const Appointments = ({ sidebarbtn_onClick }) => {
   const [data, setData] = React.useState([]);
 
@@ -157,6 +162,7 @@ const Appointments = ({ sidebarbtn_onClick }) => {
           <Card>
             <Card.Header as="h2">Manage Appointments</Card.Header>
             <Card.Body>
+              <DragAndDrop localizer={localizer} />
             </Card.Body>
           </Card>
         </Col>

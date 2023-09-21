@@ -3,6 +3,9 @@ $enable-shadows: true;
 
 @import "../node_modules/bootstrap/scss/bootstrap.scss";
 
+@import 'react-big-calendar/lib/sass/styles';
+@import 'react-big-calendar/lib/addons/dragAndDrop/styles';
+
 body {
   background-color: $gray-200;
   margin: 0;
