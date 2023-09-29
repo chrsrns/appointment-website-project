@@ -2,6 +2,11 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator custom_generator {
+  provider = "prisma-generator-fake-data"
+  /// by default, the file will be generated at `./prisma/fake-data.ts`
+}
+
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
@@ -13,15 +18,25 @@ model User {
   mname    String   @db.VarChar(30)
   lname    String   @db.VarChar(30)
   isOnline Boolean? @default(false)
-  Staff    Staff?
-  Student  Student?
 
-  login_username String         @unique
+  addr      String   @db.VarChar(255)
+  cnum      String   @db.VarChar(50)
+  emailaddr String   @db.VarChar(50)
+  bdate     DateTime @db.Date
+  rating    Int      @default(0) @db.TinyInt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  type user_type
+
+  login_username String @unique
   login_password String
-  RefreshToken   RefreshToken[]
+
+  RefreshTokens  RefreshToken[]
+  Schedules      Schedule[]
+  MedicalRecords MedicalRecord[]
 
   @@unique([fname, mname, lname])
-  @@map("Name")
 }
 
 model RefreshToken {
@@ -31,66 +46,66 @@ model RefreshToken {
   User        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   revoked     Boolean  @default(false)
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-model Student {
-  id        Int        @id @default(autoincrement())
-  userId    String     @unique @map("nameId")
-  addr      String     @db.VarChar(255)
-  cnum      String     @db.VarChar(50)
-  emailaddr String     @db.VarChar(50)
-  bdate     DateTime   @db.Date
-  rating    Int        @db.TinyInt
-  createdAt DateTime   @default(now()) @db.Timestamp(3)
-  updatedAt DateTime   @updatedAt @db.Timestamp(3)
-  name      User       @relation(fields: [userId], references: [id])
-  schedules Schedule[] @relation("ScheduleToStudent")
-}
-
-model Staff {
-  id        Int        @id @default(autoincrement())
-  userId    String     @unique @map("nameId")
-  type      staff_type
-  name      User       @relation(fields: [userId], references: [id])
-  schedules Schedule[] @relation("ScheduleToStaff")
+  updatedAt   DateTime @default(now()) @updatedAt
 }
 
 model Schedule {
-  id        Int            @id @default(autoincrement())
-  state     schedule_state
-  date      DateTime       @db.Timestamp(3)
-  createdAt DateTime       @default(now()) @db.Timestamp(3)
-  updatedAt DateTime       @updatedAt @db.Timestamp(3)
-  messages  Message[]
-  staffs    Staff[]        @relation("ScheduleToStaff")
-  students  Student[]      @relation("ScheduleToStudent")
+  id       String         @id @default(uuid())
+  state    schedule_state @default(Available)
+  fromDate DateTime
+  toDate   DateTime
+  title    String
+  desc     String         @default("")
+  repeat   repeat         @default(None)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
+  Messages  Message[]
+  Users     User[]
 }
 
 model Message {
-  id         Int       @id @default(autoincrement())
-  createdAt  DateTime  @default(now()) @db.Timestamp(3)
+  id         String    @id @default(uuid())
+  createdAt  DateTime  @default(now())
   content    String    @db.VarChar(3000)
-  scheduleId Int?
+  scheduleId String?
   Schedule   Schedule? @relation(fields: [scheduleId], references: [id])
 
   @@index([scheduleId], map: "Message_scheduleId_fkey")
 }
 
 model Announcement {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now()) @db.Timestamp(3)
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
   content   String   @db.VarChar(3000)
 }
 
-enum staff_type {
+model MedicalRecord {
+  id      String @id @default(uuid())
+  user    User   @relation(fields: [userId], references: [id])
+  content String
+  userId  String
+}
+
+enum user_type {
+  Student
   Teacher
   Guidance
   Clinic
+  Admin
 }
 
 enum schedule_state {
+  Available
   Pending
+  Approved
   Ongoing
   Completed
+}
+
+enum repeat {
+  None
+  Daily
+  Weekly
+  Monthly
 }
