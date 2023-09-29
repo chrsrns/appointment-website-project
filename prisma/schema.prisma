@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String   @id @default(uuid())
+  fname    String   @db.VarChar(30)
+  mname    String   @db.VarChar(30)
+  lname    String   @db.VarChar(30)
+  isOnline Boolean? @default(false)
+  Staff    Staff?
+  Student  Student?
+
+  login_username String         @unique
+  login_password String
+  RefreshToken   RefreshToken[]
+
+  @@unique([fname, mname, lname])
+  @@map("Name")
+}
+
+model RefreshToken {
+  id          String   @id @unique @default(uuid())
+  hashedToken String
+  userId      String
+  User        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  revoked     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Student {
+  id        Int        @id @default(autoincrement())
+  userId    String     @unique @map("nameId")
+  addr      String     @db.VarChar(255)
+  cnum      String     @db.VarChar(50)
+  emailaddr String     @db.VarChar(50)
+  bdate     DateTime   @db.Date
+  rating    Int        @db.TinyInt
+  createdAt DateTime   @default(now()) @db.Timestamp(3)
+  updatedAt DateTime   @updatedAt @db.Timestamp(3)
+  name      User       @relation(fields: [userId], references: [id])
+  schedules Schedule[] @relation("ScheduleToStudent")
+}
+
+model Staff {
+  id        Int        @id @default(autoincrement())
+  userId    String     @unique @map("nameId")
+  type      staff_type
+  name      User       @relation(fields: [userId], references: [id])
+  schedules Schedule[] @relation("ScheduleToStaff")
+}
+
+model Schedule {
+  id        Int            @id @default(autoincrement())
+  state     schedule_state
+  date      DateTime       @db.Timestamp(3)
+  createdAt DateTime       @default(now()) @db.Timestamp(3)
+  updatedAt DateTime       @updatedAt @db.Timestamp(3)
+  messages  Message[]
+  staffs    Staff[]        @relation("ScheduleToStaff")
+  students  Student[]      @relation("ScheduleToStudent")
+}
+
+model Message {
+  id         Int       @id @default(autoincrement())
+  createdAt  DateTime  @default(now()) @db.Timestamp(3)
+  content    String    @db.VarChar(3000)
+  scheduleId Int?
+  Schedule   Schedule? @relation(fields: [scheduleId], references: [id])
+
+  @@index([scheduleId], map: "Message_scheduleId_fkey")
+}
+
+model Announcement {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @db.Timestamp(3)
+  content   String   @db.VarChar(3000)
+}
+
+enum staff_type {
+  Teacher
+  Guidance
+  Clinic
+}
+
+enum schedule_state {
+  Pending
+  Ongoing
+  Completed
+}

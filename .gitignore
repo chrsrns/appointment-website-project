@@ -1,0 +1,7 @@
+node_modules
+# Keep environment variables out of version control
+.env
+mysqldata
+prisma/migrations
+package-lock.json
+src/frontend-react/build
