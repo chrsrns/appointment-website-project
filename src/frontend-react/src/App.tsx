@@ -23,6 +23,7 @@ import DragAndDrop from "./components/DragAndDrop/DragAndDropCalendar";
 
 import { momentLocalizer } from "react-big-calendar";
 import moment from "moment";
+import { useCookies } from "react-cookie";
 
 const TopBar = () => {
   return (
@@ -257,12 +258,50 @@ const SidebarColBtn = ({
 };
 
 const App: React.FC = () => {
-  const [isActive, setIsActive] = React.useState(false);
+  const [cookies, setCookie] = useCookies([
+    "accessToken",
+    "refreshToken",
+    "username",
+  ]);
+
+  const [isActive, setIsActive] = useState(false);
   const sidebarbtn_onClick = () => setIsActive(!isActive);
   const mainRowClassName = `row-offcanvas row-offcanvas-left ${
     isActive ? "active" : ""
   }`;
 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLogInDone, setIsLogInDone] = useState(false);
+
+  const getLoggedInStatus = () => {
+    const data = { refreshToken: cookies.refreshToken };
+    console.log(`token: ${data}`);
+
+    fetch(`${global.server_backend_url}/backend/auth/refreshToken`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    })
+      .then((response) => {
+        if (response.ok) return response.json();
+        else {
+          setIsLoggedIn(false);
+          setIsLogInDone(true);
+        }
+        throw response;
+      })
+      .then((data) => {
+        setCookie("accessToken", data.accessToken);
+        setCookie("refreshToken", data.refreshToken);
+        setIsLoggedIn(true);
+        setIsLogInDone(true);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  useEffect(() => getLoggedInStatus(), []);
   return (
     <BrowserRouter>
       <TopBar />
