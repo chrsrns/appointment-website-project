@@ -4,3 +4,4 @@ node_modules
 mysqldata
 prisma/migrations
 package-lock.json
+src/frontend-react/build
