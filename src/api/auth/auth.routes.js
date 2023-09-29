@@ -22,8 +22,8 @@ const { hashToken } = require('../hashTokens');
 
 router.post('/register', async (req, res, next) => {
   try {
-    const { fname, mname, lname, login_username, login_password } = req.body;
-    if (!login_username || !login_password || !fname || !mname || !lname) {
+    const { fname, mname, lname, login_username, login_password, addr, cnum, emailaddr, bdate, rating, type } = req.body;
+    if (!login_username || !login_password || !fname || !mname || !lname || !addr || !cnum || !emailaddr || !bdate || !rating || !type) {
       res.status(400);
       throw new Error(`You must provide an all required fields.`);
     }
@@ -35,7 +35,7 @@ router.post('/register', async (req, res, next) => {
       throw new Error('Email already in use.');
     }
 
-    const user = await createUser({ fname, mname, lname, login_username, login_password });
+    const user = await createUser(req.body);
     const jti = uuidv4();
     const { accessToken, refreshToken } = generateTokens(user, jti);
     await addRefreshTokenToWhitelist({ jti, refreshToken, userId: user.id });
