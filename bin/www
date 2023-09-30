@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 
-var app = require('../../src/api/index');
+var app = require('../index');
 var debug = require('debug')('public-html:server');
 var http = require('http');
 
@@ -25,7 +25,9 @@ var server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
+server.listen(port, () => {
+  console.log("REST API server ready at: http://localhost:3000")
+});
 server.on('error', onError);
 server.on('listening', onListening);
 

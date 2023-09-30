@@ -1,7 +1,7 @@
 const cors = require("cors");
 const express = require("express");
 const app = express();
-const fakedata = require("../../prisma/fake-data")
+const fakedata = require("./prisma/fake-data.ts")
 
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
@@ -13,7 +13,7 @@ app.use(cors());
 app.use(function(req, res, next) { setTimeout(next, 500) });
 
 // Frontend Static
-const path = __dirname + "src-frontend-react/build/";
+const path = __dirname + "/src-frontend-react/build/";
 app.use(express.static(path));
 
 const auth = require("./auth/auth.routes.js");
@@ -529,7 +529,8 @@ app.post("/backend/fakestaffuser", async (req, res) => {
 //   }
 // });
 
-module.exports = app;
 // app.listen(3001, () =>
 //   console.log("REST API server ready at: http://localhost:3001"),
 // );
+
+module.exports = app;
