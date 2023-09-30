@@ -13,7 +13,7 @@ app.use(cors());
 app.use(function(req, res, next) { setTimeout(next, 500) });
 
 // Frontend Static
-const path = __dirname + "/build/";
+const path = __dirname + "src-frontend-react/build/";
 app.use(express.static(path));
 
 const auth = require("./auth/auth.routes.js");
