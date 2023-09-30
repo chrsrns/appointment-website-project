@@ -529,6 +529,7 @@ app.post("/backend/fakestaffuser", async (req, res) => {
 //   }
 // });
 
-app.listen(3001, () =>
-  console.log("REST API server ready at: http://localhost:3001"),
-);
+module.exports = app;
+// app.listen(3001, () =>
+//   console.log("REST API server ready at: http://localhost:3001"),
+// );
