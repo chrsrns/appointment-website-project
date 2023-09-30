@@ -1,7 +1,7 @@
 const cors = require("cors");
 const express = require("express");
 const app = express();
-const fakedata = require("./prisma/fake-data.ts")
+const fakedata = require("./prisma/fake-data")
 
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
