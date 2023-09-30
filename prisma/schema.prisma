@@ -2,10 +2,11 @@ generator client {
   provider = "prisma-client-js"
 }
 
-generator custom_generator {
-  provider = "prisma-generator-fake-data"
-  /// by default, the file will be generated at `./prisma/fake-data.ts`
-}
+/// Commented as it keeps generating TS files at prod
+// generator custom_generator {
+//   provider = "prisma-generator-fake-data"
+//   /// by default, the file will be generated at `./prisma/fake-data.ts`
+// }
 
 datasource db {
   provider = "mysql"
