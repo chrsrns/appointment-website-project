@@ -1,24 +1,42 @@
 const { user_type, schedule_state, repeat } = require("@prisma/client");
 const { faker } = require("@faker-js/faker");
+const bcrypt = require("bcrypt");
 
-function fakeUser() {
+function fakeStudentUser() {
   return {
-    fname: faker.lorem.words(5),
-    mname: faker.lorem.words(5),
-    lname: faker.lorem.words(5),
-    addr: faker.lorem.words(5),
-    cnum: faker.lorem.words(5),
-    emailaddr: faker.lorem.words(5),
-    bdate: faker.datatype.datetime(),
+    fname: faker.name.firstName(),
+    mname: faker.name.middleName(),
+    lname: faker.name.lastName(),
+    addr: faker.address.city(),
+    cnum: faker.phone.number(),
+    emailaddr: faker.internet.email(),
+    bdate: faker.date.birthdate(),
+    rating: 0,
+    updatedAt: faker.datatype.datetime(),
+    type: faker.helpers.arrayElement([user_type.Student]),
+    login_username: faker.internet.userName(),
+    login_password: bcrypt.hashSync("test123", 12),
+  };
+}
+function fakeStaffUser() {
+  return {
+    fname: faker.name.firstName(),
+    mname: faker.name.middleName(),
+    lname: faker.name.lastName(),
+    addr: faker.address.city(),
+    cnum: faker.phone.number(),
+    emailaddr: faker.internet.email(),
+    bdate: faker.date.birthdate(),
+    rating: 0,
+    updatedAt: faker.datatype.datetime(),
     type: faker.helpers.arrayElement([
-      user_type.Student,
       user_type.Teacher,
       user_type.Guidance,
       user_type.Clinic,
       user_type.Admin,
     ]),
-    login_username: faker.lorem.words(5),
-    login_password: faker.lorem.words(5),
+    login_username: faker.internet.userName(),
+    login_password: bcrypt.hashSync("test123", 12),
   };
 }
 function fakeUserComplete() {
@@ -32,7 +50,7 @@ function fakeUserComplete() {
     cnum: faker.lorem.words(5),
     emailaddr: faker.lorem.words(5),
     bdate: faker.datatype.datetime(),
-    rating: 0,
+    rating: faker.datatype.number(),
     createdAt: new Date(),
     updatedAt: new Date(),
     type: faker.helpers.arrayElement([
@@ -48,7 +66,8 @@ function fakeUserComplete() {
 }
 
 module.exports = {
-  fakeUser,
+  fakeStaffUser,
+  fakeStudentUser,
   fakeUserComplete,
 };
 // export function fakeRefreshToken() {
