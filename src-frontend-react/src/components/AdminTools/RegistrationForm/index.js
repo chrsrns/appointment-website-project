@@ -365,34 +365,36 @@ function RegistrationForm() {
                   <div className="text-danger">{formErrors.cnum}</div>
                 </Form.Group>
               </Row>
-              <Form.Group controlId="bdate" className="mb-3">
-                <Form.Label>Birthday</Form.Label>
-                <Form.Control
-                  type="date"
-                  name="bdate"
-                  value={formData.bdate}
-                  onChange={handleChange}
-                  required
-                />
-                <div className="text-danger">{formErrors.bdate}</div>
-              </Form.Group>
-              <Form.Group>
-                <Form.Label>User Type</Form.Label>
-                <div key='inline-radio' className="mb-3">
-                  {userTypes.map((userType) => (
-                    <Form.Check
-                      inline
-                      name="type"
-                      type="radio"
-                      id={`inline-radio-${userType}`}
-                      label={userType}
-                      value={userType}
-                      onChange={handleChange}
-                      checked={formData.type === userType} />
+              <Row className="mb-3">
+                <Form.Group as={Col} md="4" controlId="bdate" className="mb-3">
+                  <Form.Label>Birthday</Form.Label>
+                  <Form.Control
+                    type="date"
+                    name="bdate"
+                    value={formData.bdate}
+                    onChange={handleChange}
+                    required
+                  />
+                  <div className="text-danger">{formErrors.bdate}</div>
+                </Form.Group>
+                <Form.Group as={Col} md="8" >
+                  <Form.Label>User Type</Form.Label>
+                  <div key='inline-radio' className="mb-3">
+                    {userTypes.map((userType) => (
+                      <Form.Check
+                        inline
+                        name="type"
+                        type="radio"
+                        id={`inline-radio-${userType}`}
+                        label={userType}
+                        value={userType}
+                        onChange={handleChange}
+                        checked={formData.type === userType} />
 
-                  ))}
-                </div>
-              </Form.Group>
+                    ))}
+                  </div>
+                </Form.Group>
+              </Row>
 
               <Row className="mb-3">
                 <Form.Group as={Col} md="6" controlId="login_username">
