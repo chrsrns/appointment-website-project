@@ -280,158 +280,152 @@ function RegistrationForm() {
 
   return (
     <LoadingOverlay active={isLoading} spinner text='Waiting for update...'>
-      <Container>
-        <Row>
-          <Col>
-            <Form onSubmit={handleSubmit}>
-              {/* <Form.Group className='mb-3'> */}
-              {/*   <Form.Select size="lg" onChange={(e) => { */}
-              {/*     setSelectedUser(e.target.value) */}
-              {/*   }}> */}
-              {/*     <option key='newUser' value='newUser'>Create New User...</option> */}
-              {/*     {usersList.map((user) => { */}
-              {/*       return <option key={user.id} value={user.id}>{`[${user.type}] ${user.fname} ${user.mname} ${user.lname}`}</option> */}
-              {/*     })} */}
-              {/*   </Form.Select> */}
-              {/* </Form.Group> */}
-              <Select className='fs-5 mb-3' options={usersListOptions} value={selectedUser} onChange={handleUserSelectionChange} />
-              <Row className="mb-3">
-                <Form.Group as={Col} md="4" controlId="firstName">
-                  <Form.Label>First Name</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="fname"
-                    value={formData.fname}
-                    onChange={handleChange}
-                    required
-                  />
-                  <div className="text-danger">{formErrors.fname}</div>
-                </Form.Group>
-                <Form.Group as={Col} md="4" controlId="middleName">
-                  <Form.Label>Middle Name</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="mname"
-                    value={formData.mname}
-                    onChange={handleChange}
-                    required
-                  />
-                  <div className="text-danger">{formErrors.mname}</div>
-                </Form.Group>
-                <Form.Group as={Col} md="4" controlId="lastName">
-                  <Form.Label>Last Name</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="lname"
-                    value={formData.lname}
-                    onChange={handleChange}
-                    required
-                  />
-                  <div className="text-danger">{formErrors.lname}</div>
-                </Form.Group>
-              </Row>
-              <Form.Group controlId="addr" className="mb-3">
-                <Form.Label>Address</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="addr"
-                  value={formData.addr}
-                  onChange={handleChange}
-                  required
-                />
-                <div className="text-danger">{formErrors.addr}</div>
-              </Form.Group>
-              <Row className="mb-3">
-                <Form.Group as={Col} md="6" controlId="emailaddr">
-                  <Form.Label>Email</Form.Label>
-                  <Form.Control
-                    type="email"
-                    name="emailaddr"
-                    value={formData.emailaddr}
-                    onChange={handleChange}
-                    required
-                  />
-                  <div className="text-danger">{formErrors.emailaddr}</div>
-                </Form.Group>
-                <Form.Group as={Col} md="6" controlId="cnum">
-                  <Form.Label>Phone Number</Form.Label>
-                  <Form.Control
-                    type="tel"
-                    name="cnum"
-                    value={formData.cnum}
-                    onChange={handleChange}
-                    required
-                  />
-                  <div className="text-danger">{formErrors.cnum}</div>
-                </Form.Group>
-              </Row>
-              <Row className="mb-3">
-                <Form.Group as={Col} md="4" controlId="bdate" className="mb-3">
-                  <Form.Label>Birthday</Form.Label>
-                  <Form.Control
-                    type="date"
-                    name="bdate"
-                    value={formData.bdate}
-                    onChange={handleChange}
-                    required
-                  />
-                  <div className="text-danger">{formErrors.bdate}</div>
-                </Form.Group>
-                <Form.Group as={Col} md="8" >
-                  <Form.Label>User Type</Form.Label>
-                  <div key='inline-radio' className="mb-3">
-                    {userTypes.map((userType) => (
-                      <Form.Check
-                        inline
-                        name="type"
-                        type="radio"
-                        id={`inline-radio-${userType}`}
-                        label={userType}
-                        value={userType}
-                        onChange={handleChange}
-                        checked={formData.type === userType} />
-
-                    ))}
-                  </div>
-                </Form.Group>
-              </Row>
-
-              <Row className="mb-3">
-                <Form.Group as={Col} md="6" controlId="login_username">
-                  <Form.Label>Username</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="login_username"
-                    value={formData.login_username}
-                    onChange={handleChange}
-                    required
-                  />
-                  <div className="text-danger">{formErrors.login_username}</div>
-                </Form.Group>
-
-                <Form.Group as={Col} md="6" controlId="login_password">
-                  <Form.Label>Password</Form.Label>
-                  <Form.Control
-                    type="password"
-                    name="login_password"
-                    value={formData.login_password}
-                    onChange={handleChange}
-                  />
-                  <div className="text-danger">{formErrors.login_password}</div>
-                </Form.Group>
-              </Row>
-              <Stack direction="horizontal" className="gap-3 justify-content-between">
-                <Button className="mt-2" variant="primary" type="submit">
-                  {`${formData.id ? 'Modify User' : 'Create User'}`}
-                </Button>
-                <Button variant="danger" className={`${formData.id ? '' : 'invisible'}`} onClick={handleDelete}>
-                  Delete User
-                </Button>
-              </Stack>
-            </Form>
-          </Col>
+      <Form onSubmit={handleSubmit}>
+        {/* <Form.Group className='mb-3'> */}
+        {/*   <Form.Select size="lg" onChange={(e) => { */}
+        {/*     setSelectedUser(e.target.value) */}
+        {/*   }}> */}
+        {/*     <option key='newUser' value='newUser'>Create New User...</option> */}
+        {/*     {usersList.map((user) => { */}
+        {/*       return <option key={user.id} value={user.id}>{`[${user.type}] ${user.fname} ${user.mname} ${user.lname}`}</option> */}
+        {/*     })} */}
+        {/*   </Form.Select> */}
+        {/* </Form.Group> */}
+        <Select className='fs-5 mb-3' options={usersListOptions} value={selectedUser} onChange={handleUserSelectionChange} />
+        <Row className="mb-3">
+          <Form.Group as={Col} md="4" controlId="firstName">
+            <Form.Label>First Name</Form.Label>
+            <Form.Control
+              type="text"
+              name="fname"
+              value={formData.fname}
+              onChange={handleChange}
+              required
+            />
+            <div className="text-danger">{formErrors.fname}</div>
+          </Form.Group>
+          <Form.Group as={Col} md="4" controlId="middleName">
+            <Form.Label>Middle Name</Form.Label>
+            <Form.Control
+              type="text"
+              name="mname"
+              value={formData.mname}
+              onChange={handleChange}
+              required
+            />
+            <div className="text-danger">{formErrors.mname}</div>
+          </Form.Group>
+          <Form.Group as={Col} md="4" controlId="lastName">
+            <Form.Label>Last Name</Form.Label>
+            <Form.Control
+              type="text"
+              name="lname"
+              value={formData.lname}
+              onChange={handleChange}
+              required
+            />
+            <div className="text-danger">{formErrors.lname}</div>
+          </Form.Group>
         </Row>
-      </Container>
+        <Form.Group controlId="addr" className="mb-3">
+          <Form.Label>Address</Form.Label>
+          <Form.Control
+            type="text"
+            name="addr"
+            value={formData.addr}
+            onChange={handleChange}
+            required
+          />
+          <div className="text-danger">{formErrors.addr}</div>
+        </Form.Group>
+        <Row className="mb-3">
+          <Form.Group as={Col} md="6" controlId="emailaddr">
+            <Form.Label>Email</Form.Label>
+            <Form.Control
+              type="email"
+              name="emailaddr"
+              value={formData.emailaddr}
+              onChange={handleChange}
+              required
+            />
+            <div className="text-danger">{formErrors.emailaddr}</div>
+          </Form.Group>
+          <Form.Group as={Col} md="6" controlId="cnum">
+            <Form.Label>Phone Number</Form.Label>
+            <Form.Control
+              type="tel"
+              name="cnum"
+              value={formData.cnum}
+              onChange={handleChange}
+              required
+            />
+            <div className="text-danger">{formErrors.cnum}</div>
+          </Form.Group>
+        </Row>
+        <Row className="mb-3">
+          <Form.Group as={Col} md="4" controlId="bdate" className="mb-3">
+            <Form.Label>Birthday</Form.Label>
+            <Form.Control
+              type="date"
+              name="bdate"
+              value={formData.bdate}
+              onChange={handleChange}
+              required
+            />
+            <div className="text-danger">{formErrors.bdate}</div>
+          </Form.Group>
+          <Form.Group as={Col} md="8" >
+            <Form.Label>User Type</Form.Label>
+            <div key='inline-radio' className="mb-3">
+              {userTypes.map((userType) => (
+                <Form.Check
+                  inline
+                  name="type"
+                  type="radio"
+                  id={`inline-radio-${userType}`}
+                  label={userType}
+                  value={userType}
+                  onChange={handleChange}
+                  checked={formData.type === userType} />
+
+              ))}
+            </div>
+          </Form.Group>
+        </Row>
+
+        <Row className="mb-3">
+          <Form.Group as={Col} md="6" controlId="login_username">
+            <Form.Label>Username</Form.Label>
+            <Form.Control
+              type="text"
+              name="login_username"
+              value={formData.login_username}
+              onChange={handleChange}
+              required
+            />
+            <div className="text-danger">{formErrors.login_username}</div>
+          </Form.Group>
+
+          <Form.Group as={Col} md="6" controlId="login_password">
+            <Form.Label>Password</Form.Label>
+            <Form.Control
+              type="password"
+              name="login_password"
+              value={formData.login_password}
+              onChange={handleChange}
+            />
+            <div className="text-danger">{formErrors.login_password}</div>
+          </Form.Group>
+        </Row>
+        <Stack direction="horizontal" className="gap-3 justify-content-between">
+          <Button className="mt-2" variant="primary" type="submit">
+            {`${formData.id ? 'Modify User' : 'Create User'}`}
+          </Button>
+          <Button variant="danger" className={`${formData.id ? '' : 'invisible'}`} onClick={handleDelete}>
+            Delete User
+          </Button>
+        </Stack>
+      </Form>
     </LoadingOverlay>
   );
 }
