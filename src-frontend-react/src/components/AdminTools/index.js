@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button, Card, Col, Form, FormGroup, Row } from "react-bootstrap";
 import { Jumbotron } from "../Jumbotron";
+import { AnnouncementsForm } from "./AnnouncementsForm";
 import RegistrationForm from "./RegistrationForm";
 
 export const AdminTools = ({ sidebarbtn_onClick }) => {
@@ -49,6 +50,7 @@ export const AdminTools = ({ sidebarbtn_onClick }) => {
           <Card className="shadow-sm">
             <Card.Header as={"h2"}>Announcements Management</Card.Header>
             <Card.Body>
+              <AnnouncementsForm />
             </Card.Body>
           </Card>
         </Col>

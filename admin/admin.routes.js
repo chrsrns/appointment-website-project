@@ -116,4 +116,79 @@ router.delete("/user/:id", async (req, res) => {
   }
 });
 
+router.get("/announcements", async (req, res, next) => {
+  try {
+    const announcements = await prisma.announcement.findMany({
+      select: {
+        id: true,
+        title: true,
+        content: true
+      }
+    });
+    res.json(announcements);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post("/announcement", async (req, res, next) => {
+  try {
+    const announcementcreate = await prisma.announcement.create({
+      data: req.body
+    })
+    res.status(200)
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred when adding the announcement" });
+  }
+
+  return next();
+})
+
+router.put("/announcement/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const announcementFromBody = req.body
+    const announcementToUpdate = await prisma.announcement.update({
+      where: {
+        id: id,
+      },
+      data: announcementFromBody
+    });
+    if (!announcementFromBody) {
+      res.status(404).json({ error: "Appointment not found" });
+      return;
+    }
+    res.status(200)
+    return next()
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while modifying the announcement" });
+  }
+});
+
+router.delete("/announcement/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const announcementToDelete = await prisma.announcement.delete({
+      where: {
+        id: id,
+      },
+    });
+    if (!announcementToDelete) {
+      res.status(404).json({ error: "Appointment not found" });
+      return;
+    }
+    res.json(announcementToDelete);
+    console.log(req.body)
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while deleting the announcement" });
+  }
+});
+
 module.exports = router;
