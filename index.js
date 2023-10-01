@@ -19,6 +19,9 @@ app.use(express.static(path));
 const auth = require("./auth/auth.routes.js");
 app.use("/backend/auth", auth);
 
+const admin = require("./admin/admin.routes.js");
+app.use("/backend/admin", admin);
+
 const users = require("./users/users.routes.js");
 app.use("/backend/users", users);
 

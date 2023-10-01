@@ -76,6 +76,12 @@ const SidebarCol = () => {
       value: "3",
       link: "/feedback",
     },
+    {
+      name: "Admin Tools",
+      iconClass: "bi-terminal",
+      value: "4",
+      link: "/admin",
+    },
   ];
 
   return (
@@ -207,7 +213,12 @@ const App: React.FC = () => {
                       <Appointments sidebarbtn_onClick={sidebarbtn_onClick} />
                     }
                   />
-                  <Route path="/admin" element={<AdminTools />} />
+                  <Route
+                    path="/admin"
+                    element={
+                      <AdminTools sidebarbtn_onClick={sidebarbtn_onClick} />
+                    }
+                  />
                 </Routes>
               </Col>
               <SidebarCol />

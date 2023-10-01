@@ -1,30 +1,103 @@
-import React, { useState } from 'react';
-import { Form, Button, Container, Row, Col } from 'react-bootstrap';
+import moment from 'moment';
+import React, { useEffect, useState } from 'react';
+import { Form, Button, Container, Row, Col, Stack } from 'react-bootstrap';
+import Select from 'react-select'
+
+import LoadingOverlay from 'react-loading-overlay-ts';
+
+const DEFAULT_FORM_VALUES = {
+  id: '',
+  fname: '',
+  mname: '',
+  lname: '',
+  addr: '',
+  cnum: '',
+  emailaddr: '',
+  bdate: '',
+  type: '',
+  login_username: '', // Add username field
+  login_password: '', // Add password field
+}
+
+/// NOTE The `{ ...DEFAULT_FORM_VALUES }` is used because simply
+//      placing `DEFAULT_FORM_VALUES` seems to make it so that 
+//      the forms modify this variable
+const DEFAULT_SELECT_VALUE = { value: { ...DEFAULT_FORM_VALUES }, label: "Create new user" }
 
 function RegistrationForm() {
-  const [formData, setFormData] = useState({
-    fname: '',
-    mname: '',
-    lname: '',
-    addr: '',
-    phoneNumber: '',
-    emailaddr: '',
-    birthday: '',
-    username: '', // Add username field
-    password: '', // Add password field
-  });
 
-  const [formErrors, setFormErrors] = useState({
-    fname: '',
-    mname: '',
-    lname: '',
-    addr: '',
-    phoneNumber: '',
-    emailaddr: '',
-    birthday: '',
-    username: '', // Add username field
-    password: '', // Add password field
-  });
+  const [usersList, setUsersList] = useState([])
+  const [userTypes, setUserTypes] = useState([])
+
+  const [usersListOptions, setUsersListOptions] = useState([])
+  const [selectedUser, setSelectedUser] = useState({ ...DEFAULT_SELECT_VALUE })
+
+  const [formData, setFormData] = useState({ ...DEFAULT_FORM_VALUES });
+
+  const [formErrors, setFormErrors] = useState({ ...DEFAULT_FORM_VALUES });
+
+  const [isLoading, setIsLoading] = useState(true)
+
+  const resetToDefault = () => {
+    setFormData({ ...DEFAULT_FORM_VALUES })
+    setFormErrors({ ...DEFAULT_FORM_VALUES })
+    setSelectedUser({ ...DEFAULT_SELECT_VALUE })
+
+  }
+
+  const fetchAll = () => {
+    setIsLoading(true)
+    Promise.all([
+      fetch(`${global.server_backend_url}/backend/admin/users`)
+        .then((response) => {
+          if (response.ok) return response.json();
+          else throw response;
+        })
+        .then((data) => {
+          setUsersList(data)
+          return data;
+        }),
+      fetch(`${global.server_backend_url}/backend/admin/usertypes`)
+        .then((response) => {
+          if (response.ok) return response.json();
+          else throw response;
+        })
+        .then((data) => {
+          setUserTypes(data)
+          return data;
+        })
+    ]).then(responses => {
+      console.log("done")
+      setIsLoading(false)
+    })
+  }
+
+  useEffect(() => {
+    fetchAll()
+  }, [])
+
+  useEffect(() => {
+    setUsersListOptions([{ ...DEFAULT_SELECT_VALUE }, ...usersList.map((user) => {
+      return { value: user, label: `[${user.type}] ${user.lname}, ${user.fname} ${user.mname}` }
+    })])
+    console.log(usersList)
+  }, [usersList])
+
+  useEffect(() => {
+    console.log(usersListOptions)
+  }, [usersListOptions])
+
+  const handleUserSelectionChange = (e) => {
+    setSelectedUser({ value: e.value, label: e.label })
+    const user = e.value
+
+    user.login_password = ''
+    user.bdate = moment(user.bdate).format('YYYY-MM-DD')
+
+    setFormData(user)
+    console.log(user)
+
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -81,35 +154,38 @@ function RegistrationForm() {
 
     // Validate Phone Number
     const phonePattern = /^\d{11}$/;
-    if (!formData.phoneNumber.trim().match(phonePattern)) {
-      newFormErrors.phoneNumber = 'Phone number must be 11 digits';
+    if (!formData.cnum.trim().match(phonePattern)) {
+      newFormErrors.cnum = 'Phone number must be 11 digits';
       isValid = false;
     } else {
-      newFormErrors.phoneNumber = '';
+      newFormErrors.cnum = '';
     }
 
     // Validate Birthday (you can add custom date validation logic)
-    if (formData.birthday.trim() === '') {
-      newFormErrors.birthday = 'Birthday is required';
+    if (formData.bdate.trim() === '') {
+      newFormErrors.bdate = 'Birthday is required';
       isValid = false;
     } else {
-      newFormErrors.birthday = '';
+      newFormErrors.bdate = '';
     }
 
     // Validate Username
-    if (formData.username.trim() === '') {
-      newFormErrors.username = 'Username is required';
+    if (formData.login_username.trim() === '') {
+      newFormErrors.login_username = 'Username is required';
       isValid = false;
     } else {
-      newFormErrors.username = '';
+      newFormErrors.login_username = '';
     }
 
     // Validate Password
-    if (formData.password.length < 6) {
-      newFormErrors.password = 'Password must be at least 6 characters';
+    if (formData.login_password.length < 6 && formData.login_password.length != 0 && formData.id) {
+      newFormErrors.login_password = 'Password must be at least 6 characters long or be left blank to leave unchanged';
+      isValid = false;
+    } else if (formData.login_password.length < 6 && !formData.id) {
+      newFormErrors.login_password = 'Password must be at least 6 characters long when creating a user';
       isValid = false;
     } else {
-      newFormErrors.password = '';
+      newFormErrors.login_password = '';
     }
 
     setFormErrors(newFormErrors);
@@ -126,11 +202,55 @@ function RegistrationForm() {
         fname: formData.fname,
         mname: formData.mname,
         lname: formData.lname,
-        cnum: formData.phoneNumber,
+        addr: formData.addr,
+        cnum: formData.cnum,
         emailaddr: formData.emailaddr,
-        bdate: new Date(formData.birthday),
-        login_username: formData.username,
-        login_password: formData.password
+        bdate: moment(new Date(formData.bdate)).toISOString(),
+        type: formData.type,
+        login_username: formData.login_username,
+      }
+
+      if (formData.id) { /// Means user is updated only. Do not include password field if empty
+
+        if (formData.login_password)
+          formatted.login_password = formData.login_password
+
+        fetch(`${global.server_backend_url}/backend/admin/user/${formData.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formatted)
+        }).then((response) => {
+          console.log(response)
+          fetchAll()
+          resetToDefault()
+
+          if (response.ok) {
+            return response.json();
+          } else throw response;
+        }).catch((err) => {
+          console.log(err)
+        })
+
+      } else { /// Means user is created, not updated
+
+        formatted.login_password = formData.login_password
+
+        fetch(`${global.server_backend_url}/backend/admin/user`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formatted)
+        }).then((response) => {
+          console.log(response)
+          fetchAll()
+          resetToDefault()
+
+          if (response.ok) {
+            return response.json();
+          } else throw response;
+        }).catch((err) => {
+          console.log(err)
+        })
+
       }
       console.log(formatted)
 
@@ -139,117 +259,178 @@ function RegistrationForm() {
     }
   };
 
-  return (
-    <Container>
-      <Row>
-        <Col>
-          <Form onSubmit={handleSubmit}>
-            <Form.Group controlId="firstName" className="mb-3">
-              <Form.Label>First Name</Form.Label>
-              <Form.Control
-                type="text"
-                name="fname"
-                value={formData.fname}
-                onChange={handleChange}
-                required
-              />
-              <div className="text-danger">{formErrors.fname}</div>
-            </Form.Group>
-            <Form.Group controlId="middleName" className="mb-3">
-              <Form.Label>Middle Name</Form.Label>
-              <Form.Control
-                type="text"
-                name="mname"
-                value={formData.mname}
-                onChange={handleChange}
-                required
-              />
-              <div className="text-danger">{formErrors.mname}</div>
-            </Form.Group>
-            <Form.Group controlId="lastName" className="mb-3">
-              <Form.Label>Last Name</Form.Label>
-              <Form.Control
-                type="text"
-                name="lname"
-                value={formData.lname}
-                onChange={handleChange}
-                required
-              />
-              <div className="text-danger">{formErrors.lname}</div>
-            </Form.Group>
-            <Form.Group controlId="addr" className="mb-3">
-              <Form.Label>Address</Form.Label>
-              <Form.Control
-                type="text"
-                name="addr"
-                value={formData.addr}
-                onChange={handleChange}
-                required
-              />
-              <div className="text-danger">{formErrors.addr}</div>
-            </Form.Group>           <Form.Group controlId="emailaddr" className="mb-3">
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                type="email"
-                name="emailaddr"
-                value={formData.emailaddr}
-                onChange={handleChange}
-                required
-              />
-              <div className="text-danger">{formErrors.emailaddr}</div>
-            </Form.Group>
-            <Form.Group controlId="phoneNumber" className="mb-3">
-              <Form.Label>Phone Number</Form.Label>
-              <Form.Control
-                type="tel"
-                name="phoneNumber"
-                value={formData.phoneNumber}
-                onChange={handleChange}
-                required
-              />
-              <div className="text-danger">{formErrors.phoneNumber}</div>
-            </Form.Group>
-            <Form.Group controlId="birthday" className="mb-3">
-              <Form.Label>Birthday</Form.Label>
-              <Form.Control
-                type="date"
-                name="birthday"
-                value={formData.birthday}
-                onChange={handleChange}
-                required
-              />
-              <div className="text-danger">{formErrors.birthday}</div>
-            </Form.Group>
-            <Form.Group controlId="username" className="mb-3">
-              <Form.Label>Username</Form.Label>
-              <Form.Control
-                type="text"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
-                required
-              />
-              <div className="text-danger">{formErrors.username}</div>
-            </Form.Group>
+  const handleDelete = () => {
+    if (formData.id) {
+      fetch(`${global.server_backend_url}/backend/admin/user/${formData.id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+      }).then((response) => {
+        console.log(response)
+        if (response.ok) {
+          fetchAll()
+          resetToDefault()
+          console.log(response)
+          return response.json();
+        } else throw response;
+      }).catch((err) => {
+        console.log(err)
+      })
+    }
+  }
 
-            <Form.Group controlId="password" className="mb-3">
-              <Form.Label>Password</Form.Label>
-              <Form.Control
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-              />
-              <div className="text-danger">{formErrors.password}</div>
-            </Form.Group>
-            <Button className="mt-2" variant="primary" type="submit">
-              Register
-            </Button>
-          </Form>
-        </Col>
-      </Row>
-    </Container>
+  return (
+    <LoadingOverlay active={isLoading} spinner text='Waiting for update...'>
+      <Container>
+        <Row>
+          <Col>
+            <Form onSubmit={handleSubmit}>
+              {/* <Form.Group className='mb-3'> */}
+              {/*   <Form.Select size="lg" onChange={(e) => { */}
+              {/*     setSelectedUser(e.target.value) */}
+              {/*   }}> */}
+              {/*     <option key='newUser' value='newUser'>Create New User...</option> */}
+              {/*     {usersList.map((user) => { */}
+              {/*       return <option key={user.id} value={user.id}>{`[${user.type}] ${user.fname} ${user.mname} ${user.lname}`}</option> */}
+              {/*     })} */}
+              {/*   </Form.Select> */}
+              {/* </Form.Group> */}
+              <Select className='fs-5 mb-3' options={usersListOptions} value={selectedUser} onChange={handleUserSelectionChange} />
+              <Row className="mb-3">
+                <Form.Group as={Col} md="4" controlId="firstName">
+                  <Form.Label>First Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="fname"
+                    value={formData.fname}
+                    onChange={handleChange}
+                    required
+                  />
+                  <div className="text-danger">{formErrors.fname}</div>
+                </Form.Group>
+                <Form.Group as={Col} md="4" controlId="middleName">
+                  <Form.Label>Middle Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="mname"
+                    value={formData.mname}
+                    onChange={handleChange}
+                    required
+                  />
+                  <div className="text-danger">{formErrors.mname}</div>
+                </Form.Group>
+                <Form.Group as={Col} md="4" controlId="lastName">
+                  <Form.Label>Last Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="lname"
+                    value={formData.lname}
+                    onChange={handleChange}
+                    required
+                  />
+                  <div className="text-danger">{formErrors.lname}</div>
+                </Form.Group>
+              </Row>
+              <Form.Group controlId="addr" className="mb-3">
+                <Form.Label>Address</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="addr"
+                  value={formData.addr}
+                  onChange={handleChange}
+                  required
+                />
+                <div className="text-danger">{formErrors.addr}</div>
+              </Form.Group>
+              <Row className="mb-3">
+                <Form.Group as={Col} md="6" controlId="emailaddr">
+                  <Form.Label>Email</Form.Label>
+                  <Form.Control
+                    type="email"
+                    name="emailaddr"
+                    value={formData.emailaddr}
+                    onChange={handleChange}
+                    required
+                  />
+                  <div className="text-danger">{formErrors.emailaddr}</div>
+                </Form.Group>
+                <Form.Group as={Col} md="6" controlId="cnum">
+                  <Form.Label>Phone Number</Form.Label>
+                  <Form.Control
+                    type="tel"
+                    name="cnum"
+                    value={formData.cnum}
+                    onChange={handleChange}
+                    required
+                  />
+                  <div className="text-danger">{formErrors.cnum}</div>
+                </Form.Group>
+              </Row>
+              <Form.Group controlId="bdate" className="mb-3">
+                <Form.Label>Birthday</Form.Label>
+                <Form.Control
+                  type="date"
+                  name="bdate"
+                  value={formData.bdate}
+                  onChange={handleChange}
+                  required
+                />
+                <div className="text-danger">{formErrors.bdate}</div>
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>User Type</Form.Label>
+                <div key='inline-radio' className="mb-3">
+                  {userTypes.map((userType) => (
+                    <Form.Check
+                      inline
+                      name="type"
+                      type="radio"
+                      id={`inline-radio-${userType}`}
+                      label={userType}
+                      value={userType}
+                      onChange={handleChange}
+                      checked={formData.type === userType} />
+
+                  ))}
+                </div>
+              </Form.Group>
+
+              <Row className="mb-3">
+                <Form.Group as={Col} md="6" controlId="login_username">
+                  <Form.Label>Username</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="login_username"
+                    value={formData.login_username}
+                    onChange={handleChange}
+                    required
+                  />
+                  <div className="text-danger">{formErrors.login_username}</div>
+                </Form.Group>
+
+                <Form.Group as={Col} md="6" controlId="login_password">
+                  <Form.Label>Password</Form.Label>
+                  <Form.Control
+                    type="password"
+                    name="login_password"
+                    value={formData.login_password}
+                    onChange={handleChange}
+                  />
+                  <div className="text-danger">{formErrors.login_password}</div>
+                </Form.Group>
+              </Row>
+              <Stack direction="horizontal" className="gap-3 justify-content-between">
+                <Button className="mt-2" variant="primary" type="submit">
+                  {`${formData.id ? 'Modify User' : 'Create User'}`}
+                </Button>
+                <Button variant="danger" className={`${formData.id ? '' : 'invisible'}`} onClick={handleDelete}>
+                  Delete User
+                </Button>
+              </Stack>
+            </Form>
+          </Col>
+        </Row>
+      </Container>
+    </LoadingOverlay>
   );
 }
 

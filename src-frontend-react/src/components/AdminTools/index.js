@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
-import { Card, Col, Form, FormGroup, Row } from "react-bootstrap";
+import { Button, Card, Col, Form, FormGroup, Row } from "react-bootstrap";
 import { Jumbotron } from "../Jumbotron";
 import RegistrationForm from "./RegistrationForm";
 
-export const AdminTools = () => {
+export const AdminTools = ({ sidebarbtn_onClick }) => {
 
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    fetch(`${process.env.SERVER_URL}/backend/users/announcements`)
+    fetch(`${global.server_backend_url}/backend/users/announcements`)
       .then((response) => {
         if (response.ok) {
+          console.log("res ok")
           return response.json();
         }
         throw response;
@@ -18,12 +19,19 @@ export const AdminTools = () => {
       .then((data) => {
         setData(data);
         console.log(data);
+      }).catch((err) => {
+        console.log(err)
       });
   }, []);
 
   return (
     <>
-      <Jumbotron header="AdminTools">
+      <p className="float-start d-lg-none d-md-block">
+        <Button variant="primary" size="sm" onClick={sidebarbtn_onClick}>
+          <i className="bi bi-chevron-right"></i>
+        </Button>
+      </p>
+      <Jumbotron header="Admin Tools">
         Create and update database details
       </Jumbotron>
       <Row>
@@ -39,7 +47,7 @@ export const AdminTools = () => {
       <Row>
         <Col>
           <Card className="shadow-sm">
-            <Card.Header as={"h2"}>My Appointments</Card.Header>
+            <Card.Header as={"h2"}>Announcements Management</Card.Header>
             <Card.Body>
             </Card.Body>
           </Card>
