@@ -20,7 +20,14 @@ router.get("/profile", isAuthenticated, async (req, res, next) => {
 
 router.get("/announcements", async (req, res, next) => {
   try {
-    const announcements = await prisma.announcement.findMany();
+    const announcements = await prisma.announcement.findMany({
+      select: {
+        createdAt: true,
+        title: true,
+        content: true,
+      }
+    }
+    );
     res.json(announcements);
   } catch (err) {
     console.error(err);

@@ -1,3 +1,4 @@
+import moment from "moment";
 import { useEffect, useState } from "react";
 import { Button, Card, Col, ListGroup, ListGroupItem, Row, Table } from "react-bootstrap";
 import { Jumbotron } from "../Jumbotron";
@@ -14,6 +15,7 @@ export const Dashboard = ({ sidebarbtn_onClick }) => {
         throw response;
       })
       .then((data) => {
+        data = data.slice().sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
         setData(data);
         console.log(data);
       });
@@ -33,10 +35,18 @@ export const Dashboard = ({ sidebarbtn_onClick }) => {
         <Col>
           <Card>
             <Card.Header as="h2">Announcements</Card.Header>
-            <Card.Body>
+            <Card.Body className="overflow-scroll" style={{ maxHeight: "16rem" }}>
               <ListGroup>
                 {data.map((announcement) => {
-                  return <ListGroupItem>{announcement.content}</ListGroupItem>;
+                  return <ListGroupItem className="m-2">
+                    <p className="fw-bold mb-2 border-bottom border-secondary pb-2">{announcement.title}</p>
+                    {announcement.content}
+                    <p className="mt-1 mb-0 text-black-50" style={{ fontSize: '.8rem' }}>
+                      {
+                        moment(announcement.createdAt).format('MMM DD, YYYY hh:mm')
+                      }
+                    </p>
+                  </ListGroupItem>;
                 })}
               </ListGroup>
             </Card.Body>
