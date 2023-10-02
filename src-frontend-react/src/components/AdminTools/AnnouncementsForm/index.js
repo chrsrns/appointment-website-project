@@ -18,7 +18,7 @@ const DEFAULT_SELECT_VALUE = { value: { ...DEFAULT_FORM_VALUES }, label: "Create
 export const AnnouncementsForm = () => {
   const [announcementsList, setAnnouncementsList] = useState([])
 
-  const [announcementsListOptions, setAnnounementsListOptions] = useState([])
+  const [announcementsListOptions, setAnnouncementsListOptions] = useState([])
   const [selectedAnnouncement, setSelectedAnnouncement] = useState({ ...DEFAULT_SELECT_VALUE })
 
   const [formData, setFormData] = useState({ ...DEFAULT_FORM_VALUES });
@@ -159,7 +159,7 @@ export const AnnouncementsForm = () => {
   }, [])
 
   useEffect(() => {
-    setAnnounementsListOptions([{ ...DEFAULT_SELECT_VALUE }, ...announcementsList.map((announcement) => {
+    setAnnouncementsListOptions([{ ...DEFAULT_SELECT_VALUE }, ...announcementsList.map((announcement) => {
       return { value: announcement, label: `${announcement.title}` }
     })])
     console.log(announcementsList)

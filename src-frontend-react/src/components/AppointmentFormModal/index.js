@@ -293,6 +293,12 @@ export const AppointmentFormModal = ({ id, show, title, eventRange, handleClose 
 
   const onModalOpen = () => {
     fetchAll();
+    if (!id)
+      setFormData({
+        ...formData,
+        start: moment(eventRange.fromDate).format('YYYY-MM-DDThh:mm'),
+        end: moment(eventRange.toDate).format('YYYY-MM-DDThh:mm'),
+      });
   }
 
   const handleDelete = () => {
