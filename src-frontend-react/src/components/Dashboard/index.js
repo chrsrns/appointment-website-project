@@ -15,7 +15,7 @@ export const Dashboard = ({ sidebarbtn_onClick }) => {
         throw response;
       })
       .then((data) => {
-        data = data.slice().sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+        data = data.slice().sort((a, b) => new Date(a.createdAt) + new Date(b.createdAt))
         setData(data);
         console.log(data);
       });
