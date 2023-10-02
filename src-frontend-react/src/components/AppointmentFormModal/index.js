@@ -1,8 +1,22 @@
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { Button, Container, Form, ListGroup, Modal, Stack } from "react-bootstrap";
+import { Button, Container, Form, ListGroup, Modal, Stack, Tab, Tabs } from "react-bootstrap";
 
 import LoadingOverlay from 'react-loading-overlay-ts';
+import Chat from "../Chat/ChatBubble";
+
+const messages = [
+  { text: 'Hi there!', sender: 'other', name: 'John', timestamp: Date.now() - 3000000 },
+  { text: 'Hello!', sender: 'user', name: 'Alice', timestamp: Date.now() - 3600000 },
+  { text: 'Sure, ask away!', sender: 'other', name: 'John', timestamp: Date.now() - 600000 },
+  { text: 'I have a question.', sender: 'user', name: 'Alice', timestamp: Date.now() - 1200000 },
+  { text: 'How can I help you?', sender: 'user', name: 'Alice', timestamp: Date.now() - 2400000 },
+  { text: 'This is another message from the user.', sender: 'user', name: 'Alice', timestamp: Date.now() - 180000 },
+  { text: 'Another message from the other party.', sender: 'other', name: 'John', timestamp: Date.now() - 4800000 },
+  { text: 'Yet another message from the user.', sender: 'user', name: 'Alice', timestamp: Date.now() - 600000 },
+  { text: 'And one more message from the other party.', sender: 'other', name: 'John', timestamp: Date.now() - 360000 },
+  { text: 'Last message from the user.', sender: 'user', name: 'Alice', timestamp: Date.now() - 120000 },
+];
 
 const AppointmentFormUserList = ({ fname, mname, lname, id, onButtonClick }) => {
   return (
@@ -16,6 +30,7 @@ const AppointmentFormUserList = ({ fname, mname, lname, id, onButtonClick }) => 
   )
 }
 
+/// TODO Refactor this component to imitate use of default values in RegistrationForm
 export const AppointmentFormModal = ({ id, show, title, eventRange, handleClose }) => {
   const [defaultValues, setDefaultValues] = useState({
     selectedStaffList: [],
@@ -312,180 +327,201 @@ export const AppointmentFormModal = ({ id, show, title, eventRange, handleClose 
       </Modal.Header>
       <LoadingOverlay active={isLoading} spinner text={loadingText}>
         <Modal.Body>
-          <Form>
-            <Form.Group className="mb-3">
-              <Form.Label>Students Involved</Form.Label>
-              <Stack direction="horizontal" gap={3}>
-                <Form.Select size="lg" onChange={(e) => {
-                  setSelectedStudent(e.target.value)
-                }}>
-                  <option key='blankChoice' hidden value>Select students...</option>
-                  {studentsList.map((student) => {
-                    return <option key={student.id} value={student.id}>{`${student.fname} ${student.mname} ${student.lname}`}</option>
-                  })}
-                </Form.Select>
-                <Button variant="primary" size="lg" onClick={addStudentToSelection}>Select</Button>
-              </Stack>
-              <Form.Text className="text-muted">
-                These people will be notified when added.
-              </Form.Text>
-              <ListGroup>
-                {selectedStudentsList.map((selectedStudent) => {
-                  // return <ListGroup.Item className="d-flex justify-content-between"> <>
-                  //   {`${selectedStudent.fname} ${selectedStudent.mname} ${selectedStudent.lname}`}
-                  // </>
-                  //   <Button variant="danger" size="sm">Remove</Button>
+          <Tabs defaultActiveKey="form" className="mb-3">
+            <Tab eventKey="form" title="Edit">
+              <Form>
+                <Form.Group className="mb-3">
+                  <Form.Label>Students Involved</Form.Label>
+                  <Stack direction="horizontal" gap={3}>
+                    <Form.Select size="lg" onChange={(e) => {
+                      setSelectedStudent(e.target.value)
+                    }}>
+                      <option key='blankChoice' hidden value>Select students...</option>
+                      {studentsList.map((student) => {
+                        return <option key={student.id} value={student.id}>{`${student.fname} ${student.mname} ${student.lname}`}</option>
+                      })}
+                    </Form.Select>
+                    <Button variant="primary" size="lg" onClick={addStudentToSelection}>Select</Button>
+                  </Stack>
+                  <Form.Text className="text-muted">
+                    These people will be notified when added.
+                  </Form.Text>
+                  <ListGroup>
+                    {selectedStudentsList.map((selectedStudent) => {
+                      // return <ListGroup.Item className="d-flex justify-content-between"> <>
+                      //   {`${selectedStudent.fname} ${selectedStudent.mname} ${selectedStudent.lname}`}
+                      // </>
+                      //   <Button variant="danger" size="sm">Remove</Button>
 
-                  // </ListGroup.Item>
-                  return <AppointmentFormUserList
-                    fname={selectedStudent.fname}
-                    mname={selectedStudent.mname}
-                    lname={selectedStudent.lname}
-                    onButtonClick={() => {
-                      setSelectedStudentsList(
-                        selectedStudentsList.filter((x) => {
-                          return x.id !== selectedStudent.id
-                        })
-                      )
-                    }} />
-                })}
-                {selectedStudentsList.length === 0 ?
-                  <ListGroup.Item disabled>Selected students appear here...</ListGroup.Item> : <></>
-                }
-              </ListGroup>
-            </Form.Group>
+                      // </ListGroup.Item>
+                      return <AppointmentFormUserList
+                        fname={selectedStudent.fname}
+                        mname={selectedStudent.mname}
+                        lname={selectedStudent.lname}
+                        onButtonClick={() => {
+                          setSelectedStudentsList(
+                            selectedStudentsList.filter((x) => {
+                              return x.id !== selectedStudent.id
+                            })
+                          )
+                        }} />
+                    })}
+                    {selectedStudentsList.length === 0 ?
+                      <ListGroup.Item disabled>Selected students appear here...</ListGroup.Item> : <></>
+                    }
+                  </ListGroup>
+                </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Staff Involved</Form.Label>
-              <Stack direction="horizontal" gap={3}>
-                <Form.Select size="lg" onChange={(e) => {
-                  setSelectedStaff(e.target.value)
-                  console.log("test")
-                }}>
-                  <option key='blankChoice' hidden value>Select staff...</option>
-                  {staffList.map((staff) => {
-                    return <option value={staff.id}>{`${staff.fname} ${staff.mname} ${staff.lname}`}</option>
-                  })}
-                </Form.Select>
-                <Button variant="primary" size="lg" onClick={addStaffToSelection}>Select</Button>
-              </Stack>
-              <Form.Text className="text-muted">
-                These people will be notified when added.
-              </Form.Text>
-              <ListGroup>
-                {selectedStaffList.map((selectedStaff) => {
-                  return <AppointmentFormUserList
-                    fname={selectedStaff.fname}
-                    mname={selectedStaff.mname}
-                    lname={selectedStaff.lname}
-                    onButtonClick={() => {
-                      setSelectedStaffList(
-                        selectedStaffList.filter((x) => {
-                          return x.id !== selectedStaff.id
-                        })
-                      )
-                    }} />
-                })}
-                {selectedStaffList.length === 0 ?
-                  <ListGroup.Item disabled>Selected staff appear here...</ListGroup.Item> : <></>
-                }
-              </ListGroup>
-            </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Staff Involved</Form.Label>
+                  <Stack direction="horizontal" gap={3}>
+                    <Form.Select size="lg" onChange={(e) => {
+                      setSelectedStaff(e.target.value)
+                      console.log("test")
+                    }}>
+                      <option key='blankChoice' hidden value>Select staff...</option>
+                      {staffList.map((staff) => {
+                        return <option value={staff.id}>{`${staff.fname} ${staff.mname} ${staff.lname}`}</option>
+                      })}
+                    </Form.Select>
+                    <Button variant="primary" size="lg" onClick={addStaffToSelection}>Select</Button>
+                  </Stack>
+                  <Form.Text className="text-muted">
+                    These people will be notified when added.
+                  </Form.Text>
+                  <ListGroup>
+                    {selectedStaffList.map((selectedStaff) => {
+                      return <AppointmentFormUserList
+                        fname={selectedStaff.fname}
+                        mname={selectedStaff.mname}
+                        lname={selectedStaff.lname}
+                        onButtonClick={() => {
+                          setSelectedStaffList(
+                            selectedStaffList.filter((x) => {
+                              return x.id !== selectedStaff.id
+                            })
+                          )
+                        }} />
+                    })}
+                    {selectedStaffList.length === 0 ?
+                      <ListGroup.Item disabled>Selected staff appear here...</ListGroup.Item> : <></>
+                    }
+                  </ListGroup>
+                </Form.Group>
 
-            <Form.Group>
+                <Form.Group>
 
-              <Form.Label>Schedule Status</Form.Label>
-              <div key='inline-radio' className="mb-3">
-                {scheduleTypes.map((scheduleType) => (
-                  <Form.Check
-                    inline
-                    name="scheduletype"
-                    type="radio"
-                    id={`inline-radio-${scheduleType}`}
-                    label={scheduleType}
-                    value={scheduleType}
+                  <Form.Label>Schedule Status</Form.Label>
+                  <div key='inline-radio' className="mb-3">
+                    {scheduleTypes.map((scheduleType) => (
+                      <Form.Check
+                        inline
+                        name="scheduletype"
+                        type="radio"
+                        id={`inline-radio-${scheduleType}`}
+                        label={scheduleType}
+                        value={scheduleType}
+                        onChange={handleChange}
+                        checked={formData.scheduletype === scheduleType} />
+
+                    ))}
+                  </div>
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                  <Form.Label>Appointment Title</Form.Label>
+                  <Form.Control
+                    name="title"
+                    placeholder="Required"
                     onChange={handleChange}
-                    checked={formData.scheduletype === scheduleType} />
+                    value={formData.title} />
+                </Form.Group>
 
-                ))}
-              </div>
-            </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Appointment Content</Form.Label>
+                  <Form.Control
+                    as={'textarea'}
+                    name="content"
+                    rows={5}
+                    placeholder="Can either be appointment details, etc..."
+                    onChange={handleChange}
+                    value={formData.content} />
+                </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Appointment Title</Form.Label>
-              <Form.Control
-                name="title"
-                placeholder="Required"
-                onChange={handleChange}
-                value={formData.title} />
-            </Form.Group>
+                <Form.Group className="hstack gap-3 mb-3" >
+                  <>
+                    <Form.Label>Start Date</Form.Label>
+                    <Form.Control
+                      type="datetime-local"
+                      name="start"
+                      value={formData.start}
+                      onChange={handleChange}
+                      required
+                    />
+                  </>
+                  <>
+                    <Form.Label>End Date</Form.Label>
+                    <Form.Control
+                      type="datetime-local"
+                      name="end"
+                      value={formData.end}
+                      onChange={handleChange}
+                      required
+                    />
+                  </>
+                </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Appointment Content</Form.Label>
-              <Form.Control
-                as={'textarea'}
-                name="content"
-                rows={5}
-                placeholder="Can either be appointment details, etc..."
-                onChange={handleChange}
-                value={formData.content} />
-            </Form.Group>
+                <Form.Group className="mb-3">
 
-            <Form.Group className="hstack gap-3 mb-3" >
-              <>
-                <Form.Label>Start Date</Form.Label>
+                  <Form.Label className="me-4">Repeat</Form.Label>
+                  {scheduleRepeatTypes.map((scheduleRepeatType) => {
+                    return <Form.Check
+                      inline
+                      name="repeat"
+                      type="radio"
+                      id={`inline-radio-${scheduleRepeatType}`}
+                      label={scheduleRepeatType}
+                      value={scheduleRepeatType}
+                      onChange={handleChange}
+                      checked={formData.repeat === scheduleRepeatType} />
+
+                  })}
+                </Form.Group>
+
+                <Stack direction="horizontal" className="gap-3 justify-content-between">
+                  <div>
+                    <Button variant="secondary" onClick={onModalClose}>
+                      Close
+                    </Button>{' '}
+                    <Button variant="primary" onClick={onModalSubmit}>
+                      Submit
+                    </Button>{' '}
+                  </div>
+                  <Button variant="danger" className={`${id ? '' : 'invisible'}`} onClick={handleDelete}>
+                    Delete
+                  </Button>
+                </Stack>
+
+              </Form>
+            </Tab>
+            <Tab eventKey="messages" title="Minutes">
+              <Chat messages={messages} />
+              <Stack direction="horizontal" gap={3}>
                 <Form.Control
-                  type="datetime-local"
-                  name="start"
-                  value={formData.start}
+                  className="me-auto"
+                  as={'textarea'}
+                  name="message"
+                  rows={3}
+                  placeholder="Type your message here..."
                   onChange={handleChange}
-                  required
-                />
-              </>
-              <>
-                <Form.Label>End Date</Form.Label>
-                <Form.Control
-                  type="datetime-local"
-                  name="end"
-                  value={formData.end}
-                  onChange={handleChange}
-                  required
-                />
-              </>
-            </Form.Group>
+                  value={formData.message} />
+                <Button variant="primary">
+                  Send
+                </Button>
+              </Stack>
 
-            <Form.Group className="mb-3">
-
-              <Form.Label className="me-4">Repeat</Form.Label>
-              {scheduleRepeatTypes.map((scheduleRepeatType) => {
-                return <Form.Check
-                  inline
-                  name="repeat"
-                  type="radio"
-                  id={`inline-radio-${scheduleRepeatType}`}
-                  label={scheduleRepeatType}
-                  value={scheduleRepeatType}
-                  onChange={handleChange}
-                  checked={formData.repeat === scheduleRepeatType} />
-
-              })}
-            </Form.Group>
-
-            <Stack direction="horizontal" className="gap-3 justify-content-between">
-              <div>
-                <Button variant="secondary" onClick={onModalClose}>
-                  Close
-                </Button>{' '}
-                <Button variant="primary" onClick={onModalSubmit}>
-                  Submit
-                </Button>{' '}
-              </div>
-              <Button variant="danger" className={`${id ? '' : 'invisible'}`} onClick={handleDelete}>
-                Delete
-              </Button>
-            </Stack>
-
-          </Form>
+            </Tab>
+          </Tabs>
         </Modal.Body>
       </LoadingOverlay>
     </Modal>
