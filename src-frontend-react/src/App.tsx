@@ -97,6 +97,7 @@ const SidebarCol = () => {
           {radios.map((radio, idx) => (
             <SidebarColBtn
               idx={idx}
+              key={idx}
               name={radio.name}
               iconClass={radio.iconClass}
               value={radio.value}
@@ -125,6 +126,7 @@ const SidebarColBtn = ({
 
   return (
     <Button
+      key={idx}
       variant={link === location.pathname ? "primary" : "secondary"}
       name="radio"
       value={value}

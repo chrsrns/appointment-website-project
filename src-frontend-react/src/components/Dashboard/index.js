@@ -39,7 +39,7 @@ export const Dashboard = ({ sidebarbtn_onClick }) => {
             <Card.Body className="overflow-scroll" style={{ maxHeight: "16rem" }}>
               <ListGroup>
                 {data.map((announcement) => {
-                  return <ListGroupItem className="m-2">
+                  return <ListGroupItem key={`${announcement.title}.${announcement.createdAt}`} className="m-2">
                     <p className="fw-bold mb-2 border-bottom border-secondary pb-2">{announcement.title}</p>
                     {announcement.content}
                     <p className="mt-1 mb-0 text-black-50" style={{ fontSize: '.8rem' }}>

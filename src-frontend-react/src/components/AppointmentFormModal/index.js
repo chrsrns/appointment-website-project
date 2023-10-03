@@ -355,6 +355,7 @@ export const AppointmentFormModal = ({ id, show, title, eventRange, handleClose:
 
                       // </ListGroup.Item>
                       return <AppointmentFormUserList
+                        key={selectedStudent.id}
                         fname={selectedStudent.fname}
                         mname={selectedStudent.mname}
                         lname={selectedStudent.lname}
@@ -381,7 +382,7 @@ export const AppointmentFormModal = ({ id, show, title, eventRange, handleClose:
                     }}>
                       <option key='blankChoice' hidden value>Select staff...</option>
                       {staffList.map((staff) => {
-                        return <option value={staff.id}>{`${staff.fname} ${staff.mname} ${staff.lname}`}</option>
+                        return <option key={staff.id} value={staff.id}>{`${staff.fname} ${staff.mname} ${staff.lname}`}</option>
                       })}
                     </Form.Select>
                     <Button variant="primary" size="lg" onClick={addStaffToSelection}>Select</Button>
@@ -392,6 +393,7 @@ export const AppointmentFormModal = ({ id, show, title, eventRange, handleClose:
                   <ListGroup>
                     {selectedStaffList.map((selectedStaff) => {
                       return <AppointmentFormUserList
+                        key={`${selectedStaff.fname}.${selectedStaff.mname}.${selectedStaff.lname}`}
                         fname={selectedStaff.fname}
                         mname={selectedStaff.mname}
                         lname={selectedStaff.lname}
@@ -415,6 +417,7 @@ export const AppointmentFormModal = ({ id, show, title, eventRange, handleClose:
                   <div key='inline-radio' className="mb-3">
                     {scheduleTypes.map((scheduleType) => (
                       <Form.Check
+                        key={scheduleType}
                         inline
                         name="scheduletype"
                         type="radio"
@@ -476,6 +479,7 @@ export const AppointmentFormModal = ({ id, show, title, eventRange, handleClose:
                   <Form.Label className="me-4">Repeat</Form.Label>
                   {scheduleRepeatTypes.map((scheduleRepeatType) => {
                     return <Form.Check
+                      key={scheduleRepeatType}
                       inline
                       name="repeat"
                       type="radio"
