@@ -6,19 +6,6 @@ import LoadingOverlay from 'react-loading-overlay-ts';
 import { customFetch } from "../../utils";
 import Chat from "../Chat/ChatBubble";
 
-const messages = [
-  { text: 'Hi there!', sender: 'other', name: 'John', timestamp: Date.now() - 3000000 },
-  { text: 'Hello!', sender: 'user', name: 'Alice', timestamp: Date.now() - 3600000 },
-  { text: 'Sure, ask away!', sender: 'other', name: 'John', timestamp: Date.now() - 600000 },
-  { text: 'I have a question.', sender: 'user', name: 'Alice', timestamp: Date.now() - 1200000 },
-  { text: 'How can I help you?', sender: 'user', name: 'Alice', timestamp: Date.now() - 2400000 },
-  { text: 'This is another message from the user.', sender: 'user', name: 'Alice', timestamp: Date.now() - 180000 },
-  { text: 'Another message from the other party.', sender: 'other', name: 'John', timestamp: Date.now() - 4800000 },
-  { text: 'Yet another message from the user.', sender: 'user', name: 'Alice', timestamp: Date.now() - 600000 },
-  { text: 'And one more message from the other party.', sender: 'other', name: 'John', timestamp: Date.now() - 360000 },
-  { text: 'Last message from the user.', sender: 'user', name: 'Alice', timestamp: Date.now() - 120000 },
-];
-
 const AppointmentFormUserList = ({ fname, mname, lname, id, onButtonClick }) => {
   return (
     <ListGroup.Item className="d-flex justify-content-between align-items-center">
@@ -509,7 +496,7 @@ export const AppointmentFormModal = ({ id, show, title, eventRange, handleClose:
               </Form>
             </Tab>
             <Tab eventKey="messages" title="Minutes">
-              <Chat scheduleId={id} messages={messages} />
+              <Chat scheduleId={id} />
 
             </Tab>
           </Tabs>
