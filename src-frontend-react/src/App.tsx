@@ -17,14 +17,14 @@ import {
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
-import { useCookies } from "react-cookie";
-
 import { LoginFormModal } from "./components/LoginFormModal";
 import LoadingOverlay from "react-loading-overlay-ts";
 import { AdminTools } from "./components/AdminTools";
 import { Dashboard } from "./components/Dashboard";
 import { Appointments } from "./components/Appointments";
 import { customFetch } from "./utils";
+
+import Cookies from "js-cookie";
 
 const TopBar = () => {
   return (
@@ -145,12 +145,6 @@ const SidebarColBtn = ({
 };
 
 const App: React.FC = () => {
-  const [cookies, setCookie] = useCookies([
-    "accessToken",
-    "refreshToken",
-    "username",
-  ]);
-
   const [isActive, setIsActive] = useState(false);
   const sidebarbtn_onClick = () => setIsActive(!isActive);
   const mainRowClassName = `row-offcanvas row-offcanvas-left ${
@@ -161,8 +155,7 @@ const App: React.FC = () => {
   const [isLogInDone, setIsLogInDone] = useState(false);
 
   const getLoggedInStatus = () => {
-    const data = { refreshToken: cookies.refreshToken };
-    console.log(`token: ${data}`);
+    const data = { refreshToken: Cookies.get("refreshToken") };
 
     customFetch(`${global.server_backend_url}/backend/auth/refreshToken`, {
       method: "POST",
@@ -177,8 +170,8 @@ const App: React.FC = () => {
         throw response;
       })
       .then((data) => {
-        setCookie("accessToken", data.accessToken);
-        setCookie("refreshToken", data.refreshToken);
+        Cookies.set("accessToken", data.accessToken);
+        Cookies.set("refreshToken", data.refreshToken);
         setIsLoggedIn(true);
         setIsLogInDone(true);
       })
@@ -188,6 +181,16 @@ const App: React.FC = () => {
   };
 
   useEffect(() => getLoggedInStatus(), []);
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      getLoggedInStatus();
+      // console.log('This code runs every 1 minute');
+    }, 60000);
+    // Clean up the interval when the component unmounts
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
 
   return (
     <BrowserRouter>
@@ -233,11 +236,11 @@ const App: React.FC = () => {
                   <Card.Header as={"h2"}>People Online</Card.Header>
                   <Card.Body>
                     <ListGroup>
-                      <ListGroup.Item>Cras justo odio</ListGroup.Item>
-                      <ListGroup.Item>Dapibus ac facilisis in</ListGroup.Item>
-                      <ListGroup.Item>Morbi leo risus</ListGroup.Item>
-                      <ListGroup.Item>Porta ac consectetur ac</ListGroup.Item>
-                      <ListGroup.Item>Vestibulum at eros</ListGroup.Item>
+                      {/* <ListGroup.Item>Cras justo odio</ListGroup.Item> */}
+                      {/* <ListGroup.Item>Dapibus ac facilisis in</ListGroup.Item> */}
+                      {/* <ListGroup.Item>Morbi leo risus</ListGroup.Item> */}
+                      {/* <ListGroup.Item>Porta ac consectetur ac</ListGroup.Item> */}
+                      {/* <ListGroup.Item>Vestibulum at eros</ListGroup.Item> */}
                     </ListGroup>
                   </Card.Body>
                 </Card>
