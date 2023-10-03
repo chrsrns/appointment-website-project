@@ -270,11 +270,11 @@ router.post("/message", async (req, res, next) => {
   messageData.userId = findUserIdByAccessToken(token)
 
   console.log(messageData)
+  res.status(200).json({ msg: "Message sent" })
   try {
     const message = await prisma.message.create({
       data: req.body
     })
-    res.json()
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "An error occurred!" });
