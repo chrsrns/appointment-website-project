@@ -3,6 +3,7 @@ import { Form, Button, Container, Row, Col, Stack } from 'react-bootstrap';
 import Select from 'react-select'
 
 import LoadingOverlay from 'react-loading-overlay-ts';
+import { customFetch } from '../../../utils';
 
 const DEFAULT_FORM_VALUES = {
   id: '',
@@ -34,7 +35,7 @@ export const AnnouncementsForm = () => {
 
   const fetchAll = () => {
     setIsLoading(true)
-    fetch(`${global.server_backend_url}/backend/admin/announcements`)
+    customFetch(`${global.server_backend_url}/backend/admin/announcements`)
       .then((response) => {
         if (response.ok) return response.json();
         else throw response;
@@ -96,9 +97,8 @@ export const AnnouncementsForm = () => {
 
       if (formData.id) { /// Means user is updated only.
 
-        fetch(`${global.server_backend_url}/backend/admin/announcement/${formData.id}`, {
+        customFetch(`${global.server_backend_url}/backend/admin/announcement/${formData.id}`, {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formatted)
         }).then((response) => {
           console.log(response)
@@ -114,9 +114,8 @@ export const AnnouncementsForm = () => {
 
       } else { /// Means user is created, not updated
 
-        fetch(`${global.server_backend_url}/backend/admin/announcement`, {
+        customFetch(`${global.server_backend_url}/backend/admin/announcement`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formatted)
         }).then((response) => {
           console.log(response)
@@ -137,9 +136,8 @@ export const AnnouncementsForm = () => {
   /// TODO Implement error handling when the response is not an object
   const handleDelete = () => {
     if (formData.id) {
-      fetch(`${global.server_backend_url}/backend/admin/announcement/${formData.id}`, {
+      customFetch(`${global.server_backend_url}/backend/admin/announcement/${formData.id}`, {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' }
       }).then((response) => {
         console.log(response)
         if (response.ok) {

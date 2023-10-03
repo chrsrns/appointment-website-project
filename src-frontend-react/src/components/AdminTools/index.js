@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button, Card, Col, Form, FormGroup, Row } from "react-bootstrap";
+import { customFetch } from "../../utils";
 import { Jumbotron } from "../Jumbotron";
 import { AnnouncementsForm } from "./AnnouncementsForm";
 import RegistrationForm from "./RegistrationForm";
@@ -9,7 +10,7 @@ export const AdminTools = ({ sidebarbtn_onClick }) => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    fetch(`${global.server_backend_url}/backend/users/announcements`)
+    customFetch(`${global.server_backend_url}/backend/users/announcements`)
       .then((response) => {
         if (response.ok) {
           console.log("res ok")

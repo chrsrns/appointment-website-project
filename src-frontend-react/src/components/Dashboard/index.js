@@ -1,13 +1,14 @@
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { Button, Card, Col, ListGroup, ListGroupItem, Row, Table } from "react-bootstrap";
+import { customFetch } from "../../utils";
 import { Jumbotron } from "../Jumbotron";
 
 export const Dashboard = ({ sidebarbtn_onClick }) => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    fetch(`${global.server_backend_url}/backend/users/announcements`)
+    customFetch(`${global.server_backend_url}/backend/users/announcements`)
       .then((response) => {
         if (response.ok) {
           return response.json();

@@ -24,6 +24,7 @@ import LoadingOverlay from "react-loading-overlay-ts";
 import { AdminTools } from "./components/AdminTools";
 import { Dashboard } from "./components/Dashboard";
 import { Appointments } from "./components/Appointments";
+import { customFetch } from "./utils";
 
 const TopBar = () => {
   return (
@@ -161,9 +162,8 @@ const App: React.FC = () => {
     const data = { refreshToken: cookies.refreshToken };
     console.log(`token: ${data}`);
 
-    fetch(`${global.server_backend_url}/backend/auth/refreshToken`, {
+    customFetch(`${global.server_backend_url}/backend/auth/refreshToken`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     })
       .then((response) => {

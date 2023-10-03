@@ -8,6 +8,7 @@ import { AppointmentFormModal } from '../AppointmentFormModal'
 import LoadingOverlay from 'react-loading-overlay-ts';
 import { RRule, RRuleSet } from 'rrule';
 import Select from 'react-select';
+import { customFetch } from '../../utils';
 
 const DEFAULT_USER_TO_FILTER_VALUES = {
   id: '',
@@ -55,7 +56,7 @@ export default function DragAndDropCalendar({ localizer }) {
     console.log(request)
     setIsLoading(true)
     Promise.all([
-      fetch(request)
+      customFetch(request)
         .then((response) => {
           if (response.ok) return response.json();
           else throw response;
@@ -94,7 +95,7 @@ export default function DragAndDropCalendar({ localizer }) {
             })])
           }
         }),
-      fetch(`${global.server_backend_url}/backend/appointments/staff`)
+      customFetch(`${global.server_backend_url}/backend/appointments/staff`)
         .then((response) => {
           if (response.ok) return response.json();
           else throw response;
@@ -268,9 +269,8 @@ export default function DragAndDropCalendar({ localizer }) {
         toDate: end,
       }
 
-      fetch(`${global.server_backend_url}/backend/appointments/schedule/${event.id}`, {
+      customFetch(`${global.server_backend_url}/backend/appointments/schedule/${event.id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       }).then((response) => {
         console.log(response)
@@ -303,9 +303,8 @@ export default function DragAndDropCalendar({ localizer }) {
 
       // console.log(`start: ${start} | end: ${end}`)
 
-      fetch(`${global.server_backend_url}/backend/appointments/schedule/${event.id}`, {
+      customFetch(`${global.server_backend_url}/backend/appointments/schedule/${event.id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       }).then((response) => {
         console.log(response)

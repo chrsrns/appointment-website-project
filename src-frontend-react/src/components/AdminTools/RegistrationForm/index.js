@@ -4,6 +4,7 @@ import { Form, Button, Container, Row, Col, Stack } from 'react-bootstrap';
 import Select from 'react-select'
 
 import LoadingOverlay from 'react-loading-overlay-ts';
+import { customFetch } from '../../../utils';
 
 const DEFAULT_FORM_VALUES = {
   id: '',
@@ -48,7 +49,7 @@ function RegistrationForm() {
   const fetchAll = () => {
     setIsLoading(true)
     Promise.all([
-      fetch(`${global.server_backend_url}/backend/admin/users`)
+      customFetch(`${global.server_backend_url}/backend/admin/users`)
         .then((response) => {
           if (response.ok) return response.json();
           else throw response;
@@ -57,7 +58,7 @@ function RegistrationForm() {
           setUsersList(data)
           return data;
         }),
-      fetch(`${global.server_backend_url}/backend/admin/usertypes`)
+      customFetch(`${global.server_backend_url}/backend/admin/usertypes`)
         .then((response) => {
           if (response.ok) return response.json();
           else throw response;
@@ -215,9 +216,8 @@ function RegistrationForm() {
         if (formData.login_password)
           formatted.login_password = formData.login_password
 
-        fetch(`${global.server_backend_url}/backend/admin/user/${formData.id}`, {
+        customFetch(`${global.server_backend_url}/backend/admin/user/${formData.id}`, {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formatted)
         }).then((response) => {
           console.log(response)
@@ -235,9 +235,8 @@ function RegistrationForm() {
 
         formatted.login_password = formData.login_password
 
-        fetch(`${global.server_backend_url}/backend/admin/user`, {
+        customFetch(`${global.server_backend_url}/backend/admin/user`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formatted)
         }).then((response) => {
           console.log(response)
@@ -261,9 +260,8 @@ function RegistrationForm() {
 
   const handleDelete = () => {
     if (formData.id) {
-      fetch(`${global.server_backend_url}/backend/admin/user/${formData.id}`, {
+      customFetch(`${global.server_backend_url}/backend/admin/user/${formData.id}`, {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' }
       }).then((response) => {
         console.log(response)
         if (response.ok) {

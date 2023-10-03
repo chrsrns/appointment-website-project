@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Button, Container, Form, ListGroup, Modal, Stack, Tab, Tabs } from "react-bootstrap";
 
 import LoadingOverlay from 'react-loading-overlay-ts';
+import { customFetch } from "../../utils";
 import Chat from "../Chat/ChatBubble";
 
 const messages = [
@@ -79,7 +80,7 @@ export const AppointmentFormModal = ({ id, show, title, eventRange, handleClose:
   const fetchAll = async () => {
 
     Promise.all([
-      fetch(`${global.server_backend_url}/backend/appointments/scheduletypes`)
+      customFetch(`${global.server_backend_url}/backend/appointments/scheduletypes`)
         .then((response) => {
           if (response.ok) return response.json();
           else throw response;
@@ -90,7 +91,7 @@ export const AppointmentFormModal = ({ id, show, title, eventRange, handleClose:
           return data;
         }),
 
-      fetch(`${global.server_backend_url}/backend/appointments/schedulerepeattypes`)
+      customFetch(`${global.server_backend_url}/backend/appointments/schedulerepeattypes`)
         .then((response) => {
           if (response.ok) return response.json();
           else throw response;
@@ -101,7 +102,7 @@ export const AppointmentFormModal = ({ id, show, title, eventRange, handleClose:
           return data;
         }),
 
-      fetch(`${global.server_backend_url}/backend/appointments/students`)
+      customFetch(`${global.server_backend_url}/backend/appointments/students`)
         .then((response) => {
           if (response.ok) {
             return response.json();
@@ -113,7 +114,7 @@ export const AppointmentFormModal = ({ id, show, title, eventRange, handleClose:
             setStudentsList(data);
         }),
 
-      fetch(`${global.server_backend_url}/backend/appointments/staff`)
+      customFetch(`${global.server_backend_url}/backend/appointments/staff`)
         .then((response) => {
           if (response.ok) {
             return response.json();
@@ -123,7 +124,8 @@ export const AppointmentFormModal = ({ id, show, title, eventRange, handleClose:
         .then((data) => {
           if (data != staffList)
             setStaffList(data);
-        })
+        }),
+
     ]).then(responses => {
       console.log("done")
       setIsLoading(false)
@@ -146,7 +148,7 @@ export const AppointmentFormModal = ({ id, show, title, eventRange, handleClose:
 
     if (show) {
       if (id) {
-        fetch(`${global.server_backend_url}/backend/appointments/schedule/${id}`)
+        customFetch(`${global.server_backend_url}/backend/appointments/schedule/${id}`)
           .then((response) => {
             if (response.ok)
               return response.json(); else throw response;
@@ -226,9 +228,8 @@ export const AppointmentFormModal = ({ id, show, title, eventRange, handleClose:
       }
     }
 
-    fetch(`${global.server_backend_url}/backend/appointments/schedule`, {
+    customFetch(`${global.server_backend_url}/backend/appointments/schedule`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     }).then((response) => {
       console.log(response)
@@ -260,9 +261,8 @@ export const AppointmentFormModal = ({ id, show, title, eventRange, handleClose:
       }
     }
 
-    fetch(`${global.server_backend_url}/backend/appointments/schedule/${id}`, {
+    customFetch(`${global.server_backend_url}/backend/appointments/schedule/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     }).then((response) => {
       console.log(response)
@@ -298,9 +298,8 @@ export const AppointmentFormModal = ({ id, show, title, eventRange, handleClose:
 
   const handleDelete = () => {
     if (id) {
-      fetch(`${global.server_backend_url}/backend/appointments/schedule/${id}`, {
+      customFetch(`${global.server_backend_url}/backend/appointments/schedule/${id}`, {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' }
       }).then((response) => {
         console.log(response)
         if (response.ok) {
@@ -520,6 +519,7 @@ export const AppointmentFormModal = ({ id, show, title, eventRange, handleClose:
                   Send
                 </Button>
               </Stack>
+              <Chat scheduleId={id} messages={messages} />
 
             </Tab>
           </Tabs>

@@ -3,6 +3,7 @@ import { Modal, Button, Form } from 'react-bootstrap';
 import { useCookies } from 'react-cookie';
 
 import LoadingOverlay from "react-loading-overlay-ts";
+import { customFetch } from '../../utils';
 
 export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
 
@@ -17,9 +18,8 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
       login_password: password
     }
 
-    fetch(`${global.server_backend_url}/backend/auth/login`, {
+    customFetch(`${global.server_backend_url}/backend/auth/login`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     }).then((response) => {
       if (response.ok)
