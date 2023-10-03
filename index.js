@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(cors());
 
 // For testing, add intentional delay
-app.use(function(req, res, next) { setTimeout(next, 500) });
+// app.use(function(req, res, next) { setTimeout(next, 500) });
 
 // Frontend Static
 const path = __dirname + "/src-frontend-react/build/";
