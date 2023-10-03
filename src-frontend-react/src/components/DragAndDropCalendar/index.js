@@ -7,6 +7,20 @@ import { AppointmentFormModal } from '../AppointmentFormModal'
 
 import LoadingOverlay from 'react-loading-overlay-ts';
 import { RRule, RRuleSet } from 'rrule';
+import Select from 'react-select';
+
+const DEFAULT_USER_TO_FILTER_VALUES = {
+  id: '',
+  fname: '',
+  mname: '',
+  lname: '',
+  type: ''
+}
+
+/// NOTE The `{ ...DEFAULT_FORM_VALUES }` is used because simply
+//      placing `DEFAULT_FORM_VALUES` seems to make it so that 
+//      the forms modify this variable
+const DEFAULT_STAFF_TO_FILTER_VALUE = { value: { ...DEFAULT_USER_TO_FILTER_VALUES }, label: "Select staff to see only their availability" }
 
 const CalendarWithDragAndDrop = withDragAndDrop(Calendar)
 
@@ -26,56 +40,72 @@ export default function DragAndDropCalendar({ localizer }) {
 
   const [isLoading, setIsLoading] = useState(false)
 
+  const [staffListOptions, setStaffListOptions] = useState([])
+  const [selectedStaffToFilter, setSelectedStaffToFilter] = useState({ ...DEFAULT_STAFF_TO_FILTER_VALUE })
+
   const [eventRange, setEventRange] = useState({
     fromDate: Date.now(),
     toDate: Date.now(),
   })
 
   const fetchAll = () => {
-    fetch(`${global.server_backend_url}/backend/appointments/schedules`)
-      .then((response) => {
-        if (response.ok) return response.json();
-        else throw response;
-      }).then((data) => {
-        if (data != eventsFull && data.length !== 0) {
-          setEventsFull(data);
+    const request = selectedStaffToFilter.value.id ?
+      `${global.server_backend_url}/backend/appointments/schedules/by-user/${selectedStaffToFilter.value.id}`
+      : `${global.server_backend_url}/backend/appointments/schedules`
+    console.log(request)
+    setIsLoading(true)
+    Promise.all([
+      fetch(request)
+        .then((response) => {
+          if (response.ok) return response.json();
+          else throw response;
+        }).then((data) => {
+          if (data != eventsFull) {
+            setEventsFull(data);
 
-          setEventsMapped([...data.map((eventFull) => {
+            setEventsMapped([...data.map((eventFull) => {
 
-            /// Check if date range spans multiple days
-            const startDate = new Date(eventFull.fromDate)
-            const endDate = new Date(eventFull.toDate)
+              /// Check if date range spans multiple days
+              const startDate = new Date(eventFull.fromDate)
+              const endDate = new Date(eventFull.toDate)
 
-            const startUTC = startDate.getDate();
-            const endUTC = endDate.getDate();
+              const startUTC = startDate.getDate();
+              const endUTC = endDate.getDate();
 
-            const isMultiDays = startUTC !== endUTC
-            ///
+              const isMultiDays = startUTC !== endUTC
+              ///
 
-            // console.log(`title: ${eventFull.title}`)
-            // console.log(`start: ${startDate} | end: ${endDate}`)
-            // console.log(`multiDays: ${isMultiDays}`)
-            // console.log(`startString: ${startUTC} | endString: ${endUTC}`)
-            // console.log(`multiDays: ${isMultiDays}`)
-            // console.log("")
+              // console.log(`title: ${eventFull.title}`)
+              // console.log(`start: ${startDate} | end: ${endDate}`)
+              // console.log(`multiDays: ${isMultiDays}`)
+              // console.log(`startString: ${startUTC} | endString: ${endUTC}`)
+              // console.log(`multiDays: ${isMultiDays}`)
+              // console.log("")
 
-            return {
-              id: eventFull.id,
-              title: eventFull.title,
-              start: new Date(eventFull.fromDate),
-              end: new Date(eventFull.toDate),
-              state: eventFull.state,
-              allDay: isMultiDays,
-              repeat: eventFull.repeat
-            }
+              return {
+                id: eventFull.id,
+                title: eventFull.title,
+                start: new Date(eventFull.fromDate),
+                end: new Date(eventFull.toDate),
+                state: eventFull.state,
+                allDay: isMultiDays,
+                repeat: eventFull.repeat
+              }
+            })])
+          }
+        }),
+      fetch(`${global.server_backend_url}/backend/appointments/staff`)
+        .then((response) => {
+          if (response.ok) return response.json();
+          else throw response;
+        }).then((data) => {
+          setStaffListOptions([{ ...DEFAULT_STAFF_TO_FILTER_VALUE }, ...data.map((staff) => {
+            return { value: staff, label: `[${staff.type}] ${staff.lname}, ${staff.fname} ${staff.mname}` }
           })])
-
-          // updateEvents()
-
-          setIsLoading(false)
-
-        }
-      })
+        })
+    ]).then(() => {
+      setIsLoading(false)
+    })
   }
   useEffect(() => updateEvents(), [eventsMapped])
 
@@ -100,7 +130,7 @@ export default function DragAndDropCalendar({ localizer }) {
     const compiledFGEvents = [...eventsForFG, ...recurringEventsForFG]
     const compiledBGEvents = [...eventsForBG, ...recurringEventsForBG]
 
-    console.log(compiledBGEvents)
+    // console.log(compiledBGEvents)
 
     setEventsForRender(compiledFGEvents)
     setEventsForBG(compiledBGEvents)
@@ -294,6 +324,8 @@ export default function DragAndDropCalendar({ localizer }) {
   const handleSelectSlot = useCallback(
     ({ start, end }) => {
       // const title = window.prompt(`New Event name ${start} ${end}`)
+      console.log(start)
+      console.log(end)
       setIsLoading(true)
       setModalTitle("Create New Event")
       setEventRange({ fromDate: start, toDate: end })
@@ -315,10 +347,22 @@ export default function DragAndDropCalendar({ localizer }) {
       setModalTitle("Modifying Existing Schedule")
       setEventRange({ fromDate: event.start, toDate: event.end })
       setModalId(event.id)
+      console.log(event.id)
       setShowModal(true);
     },
     [setModalTitle, setShowModal, setEventRange]
   )
+
+  const handleStaffToFilterSelectionChange = (e) => {
+    setSelectedStaffToFilter({ value: e.value, label: e.label })
+    // const announcement = e.value
+
+    // setFormData(announcement)
+  }
+
+  useEffect(() => {
+    fetchAll();
+  }, [selectedStaffToFilter])
 
   const onNavigate = useCallback((newDate) => setDate(newDate), [setDate])
 
@@ -335,7 +379,7 @@ export default function DragAndDropCalendar({ localizer }) {
             fetchAll()
           }}
         />
-
+        <Select className='fs-5 mb-3' options={staffListOptions} value={selectedStaffToFilter} onChange={handleStaffToFilterSelectionChange} />
         <CalendarWithDragAndDrop
           dayLayoutAlgorithm="no-overlap"
           defaultView={Views.WEEK}

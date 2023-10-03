@@ -48,6 +48,7 @@ router.get("/staff", async (req, res, next) => {
         fname: true,
         mname: true,
         lname: true,
+        type: true
       }
     })
     res.json(users);
@@ -87,6 +88,34 @@ router.get("/schedulerepeattypes", async (req, res, next) => {
 router.get("/schedules", async (req, res, next) => {
   try {
     const schedules = await prisma.schedule.findMany({
+      select: {
+        id: true,
+        state: true,
+        fromDate: true,
+        toDate: true,
+        title: true,
+        desc: true,
+        repeat: true
+      }
+    })
+    res.json(schedules)
+  } catch (err) {
+    next(err)
+  }
+})
+
+router.get("/schedules/by-user/:id", async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const schedules = await prisma.schedule.findMany({
+      where: {
+        Users: {
+          some: {
+            id: id
+          }
+        }
+      },
       select: {
         id: true,
         state: true,
