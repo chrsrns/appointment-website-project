@@ -1,4 +1,5 @@
 const { isAuthenticated } = require("../middlewares");
+const { findUserIdByAccessToken } = require("../users/users.services")
 
 const { PrismaClient, Prisma, schedule_state, user_type, repeat } = require("@prisma/client");
 const prisma = new PrismaClient();
@@ -212,6 +213,58 @@ router.delete("/schedule/:id", async (req, res) => {
 router.post("/schedule", async (req, res, next) => {
   try {
     const schedule = await prisma.schedule.create({
+      data: req.body
+    })
+    res.json()
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred!" });
+  }
+})
+
+router.get("/messages/by-schedule/:id", async (req, res, next) => {
+  const { id } = req.params
+  try {
+    const schedules = await prisma.message.findMany({
+      where: {
+        Schedule: {
+          is: {
+            id: id
+          }
+        }
+      },
+      select: {
+        id: true,
+        createdAt: true,
+        content: true,
+        User: {
+          select: {
+            id: true,
+            fname: true,
+            mname: true,
+            lname: true,
+          }
+        }
+
+      }
+    })
+    res.json(schedules)
+  } catch (err) {
+    console.error(err)
+    next(err)
+  }
+})
+
+router.post("/message", async (req, res, next) => {
+  const authorizationHeader = req.headers.authorization;
+  const messageData = req.body
+
+  const token = authorizationHeader.replace('Bearer ', '');
+  messageData.userId = findUserIdByAccessToken(token)
+
+  console.log(messageData)
+  try {
+    const message = await prisma.message.create({
       data: req.body
     })
     res.json()

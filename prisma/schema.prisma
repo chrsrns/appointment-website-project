@@ -35,6 +35,7 @@ model User {
 
   RefreshTokens  RefreshToken[]
   Schedules      Schedule[]
+  Messages       Message[]
   MedicalRecords MedicalRecord[]
 
   @@unique([fname, mname, lname])
@@ -66,11 +67,14 @@ model Schedule {
 }
 
 model Message {
-  id         String    @id @default(uuid())
-  createdAt  DateTime  @default(now())
-  content    String    @db.VarChar(3000)
+  id         String   @id @default(uuid())
+  createdAt  DateTime @default(now())
+  content    String   @db.VarChar(3000)
   scheduleId String?
-  Schedule   Schedule? @relation(fields: [scheduleId], references: [id])
+  userId     String?
+
+  Schedule Schedule? @relation(fields: [scheduleId], references: [id])
+  User     User?     @relation(fields: [userId], references: [id])
 
   @@index([scheduleId], map: "Message_scheduleId_fkey")
 }

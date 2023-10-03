@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const { db } = require('../db');
-
+const jwt = require('jsonwebtoken');
 
 function findUserByUsername(login_username) {
   return db.user.findUnique({
@@ -9,6 +9,12 @@ function findUserByUsername(login_username) {
     },
   });
 
+}
+
+function findUserIdByAccessToken(accessToken) {
+  const decoded = jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET)
+  const userId = decoded.userId
+  return userId
 }
 
 function findUserById(id) {
@@ -34,4 +40,4 @@ function createUserByEmailAndPassword(user) {
   });
 }
 
-module.exports = { findUserByUsername, findUserById, createUser };
+module.exports = { findUserByUsername, findUserById, findUserIdByAccessToken, createUser };

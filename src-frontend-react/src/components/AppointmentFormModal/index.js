@@ -505,20 +505,6 @@ export const AppointmentFormModal = ({ id, show, title, eventRange, handleClose:
               </Form>
             </Tab>
             <Tab eventKey="messages" title="Minutes">
-              <Chat messages={messages} />
-              <Stack direction="horizontal" gap={3}>
-                <Form.Control
-                  className="me-auto"
-                  as={'textarea'}
-                  name="message"
-                  rows={3}
-                  placeholder="Type your message here..."
-                  onChange={handleChange}
-                  value={formData.message} />
-                <Button variant="primary">
-                  Send
-                </Button>
-              </Stack>
               <Chat scheduleId={id} messages={messages} />
 
             </Tab>

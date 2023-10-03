@@ -1,12 +1,72 @@
-import React from 'react';
-import { Container, Row, Col, Card } from 'react-bootstrap';
+import React, { useEffect, useState } from 'react';
+import { Container, Row, Col, Card, Stack, Form, Button } from 'react-bootstrap';
+import { customFetch } from '../../../utils';
 
-const Chat = ({ messages }) => {
-  const sortedMessages = messages.slice().sort((a, b) => a.timestamp - b.timestamp);
+const DEFAULT_FORM_VALUES = {
+  content: ''
+}
+
+const Chat = ({ scheduleId }) => {
+  const [messages, setMessages] = useState([])
+
+  const [formData, setFormData] = useState(DEFAULT_FORM_VALUES);
+
+  const fetchAll = () => {
+    if (scheduleId)
+      customFetch(`${global.server_backend_url}/backend/appointments/messages/by-schedule/${scheduleId}`)
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          }
+          throw response;
+        })
+        .then((data) => {
+          setMessages(
+            data
+              .slice()
+              .sort((a, b) => a.timestamp - b.timestamp)
+          )
+        })
+  }
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleMessageSend = () => {
+    customFetch(`${global.server_backend_url}/backend/appointments/message`, {
+      method: "POST",
+      body: JSON.stringify(formData),
+    })
+      .then((response) => {
+        if (response.ok) return response.json();
+        throw response;
+      })
+  }
+
+  useEffect(() => {
+    fetchAll()
+    setFormData({
+      ...formData,
+      scheduleId: scheduleId,
+    });
+  }, [scheduleId])
+  useEffect(() => {
+    fetchAll()
+    setFormData({
+      ...formData,
+      scheduleId: scheduleId,
+    });
+
+  }, [])
   return (
-    <Container className='px-3 mb-4 border-bottom' style={{ borderBottom: '1px solid #ccc' }}>
-      <div className="overflow-scroll p-3" style={{ maxHeight: "30rem" }}>
-        {sortedMessages.map((message, index) => (
+    <Container className='px-3 mb-4'>
+      <div className="overflow-scroll p-3 mb-4" style={{ maxHeight: "30rem", borderBottom: '1px solid #ccc' }}>
+        {messages.map((message, index) => (
           <div
             key={index}
             className={`my-2 ${message.sender === 'user' ? 'text-end' : 'text-start'}`}
@@ -23,6 +83,20 @@ const Chat = ({ messages }) => {
           </div>
         ))}
       </div>
+      <Stack direction="horizontal" gap={3}>
+        <Form.Control
+          className="me-auto"
+          as={'textarea'}
+          name="content"
+          rows={3}
+          placeholder="Type your message here..."
+          onChange={handleChange}
+          value={formData.content} />
+        <Button variant="primary" onClick={handleMessageSend}>
+          Send
+        </Button>
+      </Stack>
+
     </Container>
   );
 };
