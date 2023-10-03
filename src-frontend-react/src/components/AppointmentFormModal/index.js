@@ -31,7 +31,7 @@ const AppointmentFormUserList = ({ fname, mname, lname, id, onButtonClick }) => 
 }
 
 /// TODO Refactor this component to imitate use of default values in RegistrationForm
-export const AppointmentFormModal = ({ id, show, title, eventRange, handleClose }) => {
+export const AppointmentFormModal = ({ id, show, title, eventRange, handleClose: handleCloseCallback }) => {
   const [defaultValues, setDefaultValues] = useState({
     selectedStaffList: [],
     selectedStudentList: [],
@@ -143,42 +143,52 @@ export const AppointmentFormModal = ({ id, show, title, eventRange, handleClose 
 
   useEffect(() => {
     console.log(`id: ${id}`)
-    if (id) {
-      fetch(`${global.server_backend_url}/backend/appointments/schedule/${id}`)
-        .then((response) => {
-          if (response.ok)
-            return response.json(); else throw response;
-        }).then((data) => {
-          const students = data.Users
-            .filter((user) => user.type === "Student")
-          const staff = data.Users
-            .filter((user) => user.type !== "Student" && user.type !== "Admin")
 
-          setSelectedStudentsList(students);
-          setSelectedStaffList(staff);
+    if (show) {
+      if (id) {
+        fetch(`${global.server_backend_url}/backend/appointments/schedule/${id}`)
+          .then((response) => {
+            if (response.ok)
+              return response.json(); else throw response;
+          }).then((data) => {
+            const students = data.Users
+              .filter((user) => user.type === "Student")
+            const staff = data.Users
+              .filter((user) => user.type !== "Student" && user.type !== "Admin")
 
-          setFormData({
-            ...formData,
-            title: data.title,
-            content: data.desc,
-            scheduletype: data.state,
-            start: moment(data.fromDate).format('YYYY-MM-DDThh:mm'),
-            end: moment(data.toDate).format('YYYY-MM-DDThh:mm'),
-            repeat: data.repeat,
+            setSelectedStudentsList(students);
+            setSelectedStaffList(staff);
 
-          });
+            setFormData({
+              ...formData,
+              title: data.title,
+              content: data.desc,
+              scheduletype: data.state,
+              start: moment(data.fromDate).format('YYYY-MM-DDThh:mm'),
+              end: moment(data.toDate).format('YYYY-MM-DDThh:mm'),
+              repeat: data.repeat,
 
-        }).catch((err) => {
-          console.log(err)
-        })
-      console.log(`test ${id}`)
-    } else {
-      setFormData({
-        start: moment(eventRange.fromDate).format('YYYY-MM-DDThh:mm'),
-        end: moment(eventRange.toDate).format('YYYY-MM-DDThh:mm')
-      });
+            });
+
+          }).catch((err) => {
+            console.log(err)
+          })
+        console.log(`test ${id}`)
+      } else {
+        setFormData({
+          ...formData,
+          title: "",
+          content: "",
+          scheduletype: "",
+          start: moment(eventRange.fromDate).format('YYYY-MM-DDThh:mm'),
+          end: moment(eventRange.toDate).format('YYYY-MM-DDThh:mm'),
+          repeat: ""
+        });
+      }
     }
-  }, [id])
+
+
+  }, [id, show])
 
   ///https://stackoverflow.com/questions/62111525/how-i-add-an-object-to-an-existing-array-react 
   //https://stackoverflow.com/questions/45277306/check-if-item-exists-in-array-react
@@ -273,32 +283,17 @@ export const AppointmentFormModal = ({ id, show, title, eventRange, handleClose 
   }
 
   const onModalClose = () => {
-    handleClose();
+    handleCloseCallback();
     setSelectedStaffList([])
     setSelectedStaff("")
     setSelectedStudentsList([])
     setIsLoading(true)
     setLoadingText(defaultLoadingText)
 
-    setFormData({
-      ...formData,
-      title: "",
-      content: "",
-      scheduletype: "",
-      start: "",
-      end: "",
-      repeat: ""
-    });
   }
 
   const onModalOpen = () => {
     fetchAll();
-    if (!id)
-      setFormData({
-        ...formData,
-        start: moment(eventRange.fromDate).format('YYYY-MM-DDThh:mm'),
-        end: moment(eventRange.toDate).format('YYYY-MM-DDThh:mm'),
-      });
   }
 
   const handleDelete = () => {
