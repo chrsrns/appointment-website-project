@@ -7,7 +7,7 @@ import { customFetch } from '../../utils';
 
 export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
 
-  const [cookies, setCookie] = useCookies(['accessToken', 'refreshToken', 'username'])
+  const [cookies, setCookie] = useCookies(['accessToken', 'refreshToken', 'login_username'])
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
