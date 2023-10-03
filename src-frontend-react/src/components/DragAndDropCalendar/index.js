@@ -114,7 +114,7 @@ export default function DragAndDropCalendar({ localizer }) {
 
     const eventsForBG = [...eventsMapped.filter((event) => event.state === "Available" && event.repeat === "None")]
 
-    const eventsForFG = [...eventsMapped.filter((event) => event.state !== "Available" && event.state === "None")]
+    const eventsForFG = [...eventsMapped.filter((event) => event.state !== "Available" && event.repeat === "None")]
 
     const recurringEventsForBG = [].concat(...eventsMapped
       .filter((event) => event.state === "Available" && event.repeat !== "None")
