@@ -211,6 +211,13 @@ router.delete("/schedule/:id", async (req, res) => {
 });
 
 router.post("/schedule", async (req, res, next) => {
+  const authorizationHeader = req.headers.authorization;
+  const scheduleData = req.body
+
+  const token = authorizationHeader.replace('Bearer ', '');
+  const userId = findUserIdByAccessToken(token)
+
+  scheduleData.Users = { connect: { id: userId } }
   try {
     const schedule = await prisma.schedule.create({
       data: req.body
