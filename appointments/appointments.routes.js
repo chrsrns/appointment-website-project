@@ -246,7 +246,7 @@ router.get("/messages/by-schedule/:id", async (req, res, next) => {
         content: true,
         User: {
           select: {
-            id: true,
+            login_username: true,
             fname: true,
             mname: true,
             lname: true,
