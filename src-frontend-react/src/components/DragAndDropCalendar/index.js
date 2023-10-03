@@ -388,6 +388,9 @@ export default function DragAndDropCalendar({ localizer }) {
           eventPropGetter={eventPropGetter}
           localizer={localizer}
 
+          min={new Date(1972, 0, 1, 6)}
+          max={new Date(1972, 0, 1, 18)}
+
           date={date}
           onNavigate={onNavigate}
 
