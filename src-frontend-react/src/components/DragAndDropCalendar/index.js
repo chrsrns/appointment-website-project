@@ -36,7 +36,6 @@ export default function DragAndDropCalendar({ localizer }) {
   const [recurringEvents, setRecurringEvents] = useState([])
 
   const [showModal, setShowModal] = useState(false)
-  const [modalTitle, setModalTitle] = useState('')
   const [modalId, setModalId] = useState('')
 
   const [isLoading, setIsLoading] = useState(false)
@@ -326,7 +325,6 @@ export default function DragAndDropCalendar({ localizer }) {
       console.log(start)
       console.log(end)
       setIsLoading(true)
-      setModalTitle("Create New Event")
       setEventRange({ fromDate: start, toDate: end })
       setModalId("")
       setShowModal(true)
@@ -335,7 +333,7 @@ export default function DragAndDropCalendar({ localizer }) {
       //   setEventsFull((prev) => [...prev, { start, end, title }])
       // }
     },
-    [setModalTitle, setShowModal, setEventRange]
+    [setShowModal, setEventRange]
   )
 
   const handleSelectEvent = useCallback(
@@ -343,13 +341,12 @@ export default function DragAndDropCalendar({ localizer }) {
       // window.alert(event.title)
       console.log(event)
       setIsLoading(true)
-      setModalTitle("Modifying Existing Schedule")
       setEventRange({ fromDate: event.start, toDate: event.end })
       setModalId(event.id)
       console.log(event.id)
       setShowModal(true);
     },
-    [setModalTitle, setShowModal, setEventRange]
+    [setShowModal, setEventRange]
   )
 
   const handleStaffToFilterSelectionChange = (e) => {
@@ -371,7 +368,6 @@ export default function DragAndDropCalendar({ localizer }) {
         <AppointmentFormModal
           id={modalId}
           show={showModal}
-          title={modalTitle}
           eventRange={eventRange}
           handleClose={() => {
             setShowModal(false)

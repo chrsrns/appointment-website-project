@@ -19,7 +19,7 @@ const AppointmentFormUserList = ({ fname, mname, lname, id, onButtonClick }) => 
 }
 
 /// TODO Refactor this component to imitate use of default values in RegistrationForm
-export const AppointmentFormModal = ({ id, show, title, eventRange, handleClose: handleCloseCallback }) => {
+export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handleCloseCallback }) => {
   const [defaultValues, setDefaultValues] = useState({
     selectedStaffList: [],
     selectedStudentList: [],
@@ -310,7 +310,7 @@ export const AppointmentFormModal = ({ id, show, title, eventRange, handleClose:
       size="lg"
     >
       <Modal.Header>
-        <Modal.Title>{title}</Modal.Title>
+        <Modal.Title>{id ? "Modifying Existing Appointment" : "Create New Appointment"}</Modal.Title>
       </Modal.Header>
       <LoadingOverlay active={isLoading} spinner text={loadingText}>
         <Modal.Body>
@@ -495,10 +495,11 @@ export const AppointmentFormModal = ({ id, show, title, eventRange, handleClose:
 
               </Form>
             </Tab>
-            <Tab eventKey="messages" title="Minutes">
-              <Chat scheduleId={id} />
-
-            </Tab>
+            {id ?
+              <Tab eventKey="messages" title="Minutes">
+                <Chat scheduleId={id} />
+              </Tab> : ''
+            }
           </Tabs>
         </Modal.Body>
       </LoadingOverlay>
