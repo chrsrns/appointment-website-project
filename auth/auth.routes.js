@@ -10,6 +10,8 @@ const {
 } = require('./auth.services');
 const jwt = require('jsonwebtoken');
 
+const { user_type } = require("@prisma/client");
+
 const router = express.Router();
 const {
   findUserByUsername,
@@ -22,8 +24,8 @@ const { hashToken } = require('../hashTokens');
 
 router.post('/register', async (req, res, next) => {
   try {
-    const { fname, mname, lname, login_username, login_password, addr, cnum, emailaddr, bdate, rating, type } = req.body;
-    if (!login_username || !login_password || !fname || !mname || !lname || !addr || !cnum || !emailaddr || !bdate || !rating || !type) {
+    const { fname, mname, lname, login_username, login_password, addr, cnum, emailaddr, bdate, type } = req.body;
+    if (!login_username || !login_password || !fname || !mname || !lname || !addr || !cnum || !emailaddr || !bdate || !type) {
       res.status(400);
       throw new Error(`You must provide an all required fields.`);
     }
@@ -32,20 +34,14 @@ router.post('/register', async (req, res, next) => {
 
     if (existingUser) {
       res.status(400);
-      throw new Error('Email already in use.');
+      throw new Error('LRN/Username already in use');
     }
 
     const user = await createUser(req.body);
-    const jti = uuidv4();
-    const { accessToken, refreshToken } = generateTokens(user, jti);
-    await addRefreshTokenToWhitelist({ jti, refreshToken, userId: user.id });
 
-    res.json({
-      accessToken,
-      refreshToken,
-    });
+    res.status(200).json({});
   } catch (err) {
-    next(err);
+    res.json({ msg: err.message });
   }
 });
 
@@ -123,6 +119,22 @@ router.post('/refreshToken', async (req, res, next) => {
     next(err);
   }
 });
+
+router.get("/usertypes", async (req, res, next) => {
+  try {
+    const userTypesToReturn = (Object.keys(user_type)).map(
+      (key, index) => {
+        if (user_type[key] != 'Admin')
+          return user_type[key];
+      },
+    );
+
+    res.json(userTypesToReturn);
+  } catch (err) {
+    next(err);
+  }
+});
+
 
 // This endpoint is only for demo purpose.
 // Move this logic where you need to revoke the tokens( for ex, on password reset)

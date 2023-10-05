@@ -33,6 +33,8 @@ model User {
   login_username String @unique
   login_password String
 
+  approved user_approval_type @default(Pending)
+
   RefreshTokens  RefreshToken[]
   Schedules      Schedule[]
   Messages       Message[]
@@ -99,6 +101,12 @@ enum user_type {
   Guidance
   Clinic
   Admin
+}
+
+enum user_approval_type {
+  Pending
+  Unapproved
+  Approved
 }
 
 enum schedule_state {
