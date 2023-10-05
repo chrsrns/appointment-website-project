@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Button, Form, Tab, Tabs, Col, Row } from 'react-bootstrap';
+import { Modal, Button, Form, Tab, Tabs, Col, Row, ToastContainer, Toast } from 'react-bootstrap';
 import { useCookies } from 'react-cookie';
 
 import LoadingOverlay from "react-loading-overlay-ts";
@@ -26,10 +26,15 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
   const [regFormErrors, setRegFormErrors] = useState(DEFAULT_REG_FORM_VALUES)
   const [userTypes, setUserTypes] = useState([])
 
+  const [showNotif, setShowNotif] = useState(false)
+  const [responseHeader, setResponseHeader] = useState("")
+  const [responseBody, setResponseBody] = useState("")
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
+    setShowNotif(false)
     const data = {
       login_username: username,
       login_password: password
@@ -46,6 +51,13 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
       setCookie("accessToken", data.accessToken)
       setCookie("refreshToken", data.refreshToken)
       onHide(true)
+    }).catch(async (err) => {
+      /// err.json() returns a Promise, so an async/await is necessary
+      const errorBody = await err.json()
+
+      setResponseHeader("Login Failed")
+      setResponseBody(errorBody.msg)
+      setShowNotif(true)
     })
     // Perform your login logic here
     // For example, you can make an API call to authenticate the user
@@ -85,6 +97,19 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
         <Modal.Body>
           <Tabs defaultActiveForm="login" className="mb-3">
             <Tab eventKey="login" title="Login">
+              <ToastContainer className="p-3" position='top-end' style={{ zIndex: 1 }}>
+                <Toast show={showNotif} onClose={() => { setShowNotif(false) }} delay={10000} autohide>
+                  <Toast.Header>
+                    <img
+                      src="holder.js/20x20?text=%20"
+                      className="rounded me-2"
+                      alt=""
+                    />
+                    <strong className="me-auto">{responseHeader}</strong>
+                  </Toast.Header>
+                  <Toast.Body>{responseBody}</Toast.Body>
+                </Toast>
+              </ToastContainer>
               <Form className='d-grid gap-3 mb-3' >
                 <Form.Group controlId="formBasicEmail">
                   <Form.Label>Email address</Form.Label>

@@ -131,8 +131,13 @@ const RegistrationForm = () => {
     }
 
     // Validate Username
+
+    const lrnPattern = /^\d{10}$/;
     if (formData.login_username.trim() === '') {
       newFormErrors.login_username = 'Username is required';
+      isValid = false;
+    } else if (formData.type == 'Student' && !formData.login_username.trim().match(lrnPattern)) {
+      newFormErrors.login_username = 'LRN must be a 10-digit LRN';
       isValid = false;
     } else {
       newFormErrors.login_username = '';
@@ -154,6 +159,7 @@ const RegistrationForm = () => {
   };
 
   const handleSubmit = (e) => {
+    setShowNotif(false)
     e.preventDefault();
 
     if (validateForm()) {
@@ -177,23 +183,19 @@ const RegistrationForm = () => {
         body: JSON.stringify(formatted)
       }).then((response) => {
         fetchAll()
-        resetToDefault()
         if (response.ok) {
           setResponseHeader("Registration Successful")
           setResponseBody("Please wait for the admin to approve your registration before you can sign in.")
+          resetToDefault()
           setShowNotif(true)
         } else throw response;
-      }).catch((err) => {
+      }).catch(async (err) => {
+        const errorBody = await err.json()
         setResponseHeader("Registration Failed")
-        setResponseBody(err.body.msg)
+        setResponseBody(errorBody.msg)
         setShowNotif(true)
-
       })
-
-      console.log(formatted)
-
     } else {
-      console.log('Form validation failed');
     }
   };
 

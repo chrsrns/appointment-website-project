@@ -10,7 +10,7 @@ const {
 } = require('./auth.services');
 const jwt = require('jsonwebtoken');
 
-const { user_type } = require("@prisma/client");
+const { user_type, user_approval_type } = require("@prisma/client");
 
 const router = express.Router();
 const {
@@ -66,16 +66,30 @@ router.post('/login', async (req, res, next) => {
       throw new Error('Invalid login credentials.');
     }
 
+    switch (existingUser.approved) {
+      case user_approval_type.Pending:
+        res.status(403)
+        throw new Error('Approval of this account is still pending. Please wait for it to be approved by an admin or contact the admin.')
+
+      case user_approval_type.Unapproved:
+        res.status(403)
+        throw new Error('This account\'s registration was rejected. Contact the admin for details.')
+
+      default:
+        break;
+    }
+
     const jti = uuidv4();
     const { accessToken, refreshToken } = generateTokens(existingUser, jti);
     await addRefreshTokenToWhitelist({ jti, refreshToken, userId: existingUser.id });
 
-    res.json({
+    res.status(200).json({
       accessToken,
       refreshToken
     });
   } catch (err) {
-    next(err);
+
+    res.json({ msg: err.message });
   }
 });
 
