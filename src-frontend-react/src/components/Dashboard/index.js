@@ -42,7 +42,7 @@ export const Dashboard = ({ sidebarbtn_onClick }) => {
                   return <ListGroupItem key={`${announcement.title}.${announcement.createdAt}`} className="m-2">
                     <p className="fw-bold mb-2 border-bottom border-secondary pb-2">{announcement.title}</p>
                     {announcement.content}
-                    <p className="mt-1 mb-0 text-black-50" style={{ fontSize: '.8rem' }}>
+                    <p className="mt-1 mb-0 text-muted" style={{ fontSize: '.8rem' }}>
                       {
                         moment(announcement.createdAt).format('MMM DD, YYYY hh:mm')
                       }
