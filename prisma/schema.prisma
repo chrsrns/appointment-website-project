@@ -35,10 +35,12 @@ model User {
 
   approved user_approval_type @default(Pending)
 
-  RefreshTokens  RefreshToken[]
-  Schedules      Schedule[]
-  Messages       Message[]
-  MedicalRecords MedicalRecord[]
+  RefreshTokens     RefreshToken[]
+  Schedules         Schedule[]
+  Messages          Message[]
+  MedicalRecords    MedicalRecord[]
+  authoredSchedules Schedule[]      @relation(name: "authoredByUser")
+  Notifications     Notifications[]
 
   @@unique([fname, mname, lname])
 }
@@ -62,10 +64,16 @@ model Schedule {
   desc     String         @default("")
   repeat   repeat         @default(None)
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @default(now()) @updatedAt
-  Messages  Message[]
-  Users     User[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  Messages Message[]
+  Users    User[]
+
+  authoredBy   User   @relation(name: "authoredByUser", fields: [authorUserId], references: [id])
+  authorUserId String
+
+  exists Boolean @default(true)
 }
 
 model Message {
@@ -93,6 +101,15 @@ model MedicalRecord {
   user    User   @relation(fields: [userId], references: [id])
   content String
   userId  String
+}
+
+model Notifications {
+  id        String   @id @default(uuid())
+  title     String?
+  message   String
+  createdAt DateTime @default(now())
+
+  usersToNotify User[]
 }
 
 enum user_type {
