@@ -2,7 +2,7 @@ const { isAuthenticated } = require("../middlewares");
 // const { findUserById } = require("./users.services");
 const bcrypt = require("bcrypt");
 
-const { PrismaClient, Prisma, user_type } = require("@prisma/client");
+const { PrismaClient, Prisma, user_type, user_approval_type } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const express = require("express");
@@ -55,9 +55,10 @@ router.post("/user", async (req, res, next) => {
     }
 
     user.login_password = bcrypt.hashSync(user.login_password, 12)
+    user.approved = user_approval_type.Approved
 
     const usercreate = await prisma.user.create({
-      data: req.body
+      data: user
     })
     res.status(200)
   } catch (err) {
