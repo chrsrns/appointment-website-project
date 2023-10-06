@@ -15,6 +15,7 @@ import {
   Stack,
   ListGroup,
   ButtonGroup,
+  ListGroupItem,
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
@@ -25,7 +26,14 @@ import { Dashboard } from "./components/Dashboard";
 import { Appointments } from "./components/Appointments";
 import { customFetch } from "./utils";
 
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+import { socket } from "./socket";
 import Cookies from "js-cookie";
+import { useCookies } from "react-cookie";
+
+/// TODO Separate components to other files
 
 const TopBar = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -160,8 +168,12 @@ const App: React.FC = () => {
     isActive ? "active" : ""
   }`;
 
+  const [cookies] = useCookies(["accessToken"]);
+
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLogInDone, setIsLogInDone] = useState(false);
+
+  const [onlineUsers, setOnlineUsers] = useState([]);
 
   const getLoggedInStatus = () => {
     const data = { refreshToken: Cookies.get("refreshToken") };
@@ -189,7 +201,43 @@ const App: React.FC = () => {
       });
   };
 
-  useEffect(() => getLoggedInStatus(), []);
+  const fetchAll = () => {
+    customFetch(`${global.server_backend_url}/backend/users/onlineusers`, {})
+      .then((response) => {
+        if (response.ok) return response.json();
+        throw response;
+      })
+      .then((data) => {
+        setOnlineUsers(data);
+      })
+      .catch((error) => {
+        console.error(error);
+        toast("Something went wrong when fetching online users.");
+      });
+  };
+
+  useEffect(() => {
+    fetchAll();
+    getLoggedInStatus();
+    socket.onAny((event, ...args) => {
+      console.log("Socket onAny: ");
+      console.log(event, args);
+    });
+    socket.on("online users changed", () => {
+      fetchAll();
+    });
+    socket.on("schedule updated", ({ schedTitle }) => {
+      toast(`Schedule "${schedTitle}" was updated.`);
+    });
+    socket.auth = { accessToken: Cookies.get("accessToken") };
+    socket.connect();
+  }, []);
+
+  useEffect(() => {
+    socket.auth = { accessToken: Cookies.get("accessToken") };
+    socket.connect();
+  }, [cookies]);
+
   useEffect(() => {
     const intervalId = setInterval(() => {
       getLoggedInStatus();
@@ -245,6 +293,9 @@ const App: React.FC = () => {
                   <Card.Header as={"h2"}>People Online</Card.Header>
                   <Card.Body>
                     <ListGroup>
+                      {onlineUsers.map((user) => (
+                        <ListGroupItem>{`[${user.type}] ${user.lname}, ${user.fname} ${user.mname[0]}.`}</ListGroupItem>
+                      ))}
                       {/* <ListGroup.Item>Cras justo odio</ListGroup.Item> */}
                       {/* <ListGroup.Item>Dapibus ac facilisis in</ListGroup.Item> */}
                       {/* <ListGroup.Item>Morbi leo risus</ListGroup.Item> */}
@@ -258,6 +309,7 @@ const App: React.FC = () => {
           </Container>
         </Stack>
       </LoadingOverlay>
+      <ToastContainer />
     </BrowserRouter>
   );
 };

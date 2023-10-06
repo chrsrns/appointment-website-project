@@ -3,9 +3,13 @@ import { Modal, Button, Form, Tab, Tabs, Col, Row, ToastContainer, Toast } from 
 import { useCookies } from 'react-cookie';
 
 import LoadingOverlay from "react-loading-overlay-ts";
+import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
 
 import RegistrationForm from './RegistrationForm';
+import { socket } from '../../socket';
+
+import Cookies from "js-cookie";
 
 const DEFAULT_REG_FORM_VALUES = {
   fname: '',
@@ -88,6 +92,11 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
   useEffect(() => {
     fetchAll()
   }, [])
+  useEffect(() => {
+    socket.on("connect_error", (err) => {
+      console.log(err.message)
+    });
+  }, [socket])
   return (
     <Modal size='lg' show={show} backdrop="static">
       <Modal.Header>

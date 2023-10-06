@@ -12,9 +12,11 @@ function findUserByUsername(login_username) {
 }
 
 function findUserIdByAccessToken(accessToken) {
-  const decoded = jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET)
-  const userId = decoded.userId
-  return userId
+  try {
+    const decoded = jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET)
+    const userId = decoded.userId
+    return userId
+  } catch (err) { return null }
 }
 
 function findUserById(id) {

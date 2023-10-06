@@ -130,7 +130,7 @@ router.post('/refreshToken', async (req, res, next) => {
       refreshToken: newRefreshToken
     });
   } catch (err) {
-    next(err);
+    res.json({ msg: err.message });
   }
 });
 

@@ -7,6 +7,9 @@ const prisma = new PrismaClient();
 const express = require("express");
 const router = express.Router();
 
+const { getSocketInstance } = require("../socket");
+const socketIO = getSocketInstance()
+
 router.get("/students", async (req, res, next) => {
   try {
     const users = await prisma.user.findMany({
@@ -178,8 +181,13 @@ router.put("/schedule/:id", async (req, res) => {
       res.status(404).json({ error: "Schedule not found" });
       return;
     }
+
+    req.body.Users.set.forEach(element => {
+      socketIO.to(element.id).emit("schedule updated", {
+        schedTitle: schedule.title
+      })
+    });
     res.json(schedule);
-    console.log(req.body)
   } catch (error) {
     console.error(error);
     res
@@ -217,10 +225,10 @@ router.post("/schedule", async (req, res, next) => {
   const token = authorizationHeader.replace('Bearer ', '');
   const userId = findUserIdByAccessToken(token)
 
-  scheduleData.Users = { connect: { id: userId } }
+  scheduleData.authoredBy = { connect: { id: userId } }
   try {
     const schedule = await prisma.schedule.create({
-      data: req.body
+      data: scheduleData
     })
     res.json()
   } catch (err) {
@@ -273,7 +281,7 @@ router.post("/message", async (req, res, next) => {
   res.status(200).json({ msg: "Message sent" })
   try {
     const message = await prisma.message.create({
-      data: req.body
+      data: messageData
     })
   } catch (err) {
     console.error(err);

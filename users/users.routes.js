@@ -43,4 +43,26 @@ router.get("/appointments", async (req, res, next) => {
   } catch { }
 });
 
+router.get("/onlineusers", async (req, res, next) => {
+  try {
+    const user = await prisma.user.findMany({
+      where: {
+        isOnline: true
+      },
+      select: {
+        fname: true,
+        mname: true,
+        lname: true,
+        type: true,
+      }
+    });
+    res.json(user);
+  } catch (err) {
+    console.error(err);
+    res
+      .status(500)
+      .json({ error: "An error occurred while fetching online users" });
+  }
+})
+
 module.exports = router;

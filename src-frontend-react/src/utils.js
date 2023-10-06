@@ -2,8 +2,6 @@ import Cookies from 'universal-cookie';
 
 export const customFetch = (url, options = {}) => {
   const cookies = new Cookies(null, { path: '/' });
-  console.log("AccessToken:")
-  console.log(cookies.get('accessToken'))
 
   // Define the default headers you want to add to each request
   const defaultHeaders = {
