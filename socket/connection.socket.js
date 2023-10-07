@@ -1,6 +1,8 @@
 const { PrismaClient, Prisma } = require("@prisma/client");
 const { findUserIdByAccessToken } = require("../users/users.services")
 const prisma = new PrismaClient();
+const jwt = require('jsonwebtoken');
+const { findRefreshTokenById } = require("../auth/auth.services");
 
 class Connection {
   constructor(io, socket) {
@@ -43,12 +45,21 @@ class Connection {
 }
 
 function connect(io) {
-  io.use((socket, next) => {
+  io.use(async (socket, next) => {
     const accessToken = socket.handshake.auth.accessToken;
+    const refreshToken = socket.handshake.auth.refreshToken
     const userId = findUserIdByAccessToken(accessToken)
 
     if (!userId)
       return next(new Error("invalid access token"))
+
+    const payload = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    const savedRefreshToken = await findRefreshTokenById(payload.jti);
+    console.log(savedRefreshToken)
+
+    if (!savedRefreshToken || savedRefreshToken.revoked === true) {
+      return next(new Error('unauthorized session'));
+    }
 
     socket.userId = userId
     next()

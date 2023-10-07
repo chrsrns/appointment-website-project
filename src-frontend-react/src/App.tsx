@@ -32,6 +32,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { socket } from "./socket";
 import Cookies from "js-cookie";
 import { useCookies } from "react-cookie";
+import SideNotifications from "./components/Notifications";
+
 import {
   enable as enableDarkMode,
   disable as disableDarkMode,
@@ -230,6 +232,13 @@ const App: React.FC = () => {
       });
   };
 
+  const attemptSocketConnection = () => {
+    socket.auth = {
+      accessToken: Cookies.get("accessToken"),
+      refreshToken: Cookies.get("refreshToken"),
+    };
+    socket.connect();
+  };
   useEffect(() => {
     fetchAll();
     getLoggedInStatus();
@@ -243,13 +252,11 @@ const App: React.FC = () => {
     socket.on("schedule updated", ({ schedTitle }) => {
       toast(`Schedule "${schedTitle}" was updated.`);
     });
-    socket.auth = { accessToken: Cookies.get("accessToken") };
-    socket.connect();
+    attemptSocketConnection();
   }, []);
 
   useEffect(() => {
-    socket.auth = { accessToken: Cookies.get("accessToken") };
-    socket.connect();
+    attemptSocketConnection();
   }, [cookies]);
 
   useEffect(() => {
@@ -303,19 +310,20 @@ const App: React.FC = () => {
                 lg={{ span: 3, order: "last" }}
                 style={{ marginBottom: "3rem" }}
               >
-                <Card className="shadow-sm">
+                <Card className="shadow-sm mb-3">
                   <Card.Header as={"h2"}>People Online</Card.Header>
                   <Card.Body>
                     <ListGroup>
                       {onlineUsers.map((user) => (
                         <ListGroupItem>{`[${user.type}] ${user.lname}, ${user.fname} ${user.mname[0]}.`}</ListGroupItem>
                       ))}
-                      {/* <ListGroup.Item>Cras justo odio</ListGroup.Item> */}
-                      {/* <ListGroup.Item>Dapibus ac facilisis in</ListGroup.Item> */}
-                      {/* <ListGroup.Item>Morbi leo risus</ListGroup.Item> */}
-                      {/* <ListGroup.Item>Porta ac consectetur ac</ListGroup.Item> */}
-                      {/* <ListGroup.Item>Vestibulum at eros</ListGroup.Item> */}
                     </ListGroup>
+                  </Card.Body>
+                </Card>
+                <Card className="shadow-sm mb-3">
+                  <Card.Header as={"h2"}>Notifications</Card.Header>
+                  <Card.Body>
+                    <SideNotifications />
                   </Card.Body>
                 </Card>
               </Col>
