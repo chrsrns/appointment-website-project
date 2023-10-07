@@ -9,6 +9,19 @@ const fakedata = require("./prisma/fake-data")
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
+const resetAll = async () => {
+  console.log("Resetting online status")
+  console.log(await prisma.user.updateMany({
+    where: {
+      isOnline: true
+    },
+    data: {
+      isOnline: false
+    }
+  }))
+}
+resetAll()
+
 app.use(express.json());
 app.use(cors());
 
