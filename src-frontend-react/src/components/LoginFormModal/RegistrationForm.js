@@ -131,7 +131,6 @@ const RegistrationForm = () => {
     }
 
     // Validate Username
-
     const lrnPattern = /^\d{10}$/;
     if (formData.login_username.trim() === '') {
       newFormErrors.login_username = 'Username is required';
@@ -290,6 +289,7 @@ const RegistrationForm = () => {
               {userTypes.map((userType) => (
                 <Form.Check
                   inline
+                  key={userType}
                   name="type"
                   type="radio"
                   id={`inline-radio-${userType}`}

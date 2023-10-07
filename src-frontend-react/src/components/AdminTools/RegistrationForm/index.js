@@ -23,6 +23,7 @@ const DEFAULT_FORM_VALUES = {
 /// NOTE The `{ ...DEFAULT_FORM_VALUES }` is used because simply
 //      placing `DEFAULT_FORM_VALUES` seems to make it so that 
 //      the forms modify this variable
+/// TODO Add placeholders to the form controls
 const DEFAULT_SELECT_VALUE = { value: { ...DEFAULT_FORM_VALUES }, label: "Create new user" }
 
 function RegistrationForm() {

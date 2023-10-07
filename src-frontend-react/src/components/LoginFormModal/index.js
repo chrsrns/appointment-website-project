@@ -121,10 +121,10 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
               </ToastContainer>
               <Form className='d-grid gap-3 mb-3' >
                 <Form.Group controlId="formBasicEmail">
-                  <Form.Label>Email address</Form.Label>
+                  <Form.Label>Username</Form.Label>
                   <Form.Control
                     type="email"
-                    placeholder="Enter email"
+                    placeholder="Enter username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                   />
