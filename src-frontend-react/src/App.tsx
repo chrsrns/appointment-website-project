@@ -32,6 +32,13 @@ import "react-toastify/dist/ReactToastify.css";
 import { socket } from "./socket";
 import Cookies from "js-cookie";
 import { useCookies } from "react-cookie";
+import {
+  enable as enableDarkMode,
+  disable as disableDarkMode,
+  auto as followSystemColorScheme,
+  exportGeneratedCSS as collectCSS,
+  isEnabled as isDarkReaderEnabled,
+} from "darkreader";
 
 /// TODO Separate components to other files
 
@@ -43,9 +50,16 @@ const TopBar = () => {
   };
 
   useEffect(() => {
+    // if (darkMode)
+    //   document.documentElement.setAttribute("data-bs-theme", "dark");
+    // else document.documentElement.setAttribute("data-bs-theme", "light");
+    //
     if (darkMode)
-      document.documentElement.setAttribute("data-bs-theme", "dark");
-    else document.documentElement.setAttribute("data-bs-theme", "light");
+      enableDarkMode({
+        brightness: 100,
+        contrast: 100,
+      });
+    else disableDarkMode();
   }, [darkMode]);
 
   return (
