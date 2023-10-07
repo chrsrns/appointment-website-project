@@ -32,6 +32,57 @@ router.get("/users", async (req, res, next) => {
   }
 });
 
+router.get("/pendingusers", async (req, res, next) => {
+  try {
+    const user = await prisma.user.findMany({
+      where: {
+        approved: user_approval_type.Pending
+      },
+      select: {
+        id: true,
+        fname: true,
+        mname: true,
+        lname: true,
+        addr: true,
+        cnum: true,
+        emailaddr: true,
+        bdate: true,
+        rating: true,
+        type: true,
+        login_username: true
+      }
+    });
+    res.json(user);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.put("/pendinguser/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const userToUpdate = await prisma.user.update({
+      where: {
+        id: id,
+      },
+      data: {
+        approved: req.body.approved
+      }
+    });
+    if (!userToUpdate) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+    res.status(200)
+    return next()
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while modifying the user" });
+  }
+});
+
 router.get("/usertypes", async (req, res, next) => {
   try {
     const userTypesToReturn = (Object.keys(user_type)).map(

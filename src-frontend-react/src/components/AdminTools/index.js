@@ -4,6 +4,7 @@ import { customFetch } from "../../utils";
 import { Jumbotron } from "../Jumbotron";
 import { AnnouncementsForm } from "./AnnouncementsForm";
 import RegistrationForm from "./RegistrationForm";
+import UserApprovalComponent from "./UserApproval";
 
 export const AdminTools = ({ sidebarbtn_onClick }) => {
 
@@ -55,6 +56,9 @@ export const AdminTools = ({ sidebarbtn_onClick }) => {
             </Card.Body>
           </Card>
         </Col>
+      </Row>
+      <Row>
+        <UserApprovalComponent />
       </Row>
     </>
   );
