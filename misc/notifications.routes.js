@@ -6,12 +6,11 @@ const { findUserIdByAccessToken } = require("../users/users.services");
 const router = express.Router();
 
 router.get("/notifications", async (req, res, next) => {
-  const authorizationHeader = req.headers.authorization;
-
-  const token = authorizationHeader.replace('Bearer ', '');
-  const userId = findUserIdByAccessToken(token)
-
   try {
+    const authorizationHeader = req.headers.authorization;
+
+    const token = authorizationHeader.replace('Bearer ', '');
+    const userId = findUserIdByAccessToken(token)
     const notificationsToGet = await prisma.notifications.findMany({
       where: {
         usersToNotify: {
@@ -30,8 +29,8 @@ router.get("/notifications", async (req, res, next) => {
 });
 
 router.put("/removeFromUsersToNotify/:id", async (req, res, next) => {
-  const { id } = req.params;
   try {
+    const { id } = req.params;
     const authorizationHeader = req.headers.authorization;
     const token = authorizationHeader.replace('Bearer ', '');
     const userId = findUserIdByAccessToken(token)
