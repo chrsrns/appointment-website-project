@@ -79,7 +79,7 @@ model Schedule {
 model Message {
   id         String   @id @default(uuid())
   createdAt  DateTime @default(now())
-  content    String   @db.VarChar(3000)
+  content    String   @db.Text
   scheduleId String?
   userId     String?
 
@@ -93,14 +93,15 @@ model Announcement {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   title     String
-  content   String   @db.VarChar(3000)
+  content   String   @db.LongText
 }
 
 model MedicalRecord {
-  id      String @id @default(uuid())
-  user    User   @relation(fields: [userId], references: [id])
-  content String
-  userId  String
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  content   String   @db.LongText
+  userId    String
 }
 
 model Notifications {

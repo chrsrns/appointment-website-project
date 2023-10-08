@@ -24,6 +24,7 @@ import LoadingOverlay from "react-loading-overlay-ts";
 import { AdminTools } from "./components/AdminTools";
 import { Dashboard } from "./components/Dashboard";
 import { Appointments } from "./components/Appointments";
+import { MedicalRecords } from "./components/MedicalRecords";
 import { customFetch } from "./utils";
 
 import { toast, ToastContainer } from "react-toastify";
@@ -103,6 +104,12 @@ const SidebarCol = () => {
       iconClass: "bi-clipboard",
       value: "2",
       link: "/appointments",
+    },
+    {
+      name: "Medical Records",
+      iconClass: "bi-bandaid",
+      value: "5",
+      link: "/medrecords",
     },
     {
       name: "Feedback",
@@ -294,6 +301,12 @@ const App: React.FC = () => {
                     path="/appointments"
                     element={
                       <Appointments sidebarbtn_onClick={sidebarbtn_onClick} />
+                    }
+                  />
+                  <Route
+                    path="/medrecords"
+                    element={
+                      <MedicalRecords sidebarbtn_onClick={sidebarbtn_onClick} />
                     }
                   />
                   <Route
