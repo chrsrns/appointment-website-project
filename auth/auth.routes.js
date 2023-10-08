@@ -21,6 +21,7 @@ const {
 
 
 const { hashToken } = require('../hashTokens');
+const { createNotification } = require('../misc/notifications.services');
 
 router.post('/register', async (req, res, next) => {
   try {
@@ -36,11 +37,20 @@ router.post('/register', async (req, res, next) => {
       res.status(400);
       throw new Error('LRN/Username already in use');
     }
+    if (type == user_type.Admin) {
+      res.status(400);
+      throw new Error('Unauthorized')
+    }
 
     const user = await createUser(req.body);
+    createNotification({
+      title: "New User Registered",
+      message: `User with username ${user.login_username} registered in the system`
+    })
 
-    res.status(200).json({});
+    res.status(200).json(user);
   } catch (err) {
+    console.error(err)
     res.json({ msg: err.message });
   }
 });
@@ -83,9 +93,15 @@ router.post('/login', async (req, res, next) => {
     const { accessToken, refreshToken } = generateTokens(existingUser, jti);
     await addRefreshTokenToWhitelist({ jti, refreshToken, userId: existingUser.id });
 
+    createNotification({
+      title: "User Logged In",
+      message: `User with username ${existingUser.login_username} logged in to the system`
+    })
+
     res.status(200).json({
       accessToken,
-      refreshToken
+      refreshToken,
+      type: existingUser.type
     });
   } catch (err) {
 
@@ -136,12 +152,13 @@ router.post('/refreshToken', async (req, res, next) => {
 
 router.get("/usertypes", async (req, res, next) => {
   try {
-    const userTypesToReturn = (Object.keys(user_type)).map(
-      (key, index) => {
-        if (user_type[key] != 'Admin')
+    const userTypesToReturn = (Object.keys(user_type))
+      .filter(key => key != "Admin")
+      .map(
+        (key, index) => {
           return user_type[key];
-      },
-    );
+        },
+      );
 
     res.json(userTypesToReturn);
   } catch (err) {
