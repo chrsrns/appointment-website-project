@@ -227,21 +227,6 @@ const App: React.FC = () => {
       });
   };
 
-  const fetchAll = () => {
-    customFetch(`${global.server_backend_url}/backend/users/onlineusers`, {})
-      .then((response) => {
-        if (response.ok) return response.json();
-        throw response;
-      })
-      .then((data) => {
-        setOnlineUsers(data);
-      })
-      .catch((error) => {
-        console.error(error);
-        toast("Something went wrong when fetching online users.");
-      });
-  };
-
   const attemptSocketConnection = () => {
     socket.auth = {
       accessToken: Cookies.get("accessToken"),
@@ -250,14 +235,25 @@ const App: React.FC = () => {
     socket.connect();
   };
   useEffect(() => {
-    fetchAll();
     getLoggedInStatus();
     socket.onAny((event, ...args) => {
       console.log("Socket onAny: ");
       console.log(event, args);
     });
-    socket.on("online users changed", () => {
-      fetchAll();
+    socket.on("users", (users) => {
+      users.forEach((user) => {
+        user.self = user.login_username === Cookies.get("login_username");
+        // initReactiveProperties(user);
+      });
+      // put the current user first, and then sort by username
+      users = users.sort((a, b) => {
+        if (a.self) return -1;
+        if (b.self) return 1;
+        if (a.username < b.username) return -1;
+        return a.username > b.username ? 1 : 0;
+      });
+
+      setOnlineUsers(users);
     });
     socket.on("schedule updated", ({ schedTitle }) => {
       toast(`Schedule "${schedTitle}" was updated.`);
@@ -336,9 +332,12 @@ const App: React.FC = () => {
                   <Card.Header as={"h2"}>People Online</Card.Header>
                   <Card.Body>
                     <ListGroup>
-                      {onlineUsers.map((user) => (
-                        <ListGroupItem>{`[${user.type}] ${user.lname}, ${user.fname} ${user.mname[0]}.`}</ListGroupItem>
-                      ))}
+                      {onlineUsers.map((user) => {
+                        console.log("online user: ", user);
+                        return (
+                          <ListGroupItem>{`[${user.type}] ${user.lname}, ${user.fname} ${user.mname[0]}.`}</ListGroupItem>
+                        );
+                      })}
                     </ListGroup>
                   </Card.Body>
                 </Card>

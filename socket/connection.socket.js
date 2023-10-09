@@ -3,13 +3,14 @@ const { findUserIdByAccessToken } = require("../routes/users.services")
 const prisma = new PrismaClient();
 const jwt = require('jsonwebtoken');
 const { findRefreshTokenById } = require("../routes/auth.services");
+const { db } = require("../db");
 
 class Connection {
   constructor(io, socket) {
     this.socket = socket;
     this.io = io;
 
-    this.setOnlineStatus(socket.userId, true)
+    this.updatePeopleOnline()
 
     socket.on('disconnect', () => this.disconnect());
     socket.on('connect_error', (err) => {
@@ -20,24 +21,24 @@ class Connection {
   disconnect() {
     console.log('🔥: A user disconnected');
 
-    this.setOnlineStatus(this.socket.userId, false)
+    this.updatePeopleOnline(this.socket.userId, false)
 
   }
-  async setOnlineStatus(userId, status) {
+  async updatePeopleOnline() {
     try {
-      const user = await prisma.user.update({
-        where: {
-          id: userId,
-        },
-        data: {
-          isOnline: status
-        }
-      });
-      if (!user) {
-        console.error("User not found")
-        return;
+      const users = []
+      for (let [id, socket] of this.io.of("/").sockets) {
+        if (!users.some(el => el.userId === socket.userId))
+          users.push({
+            userId: socket.userId,
+            login_username: socket.login_username,
+            fname: socket.fname,
+            mname: socket.mname,
+            lname: socket.lname,
+            type: socket.type
+          });
       }
-      this.io.emit("online users changed")
+      this.io.emit("users", users);
     } catch (error) {
       console.error(error);
     }
@@ -61,13 +62,31 @@ function connect(io) {
       return next(new Error('unauthorized session'));
     }
 
+    const user = await db.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        login_username: true,
+        fname: true,
+        mname: true,
+        lname: true,
+        type: true
+      }
+    });
+
+
     socket.userId = userId
+    socket.login_username = user.login_username
+    socket.fname = user.fname
+    socket.mname = user.mname
+    socket.lname = user.lname
+    socket.type = user.type
     next()
   })
   io.on('connect', (socket) => {
     console.log(`⚡: ${socket.id} user just connected!`);
     new Connection(io, socket)
-    console.log(`userId: ${socket.userId}`)
     socket.join(socket.userId)
 
   });
