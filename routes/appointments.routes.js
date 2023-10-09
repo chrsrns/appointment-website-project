@@ -1,5 +1,5 @@
 const { isAuthenticated } = require("../middlewares");
-const { findUserIdByAccessToken } = require("../users/users.services")
+const { findUserIdByAccessToken } = require("../routes/users.services")
 
 const { PrismaClient, Prisma, schedule_state, user_type, repeat } = require("@prisma/client");
 const prisma = new PrismaClient();

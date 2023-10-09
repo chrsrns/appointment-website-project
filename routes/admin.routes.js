@@ -1,12 +1,10 @@
 const { isAuthenticated } = require("../middlewares");
-// const { findUserById } = require("./users.services");
 const bcrypt = require("bcrypt");
 
 const { PrismaClient, Prisma, user_type, user_approval_type } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const express = require("express");
-const { response } = require("..");
 const router = express.Router();
 
 router.get("/users", async (req, res, next) => {

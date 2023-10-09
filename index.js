@@ -44,25 +44,25 @@ connect(socketIO)
 const path = __dirname + "/src-frontend-react/build/";
 app.use(express.static(path));
 
-const auth = require("./auth/auth.routes.js");
+const auth = require("./routes/auth.routes.js");
 app.use("/backend/auth", auth);
 
-const admin = require("./admin/admin.routes.js");
+const admin = require("./routes/admin.routes.js");
 app.use("/backend/admin", admin);
 
-const users = require("./users/users.routes.js");
+const users = require("./routes/users.routes.js");
 app.use("/backend/users", users);
 
-const appointments = require("./appointments/appointments.routes.js");
+const appointments = require("./routes/appointments.routes.js");
 app.use("/backend/appointments", appointments);
 
-const notifications = require('./misc/notifications.routes')
+const notifications = require('./routes/notifications.routes')
 app.use("/backend/notifications", notifications)
 
-const medrecords = require('./misc/medrecords.routes')
+const medrecords = require('./routes/medrecords.routes')
 app.use("/backend/medrecords", medrecords)
 
-const feedback = require('./misc/feedback.routes')
+const feedback = require('./routes/feedback.routes')
 app.use("/backend/feedback", feedback)
 
 app.post("/backend/fakestudentuser", async (req, res) => {

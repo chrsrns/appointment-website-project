@@ -1,8 +1,8 @@
 const { PrismaClient, Prisma } = require("@prisma/client");
-const { findUserIdByAccessToken } = require("../users/users.services")
+const { findUserIdByAccessToken } = require("../routes/users.services")
 const prisma = new PrismaClient();
 const jwt = require('jsonwebtoken');
-const { findRefreshTokenById } = require("../auth/auth.services");
+const { findRefreshTokenById } = require("../routes/auth.services");
 
 class Connection {
   constructor(io, socket) {

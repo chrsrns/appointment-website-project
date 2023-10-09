@@ -17,11 +17,11 @@ const {
   findUserByUsername,
   findUserById,
   createUser,
-} = require('../users/users.services');
+} = require('../routes/users.services');
 
 
 const { hashToken } = require('../hashTokens');
-const { createNotification } = require('../misc/notifications.services');
+const { createNotification } = require('../routes/notifications.services');
 
 router.post('/register', async (req, res, next) => {
   try {

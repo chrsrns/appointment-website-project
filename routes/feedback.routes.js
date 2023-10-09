@@ -1,7 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const express = require('express');
-const { findUserIdByAccessToken } = require("../users/users.services");
+const { findUserIdByAccessToken } = require("../routes/users.services");
 
 const router = express.Router();
 
