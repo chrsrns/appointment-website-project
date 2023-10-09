@@ -51,7 +51,7 @@ router.post('/register', async (req, res, next) => {
     res.status(200).json(user);
   } catch (err) {
     console.error(err)
-    res.json({ msg: err.message });
+    res.status(500).json({ msg: err.message });
   }
 });
 
@@ -146,7 +146,7 @@ router.post('/refreshToken', async (req, res, next) => {
       refreshToken: newRefreshToken
     });
   } catch (err) {
-    res.json({ msg: err.message });
+    res.status(500).json({ msg: err.message });
   }
 });
 
