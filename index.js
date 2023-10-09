@@ -62,6 +62,9 @@ app.use("/backend/notifications", notifications)
 const medrecords = require('./misc/medrecords.routes')
 app.use("/backend/medrecords", medrecords)
 
+const feedback = require('./misc/feedback.routes')
+app.use("/backend/feedback", feedback)
+
 app.post("/backend/fakestudentuser", async (req, res) => {
   try {
     const name = await prisma.user.create(

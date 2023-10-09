@@ -21,7 +21,6 @@ router.get("/users", async (req, res, next) => {
         cnum: true,
         emailaddr: true,
         bdate: true,
-        rating: true,
         type: true,
         login_username: true
       }
@@ -47,7 +46,6 @@ router.get("/pendingusers", async (req, res, next) => {
         cnum: true,
         emailaddr: true,
         bdate: true,
-        rating: true,
         type: true,
         login_username: true
       }

@@ -42,6 +42,7 @@ import {
   exportGeneratedCSS as collectCSS,
   isEnabled as isDarkReaderEnabled,
 } from "darkreader";
+import { FeedbackForm } from "./components/FeedbackForm";
 
 /// TODO Separate components to other files
 
@@ -206,8 +207,10 @@ const App: React.FC = () => {
       body: JSON.stringify(data),
     })
       .then((response) => {
-        if (response.ok) return response.json();
-        else {
+        if (response.ok) {
+          console.log("login successful");
+          return response.json();
+        } else {
           setIsLoggedIn(false);
           setIsLogInDone(true);
         }
@@ -307,6 +310,12 @@ const App: React.FC = () => {
                     path="/medrecords"
                     element={
                       <MedicalRecords sidebarbtn_onClick={sidebarbtn_onClick} />
+                    }
+                  />
+                  <Route
+                    path="/feedback"
+                    element={
+                      <FeedbackForm sidebarbtn_onClick={sidebarbtn_onClick} />
                     }
                   />
                   <Route
