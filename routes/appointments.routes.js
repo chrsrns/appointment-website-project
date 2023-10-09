@@ -108,6 +108,37 @@ router.get("/schedules", async (req, res, next) => {
   }
 })
 
+router.get("/schedules-summary", async (req, res, next) => {
+  try {
+    const authorizationheader = req.headers.authorization;
+
+    const token = authorizationheader.replace('Bearer ', '');
+    const userId = findUserIdByAccessToken(token)
+
+    const schedules = await prisma.schedule.findMany({
+      where: {
+        OR: [
+          { state: schedule_state.Ongoing },
+          { state: schedule_state.Approved }
+        ],
+        authorUserId: userId
+
+      },
+      select: {
+        id: true,
+        state: true,
+        fromDate: true,
+        toDate: true,
+        title: true,
+        repeat: true
+      }
+    })
+    res.json(schedules)
+  } catch (err) {
+    next(err)
+  }
+})
+
 router.get("/schedules/by-user/:id", async (req, res, next) => {
   const { id } = req.params;
 
@@ -175,14 +206,16 @@ router.put("/schedule/:id", async (req, res) => {
       where: {
         id: id,
       },
-      data: req.body
+      data: req.body,
+      include: { Users: true }
     });
     if (!schedule) {
       res.status(404).json({ error: "Schedule not found" });
       return;
     }
 
-    req.body.Users.set.forEach(element => {
+    schedule.Users.forEach(element => {
+      console.log("Notifying user ", element.id)
       socketIO.to(element.id).emit("schedule updated", {
         schedTitle: schedule.title
       })

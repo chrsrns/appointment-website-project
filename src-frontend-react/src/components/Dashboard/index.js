@@ -5,21 +5,44 @@ import { customFetch } from "../../utils";
 import { Jumbotron } from "../Jumbotron";
 
 export const Dashboard = ({ sidebarbtn_onClick }) => {
-  const [data, setData] = useState([]);
+  const [announcements, setAnnoucements] = useState([]);
+  const [appointments, setAppointments] = useState([])
 
   useEffect(() => {
-    customFetch(`${global.server_backend_url}/backend/users/announcements`)
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw response;
-      })
-      .then((data) => {
-        data = data.slice().sort((a, b) => new Date(a.createdAt) + new Date(b.createdAt))
-        setData(data);
-        console.log(data);
-      });
+    Promise.all([
+      customFetch(`${global.server_backend_url}/backend/users/announcements`)
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          }
+          throw response;
+        })
+        .then((data) => {
+          data = data.slice().sort((a, b) => new Date(a.createdAt) + new Date(b.createdAt))
+          setAnnoucements(data);
+          console.log(data);
+        }),
+      customFetch(`${global.server_backend_url}/backend/appointments/schedules-summary`)
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          }
+          throw response;
+        })
+        .then((data) => {
+          data = data
+            .slice()
+            .sort((a, b) => new Date(a.createdAt) + new Date(b.createdAt))
+            .map((x) => {
+              x.fromDate = moment(x.fromDate).format('MMM DD, YYYY hh:mm')
+              x.toDate = moment(x.toDate).format('MMM DD, YYYY hh:mm')
+              return x
+            })
+
+          setAppointments(data);
+          console.log(data);
+        })
+    ])
   }, []);
 
   return (
@@ -38,7 +61,7 @@ export const Dashboard = ({ sidebarbtn_onClick }) => {
             <Card.Header as="h2">Announcements</Card.Header>
             <Card.Body className="overflow-scroll" style={{ maxHeight: "16rem" }}>
               <ListGroup>
-                {data.map((announcement) => {
+                {announcements.map((announcement) => {
                   return <ListGroupItem key={`${announcement.title}.${announcement.createdAt}`} className="m-2">
                     <p className="fw-bold mb-2 border-bottom border-secondary pb-2">{announcement.title}</p>
                     {announcement.content}
@@ -69,17 +92,19 @@ export const Dashboard = ({ sidebarbtn_onClick }) => {
                 <Table className="appointments-table">
                   <thead>
                     <tr className="text-uppercase">
+                      <th scope="col">Title</th>
                       <th scope="col">Hours</th>
-                      <th scope="col">By Students</th>
-                      <th scope="col">Staff Involved</th>
+                      <th scope="col">Schedule Status</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>Like a butterflies</td>
-                      <td>Boxing</td>
-                      <td>8:00 AM - 11:00 AM</td>
-                    </tr>
+                    {appointments.map(appointment => (
+                      <tr>
+                        <td>{appointment.title}</td>
+                        <td>{appointment.fromDate} to {appointment.toDate}</td>
+                        <td>{appointment.state}</td>
+                      </tr>
+                    ))}
                   </tbody>
                 </Table>
               </div>

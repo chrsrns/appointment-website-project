@@ -9,6 +9,7 @@ import LoadingOverlay from 'react-loading-overlay-ts';
 import { RRule, RRuleSet } from 'rrule';
 import Select from 'react-select';
 import { customFetch } from '../../utils';
+import { Stack } from 'react-bootstrap';
 
 const DEFAULT_USER_TO_FILTER_VALUES = {
   id: '',
@@ -33,7 +34,6 @@ export default function DragAndDropCalendar({ localizer }) {
 
   const [eventsForRender, setEventsForRender] = useState([])
   const [eventsForBG, setEventsForBG] = useState([])
-  const [recurringEvents, setRecurringEvents] = useState([])
 
   const [showModal, setShowModal] = useState(false)
   const [modalId, setModalId] = useState('')
@@ -103,7 +103,7 @@ export default function DragAndDropCalendar({ localizer }) {
             return { value: staff, label: `[${staff.type}] ${staff.lname}, ${staff.fname} ${staff.mname}` }
           })])
         })
-    ]).then(() => {
+    ]).finally(() => {
       setIsLoading(false)
     })
   }
@@ -210,35 +210,42 @@ export default function DragAndDropCalendar({ localizer }) {
     fetchAll()
   }, [])
 
+  const appointmentsTypesColors = {
+    Available: "#dee2e6",
+    Pending: "#fff3cd",
+    Approved: "#afdbc7",
+    Ongoing: "#fecba1",
+    Completed: "#d8fea1"
+  }
   const eventPropGetter = useCallback(
     (event, start, end, isSelected) => ({
       ...(event.state === "Available" && {
         style: {
-          backgroundColor: '#dee2e6',
+          backgroundColor: appointmentsTypesColors.Available,
         },
         className: 'text-dark',
       }),
       ...(event.state === "Pending" && {
         style: {
-          backgroundColor: '#fff3cd',
+          backgroundColor: appointmentsTypesColors.Pending,
         },
         className: 'text-dark',
       }),
       ...(event.state === "Approved" && {
         style: {
-          backgroundColor: '#afdbc7',
+          backgroundColor: appointmentsTypesColors.Approved,
         },
         className: 'text-dark',
       }),
       ...(event.state === "Ongoing" && {
         style: {
-          backgroundColor: '#fecba1',
+          backgroundColor: appointmentsTypesColors.Ongoing,
         },
         className: 'text-dark',
       }),
       ...(event.state === "Completed" && {
         style: {
-          backgroundColor: '#e6e6e6',
+          backgroundColor: appointmentsTypesColors.Completed,
         },
         className: 'text-dark',
       }),
@@ -280,7 +287,7 @@ export default function DragAndDropCalendar({ localizer }) {
 
       }).catch((err) => {
         console.log(err)
-      })
+      }).finally(() => setIsLoading(false))
     },
     [setEventsFull]
   )
@@ -314,7 +321,7 @@ export default function DragAndDropCalendar({ localizer }) {
 
       }).catch((err) => {
         console.log(err)
-      })
+      }).finally(() => setIsLoading(false))
     },
     [setEventsFull]
   )
@@ -375,6 +382,14 @@ export default function DragAndDropCalendar({ localizer }) {
           }}
         />
         <Select className='fs-5 mb-3' options={staffListOptions} value={selectedStaffToFilter} onChange={handleStaffToFilterSelectionChange} />
+        <Stack direction='horizontal' className='gap-4 justify-content-center mb-2'>
+          {Object.keys(appointmentsTypesColors).map((key) => (
+            <div key={key}>
+              <i className="bi bi-caret-down-fill" style={{ color: appointmentsTypesColors[key] }}></i>
+              {key}
+            </div>
+          ))}
+        </Stack>
         <CalendarWithDragAndDrop
           dayLayoutAlgorithm="no-overlap"
           defaultView={Views.WEEK}

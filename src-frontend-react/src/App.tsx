@@ -95,36 +95,39 @@ type SidebarColBtnType = {
   value: string;
   link: string;
 };
+const radios: SidebarColBtnType[] = [
+  { name: "Dashboard", iconClass: "bi-columns-gap", value: "1", link: "/" },
+  {
+    name: "Appointments",
+    iconClass: "bi-clipboard",
+    value: "2",
+    link: "/appointments",
+  },
+  {
+    name: "Medical Records",
+    iconClass: "bi-bandaid",
+    value: "5",
+    link: "/medrecords",
+  },
+  {
+    name: "Feedback",
+    iconClass: "bi-graph-up",
+    value: "3",
+    link: "/feedback",
+  },
+];
 const SidebarCol = () => {
   const [radioValue, setRadioValue] = useState("1");
 
-  const radios: SidebarColBtnType[] = [
-    { name: "Dashboard", iconClass: "bi-columns-gap", value: "1", link: "/" },
-    {
-      name: "Appointments",
-      iconClass: "bi-clipboard",
-      value: "2",
-      link: "/appointments",
-    },
-    {
-      name: "Medical Records",
-      iconClass: "bi-bandaid",
-      value: "5",
-      link: "/medrecords",
-    },
-    {
-      name: "Feedback",
-      iconClass: "bi-graph-up",
-      value: "3",
-      link: "/feedback",
-    },
-    {
-      name: "Admin Tools",
-      iconClass: "bi-terminal",
-      value: "4",
-      link: "/admin",
-    },
-  ];
+  useEffect(() => {
+    if (Cookies.get("usertype") == "Admin")
+      radios.push({
+        name: "Admin Tools",
+        iconClass: "bi-terminal",
+        value: "4",
+        link: "/admin",
+      });
+  }, []);
 
   return (
     <Col
@@ -335,7 +338,11 @@ const App: React.FC = () => {
                       {onlineUsers.map((user) => {
                         console.log("online user: ", user);
                         return (
-                          <ListGroupItem>{`[${user.type}] ${user.lname}, ${user.fname} ${user.mname[0]}.`}</ListGroupItem>
+                          <ListGroupItem
+                            key={
+                              user.fname + user.mname + user.lname + user.type
+                            }
+                          >{`[${user.type}] ${user.lname}, ${user.fname} ${user.mname[0]}.`}</ListGroupItem>
                         );
                       })}
                     </ListGroup>

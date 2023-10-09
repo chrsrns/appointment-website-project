@@ -104,7 +104,11 @@ const UserApprovalComponent = () => {
       <Card className="shadow-sm">
         <Card.Header as={"h2"}>User Registration Approval</Card.Header>
         <Card.Body>
-          <ListGroup>{renderUserList()}</ListGroup>
+          <ListGroup>{
+            users.length !== 0
+              ? renderUserList()
+              : <div className='text-secondary align-self-center'>Nothing to show</div>
+          }</ListGroup>
         </Card.Body>
       </Card>
     </div>
