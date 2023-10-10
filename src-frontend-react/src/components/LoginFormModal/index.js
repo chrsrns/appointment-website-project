@@ -51,9 +51,6 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
   };
 
   useEffect(() => {
-    fetchAll()
-  }, [])
-  useEffect(() => {
     socket.on("connect_error", (err) => {
       console.log(err.message)
     });
