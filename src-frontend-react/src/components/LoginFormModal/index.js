@@ -50,19 +50,6 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
     // and handle success/failure accordingly
   };
 
-  const fetchAll = () => {
-    Promise.all([
-
-      customFetch(`${global.server_backend_url}/backend/auth/usertypes`)
-        .then((response) => {
-          if (response.ok)
-            return response.json(); else throw response;
-        }).then((data) => {
-          setUserTypes(data)
-        })
-    ])
-  }
-
   useEffect(() => {
     fetchAll()
   }, [])
