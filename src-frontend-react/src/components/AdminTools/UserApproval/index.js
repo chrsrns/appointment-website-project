@@ -1,5 +1,4 @@
-import { user_approval_type } from '@prisma/client';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, ListGroup, Container, Row, Col, Card } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import { customFetch } from '../../../utils';
@@ -29,12 +28,12 @@ const UserApprovalComponent = () => {
 
   const approveUser = (userId) => {
     setApprovedUsers([...approvedUsers, userId]);
-    setApproval(userId, user_approval_type.Approved)
+    setApproval(userId, "Approved")
   };
 
   const denyUser = (userId) => {
     setDeniedUsers([...deniedUsers, userId]);
-    setApproval(userId, user_approval_type.Unapproved)
+    setApproval(userId, "Unapproved")
   };
 
 
