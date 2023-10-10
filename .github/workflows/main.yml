@@ -19,15 +19,15 @@ jobs:
           node-version: 14  # Adjust the Node.js version as needed
 
       - name: Install Dependencies
-        working-directory: frontend
+        working-directory: src-frontend-react
         run: npm install
 
       - name: Build Frontend
-        working-directory: frontend
+        working-directory: src-frontend-react
         run: npm run build
 
       - name: Move Build Files
-        run: mv frontend/build ./frontend-build
+        run: mv src-frontend-react/build ./frontend-build
 
       - name: Commit and Push Build Files
         run: |
