@@ -1,12 +1,12 @@
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { Button, Container, Form, ListGroup, Modal, Stack, Tab, Tabs } from "react-bootstrap";
+import { Button, Form, ListGroup, Modal, Stack, Tab, Tabs } from "react-bootstrap";
 
 import LoadingOverlay from 'react-loading-overlay-ts';
 import { customFetch } from "../../utils";
 import Chat from "../Chat/ChatBubble";
 
-const AppointmentFormUserList = ({ fname, mname, lname, id, onButtonClick }) => {
+const AppointmentFormUserList = ({ fname, mname, lname, onButtonClick }) => {
   return (
     <ListGroup.Item className="d-flex justify-content-between align-items-center">
       <>
@@ -20,13 +20,6 @@ const AppointmentFormUserList = ({ fname, mname, lname, id, onButtonClick }) => 
 
 /// TODO Refactor this component to imitate use of default values in RegistrationForm
 export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handleCloseCallback }) => {
-  const [defaultValues, setDefaultValues] = useState({
-    selectedStaffList: [],
-    selectedStudentList: [],
-    selectedScheduleType: "",
-    appointmentTitle: "",
-    appointmentContent: ""
-  })
 
   const [staffList, setStaffList] = useState([])
   const [selectedStaffList, setSelectedStaffList] = useState([]);
@@ -73,7 +66,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
           else throw response;
         })
         .then((data) => {
-          if (data != scheduleTypes)
+          if (data !== scheduleTypes)
             setScheduleTypes(data);
           return data;
         }),
@@ -84,7 +77,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
           else throw response;
         })
         .then((data) => {
-          if (data != scheduleRepeatTypes)
+          if (data !== scheduleRepeatTypes)
             setScheduleRepeatTypes(data);
           return data;
         }),
@@ -97,7 +90,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
           throw response;
         })
         .then((data) => {
-          if (data != studentsList)
+          if (data !== studentsList)
             setStudentsList(data);
         }),
 
@@ -109,11 +102,11 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
           throw response;
         })
         .then((data) => {
-          if (data != staffList)
+          if (data !== staffList)
             setStaffList(data);
         }),
 
-    ]).then(responses => {
+    ]).then(() => {
       console.log("done")
       setIsLoading(false)
     })

@@ -1,31 +1,10 @@
-import { useEffect, useState } from "react";
-import { Button, Card, Col, Form, FormGroup, Row } from "react-bootstrap";
-import { customFetch } from "../../utils";
+import { Button, Card, Col, Row } from "react-bootstrap";
 import { Jumbotron } from "../Jumbotron";
 import { AnnouncementsForm } from "./AnnouncementsForm";
 import RegistrationForm from "./RegistrationForm";
 import UserApprovalComponent from "./UserApproval";
 
 export const AdminTools = ({ sidebarbtn_onClick }) => {
-
-  const [data, setData] = useState([]);
-
-  useEffect(() => {
-    customFetch(`${global.server_backend_url}/backend/users/announcements`)
-      .then((response) => {
-        if (response.ok) {
-          console.log("res ok")
-          return response.json();
-        }
-        throw response;
-      })
-      .then((data) => {
-        setData(data);
-        console.log(data);
-      }).catch((err) => {
-        console.log(err)
-      });
-  }, []);
 
   return (
     <>

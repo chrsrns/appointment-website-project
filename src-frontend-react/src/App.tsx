@@ -8,8 +8,6 @@ import {
   Card,
   Col,
   Container,
-  Nav,
-  NavDropdown,
   Navbar,
   Row,
   Stack,
@@ -38,9 +36,6 @@ import SideNotifications from "./components/Notifications";
 import {
   enable as enableDarkMode,
   disable as disableDarkMode,
-  auto as followSystemColorScheme,
-  exportGeneratedCSS as collectCSS,
-  isEnabled as isDarkReaderEnabled,
 } from "darkreader";
 import { FeedbackForm } from "./components/FeedbackForm";
 
@@ -117,8 +112,6 @@ const radios: SidebarColBtnType[] = [
   },
 ];
 const SidebarCol = () => {
-  const [radioValue, setRadioValue] = useState("1");
-
   useEffect(() => {
     if (Cookies.get("usertype") == "Admin")
       radios.push({
@@ -145,8 +138,6 @@ const SidebarCol = () => {
               name={radio.name}
               iconClass={radio.iconClass}
               value={radio.value}
-              radioValue={radioValue}
-              setRadioValue={setRadioValue}
               link={radio.link}
             />
           ))}
@@ -156,15 +147,7 @@ const SidebarCol = () => {
   );
 };
 
-const SidebarColBtn = ({
-  idx,
-  name,
-  iconClass,
-  value,
-  radioValue,
-  setRadioValue,
-  link,
-}) => {
+const SidebarColBtn = ({ idx, name, iconClass, value, link }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -174,9 +157,8 @@ const SidebarColBtn = ({
       variant={link === location.pathname ? "primary" : "secondary"}
       name="radio"
       value={value}
-      onClick={(e) => {
+      onClick={() => {
         navigate(link);
-        setRadioValue(e.currentTarget.value);
       }}
       size="lg"
       className="shadow-sm rounded-pill"

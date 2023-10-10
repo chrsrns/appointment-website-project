@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Container, Row, Col, Card, Stack, Form, Button } from 'react-bootstrap';
+import { useEffect, useState } from 'react';
+import { Container, Card, Stack, Form, Button } from 'react-bootstrap';
 import { useCookies } from 'react-cookie';
 import LoadingOverlay from 'react-loading-overlay-ts';
 import { customFetch } from '../../../utils';
@@ -9,7 +9,7 @@ const DEFAULT_FORM_VALUES = {
 }
 
 const Chat = ({ scheduleId }) => {
-  const [cookies, setCookie] = useCookies(['login_username'])
+  const [cookies] = useCookies(['login_username'])
 
   const [messages, setMessages] = useState([])
   const [formData, setFormData] = useState(DEFAULT_FORM_VALUES);

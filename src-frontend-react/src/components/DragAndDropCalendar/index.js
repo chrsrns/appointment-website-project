@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { Calendar, Views, DateLocalizer } from 'react-big-calendar'
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
@@ -60,7 +60,7 @@ export default function DragAndDropCalendar({ localizer }) {
           if (response.ok) return response.json();
           else throw response;
         }).then((data) => {
-          if (data != eventsFull) {
+          if (data !== eventsFull) {
             setEventsFull(data);
 
             setEventsMapped([...data.map((eventFull) => {
@@ -218,7 +218,7 @@ export default function DragAndDropCalendar({ localizer }) {
     Completed: "#d8fea1"
   }
   const eventPropGetter = useCallback(
-    (event, start, end, isSelected) => ({
+    (event, _start, _end) => ({
       ...(event.state === "Available" && {
         style: {
           backgroundColor: appointmentsTypesColors.Available,

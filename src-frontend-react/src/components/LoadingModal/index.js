@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Modal, Spinner } from 'react-bootstrap';
 
 const FullscreenLoaderModal = ({ show }) => {

@@ -8,8 +8,6 @@ import DragAndDropCalendar from "../DragAndDropCalendar";
 
 const localizer = momentLocalizer(moment);
 export const Appointments = ({ sidebarbtn_onClick }) => {
-  const [data, setData] = useState([]);
-
   return (
     <>
       <p className="float-start d-lg-none d-md-block">

@@ -70,7 +70,7 @@ export const FeedbackForm = ({ sidebarbtn_onClick }) => {
         if (response.ok) {
           return response.json();
         } else throw response;
-      }).then((data) => {
+      }).then(() => {
         toast(`Thank you for your feedback!`)
       }).catch((err) => {
         console.log(err)

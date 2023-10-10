@@ -1,34 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { Modal, Button, Form, Tab, Tabs, Col, Row, ToastContainer, Toast } from 'react-bootstrap';
+import { useEffect, useState } from 'react';
+import { Modal, Button, Form, Tab, Tabs, ToastContainer, Toast } from 'react-bootstrap';
 import { useCookies } from 'react-cookie';
 
 import LoadingOverlay from "react-loading-overlay-ts";
-import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
 
 import RegistrationForm from './RegistrationForm';
 import { socket } from '../../socket';
 
-import Cookies from "js-cookie";
-
-const DEFAULT_REG_FORM_VALUES = {
-  fname: '',
-  mname: '',
-  lname: '',
-  addr: '',
-  cnum: '',
-  emailaddr: '',
-  bdate: '',
-  type: '',
-  login_username: '', // Add username field
-}
-
 export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
-  const [cookies, setCookie] = useCookies(['accessToken', 'refreshToken', 'login_username'])
-
-  const [regFormData, setRegFormData] = useState(DEFAULT_REG_FORM_VALUES)
-  const [regFormErrors, setRegFormErrors] = useState(DEFAULT_REG_FORM_VALUES)
-  const [userTypes, setUserTypes] = useState([])
+  const [, setCookie] = useCookies(['accessToken', 'refreshToken', 'login_username'])
 
   const [showNotif, setShowNotif] = useState(false)
   const [responseHeader, setResponseHeader] = useState("")
@@ -81,14 +62,6 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
         })
     ])
   }
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setRegFormData({
-      ...regFormData,
-      [name]: value,
-    });
-  };
 
   useEffect(() => {
     fetchAll()

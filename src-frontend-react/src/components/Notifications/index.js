@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Alert, ListGroup } from "react-bootstrap";
-import LoadingOverlay from "react-loading-overlay-ts";
 import { toast } from "react-toastify";
 import { customFetch } from "../../utils";
 

@@ -1,6 +1,6 @@
 import moment from 'moment';
-import React, { useEffect, useState } from 'react';
-import { Form, Button, Container, Row, Col, Stack } from 'react-bootstrap';
+import { useEffect, useState } from 'react';
+import { Form, Button, Row, Col, Stack } from 'react-bootstrap';
 import Select from 'react-select'
 
 import LoadingOverlay from 'react-loading-overlay-ts';
@@ -68,7 +68,7 @@ function RegistrationForm() {
           setUserTypes(data)
           return data;
         })
-    ]).then(responses => {
+    ]).then(() => {
       console.log("done")
       setIsLoading(false)
     })
@@ -180,7 +180,7 @@ function RegistrationForm() {
     }
 
     // Validate Password
-    if (formData.login_password.length < 6 && formData.login_password.length != 0 && formData.id) {
+    if (formData.login_password.length < 6 && formData.login_password.length !== 0 && formData.id) {
       newFormErrors.login_password = 'Password must be at least 6 characters long or be left blank to leave unchanged';
       isValid = false;
     } else if (formData.login_password.length < 6 && !formData.id) {
