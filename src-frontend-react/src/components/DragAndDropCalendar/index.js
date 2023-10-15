@@ -9,7 +9,8 @@ import LoadingOverlay from 'react-loading-overlay-ts';
 import { RRule, RRuleSet } from 'rrule';
 import Select from 'react-select';
 import { customFetch } from '../../utils';
-import { Stack } from 'react-bootstrap';
+import { Button, Stack } from 'react-bootstrap';
+import { PrintModal } from '../PrintModal';
 
 const DEFAULT_USER_TO_FILTER_VALUES = {
   id: '',
@@ -27,6 +28,7 @@ const DEFAULT_STAFF_TO_FILTER_VALUE = { value: { ...DEFAULT_USER_TO_FILTER_VALUE
 const CalendarWithDragAndDrop = withDragAndDrop(Calendar)
 
 export default function DragAndDropCalendar({ localizer }) {
+  const [showPrintModal, setShowPrintModal] = useState(false)
   const [date, setDate] = useState(new Date())
 
   const [eventsFull, setEventsFull] = useState([])
@@ -103,7 +105,9 @@ export default function DragAndDropCalendar({ localizer }) {
             return { value: staff, label: `[${staff.type}] ${staff.lname}, ${staff.fname} ${staff.mname}` }
           })])
         })
-    ]).finally(() => {
+    ]).catch((err) => {
+      console.error(err)
+    }).finally(() => {
       setIsLoading(false)
     })
   }
@@ -371,7 +375,7 @@ export default function DragAndDropCalendar({ localizer }) {
 
   return (
     <LoadingOverlay active={isLoading} spinner text='Waiting for update...'>
-      <div>
+      <div className='text-center'>
         <AppointmentFormModal
           id={modalId}
           show={showModal}
@@ -381,6 +385,12 @@ export default function DragAndDropCalendar({ localizer }) {
             fetchAll()
           }}
         />
+        <PrintModal
+          show={showPrintModal}
+          records={eventsFull}
+          onClose={() => {
+            setShowPrintModal(false)
+          }} />
         <Select className='fs-5 mb-3' options={staffListOptions} value={selectedStaffToFilter} onChange={handleStaffToFilterSelectionChange} />
         <Stack direction='horizontal' className='gap-4 justify-content-center mb-2'>
           {Object.keys(appointmentsTypesColors).map((key) => (
@@ -415,6 +425,7 @@ export default function DragAndDropCalendar({ localizer }) {
           selectable
           style={{ height: '40rem' }}
         />
+        <Button className='mt-3' onClick={() => setShowPrintModal(true)}>Print</Button>
 
       </div>
     </LoadingOverlay>

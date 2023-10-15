@@ -113,8 +113,17 @@ router.get("/schedules", async (req, res, next) => {
         toDate: true,
         title: true,
         desc: true,
-        repeat: true
-      }
+        repeat: true,
+        Users: {
+          select: {
+            id: true,
+            fname: true,
+            mname: true,
+            lname: true,
+            type: true
+          }
+        }
+      },
     })
     res.json(schedules)
   } catch (err) {
@@ -191,8 +200,17 @@ router.get("/schedules/by-user/:id", async (req, res, next) => {
         toDate: true,
         title: true,
         desc: true,
-        repeat: true
-      }
+        repeat: true,
+        Users: {
+          select: {
+            id: true,
+            fname: true,
+            mname: true,
+            lname: true,
+            type: true
+          }
+        }
+      },
     })
     res.json(schedules)
   } catch (err) {
