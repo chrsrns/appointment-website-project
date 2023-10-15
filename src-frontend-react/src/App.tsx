@@ -69,17 +69,27 @@ const TopBar = () => {
           <Navbar.Brand href="#home">Kapayapaan Integrated School</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
         </>
-        <Button onClick={handleDarkModeToggleClick}>
-          {darkMode ? (
-            <>
-              <i className="bi bi-moon-stars-fill" /> Dark
-            </>
-          ) : (
-            <>
-              <i className="bi bi-brightness-high" /> Light
-            </>
-          )}
-        </Button>
+        <Stack direction="horizontal" gap={3}>
+          <Button onClick={handleDarkModeToggleClick}>
+            {darkMode ? (
+              <>
+                <i className="bi bi-moon-stars-fill" /> Dark
+              </>
+            ) : (
+              <>
+                <i className="bi bi-brightness-high" /> Light
+              </>
+            )}
+          </Button>
+          <Button
+            onClick={() => {
+              Cookies.set("refreshToken", "");
+              Cookies.set("accessToken", "");
+            }}
+          >
+            Logout
+          </Button>
+        </Stack>
       </Container>
     </Navbar>
   );
