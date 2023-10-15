@@ -22,7 +22,7 @@ model User {
 
   addr      String   @db.VarChar(255)
   cnum      String   @db.VarChar(50)
-  emailaddr String   @db.VarChar(50)
+  emailaddr String   @unique @db.VarChar(50)
   bdate     DateTime @db.Date
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
