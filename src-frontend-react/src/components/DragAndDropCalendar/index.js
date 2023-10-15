@@ -50,7 +50,7 @@ export default function DragAndDropCalendar({ localizer }) {
     toDate: Date.now(),
   })
 
-  const fetchAll = () => {
+  const fetchAll = useCallback(() => {
     const request = selectedStaffToFilter.value.id ?
       `${global.server_backend_url}/backend/appointments/schedules/by-user/${selectedStaffToFilter.value.id}`
       : `${global.server_backend_url}/backend/appointments/schedules`
@@ -110,45 +110,9 @@ export default function DragAndDropCalendar({ localizer }) {
     }).finally(() => {
       setIsLoading(false)
     })
-  }
-  useEffect(() => updateEvents(), [eventsMapped])
+  }, [eventsFull, selectedStaffToFilter.value.id])
 
-  const updateEvents = () => {
-
-    const eventsForBG = [...eventsMapped.filter((event) => event.state === "Available" && event.repeat === "None")]
-
-    const eventsForFG = [...eventsMapped.filter((event) => event.state !== "Available" && event.repeat === "None")]
-
-    const recurringEventsForBG = [].concat(...eventsMapped
-      .filter((event) => event.state === "Available" && event.repeat !== "None")
-      .map((event) => {
-        return getRecurredEvents(event)
-      }))
-
-    const recurringEventsForFG = [].concat(...eventsMapped
-      .filter((event) => event.state !== "Available" && event.repeat !== "None")
-      .map((event) => {
-        return getRecurredEvents(event)
-      }))
-
-    const compiledFGEvents = [...eventsForFG, ...recurringEventsForFG]
-    const compiledBGEvents = [...eventsForBG, ...recurringEventsForBG]
-
-    // console.log(compiledBGEvents)
-
-    setEventsForRender(compiledFGEvents)
-    setEventsForBG(compiledBGEvents)
-
-    // console.log(
-    //   `eventsMapped: ${eventsMapped}`
-    // )
-
-    // console.log(recurringEventsForFG)
-    // console.log(date)
-
-  }
-
-  const getRecurredEvents = (event) => {
+  const getRecurredEvents = useCallback((event) => {
     var repeatRule;
     switch (event.repeat) {
       case "Daily":
@@ -159,6 +123,8 @@ export default function DragAndDropCalendar({ localizer }) {
         break
       case "Monthly":
         repeatRule = RRule.MONTHLY
+        break
+      default:
         break
     }
     console.log(`rule: ${event.repeat}`)
@@ -204,15 +170,53 @@ export default function DragAndDropCalendar({ localizer }) {
         repeat: event.repeat
       }
     })
-  }
+  }, [date])
+
+  const updateEvents = useCallback(() => {
+
+    const eventsForBG = [...eventsMapped.filter((event) => event.state === "Available" && event.repeat === "None")]
+
+    const eventsForFG = [...eventsMapped.filter((event) => event.state !== "Available" && event.repeat === "None")]
+
+    const recurringEventsForBG = [].concat(...eventsMapped
+      .filter((event) => event.state === "Available" && event.repeat !== "None")
+      .map((event) => {
+        return getRecurredEvents(event)
+      }))
+
+    const recurringEventsForFG = [].concat(...eventsMapped
+      .filter((event) => event.state !== "Available" && event.repeat !== "None")
+      .map((event) => {
+        return getRecurredEvents(event)
+      }))
+
+    const compiledFGEvents = [...eventsForFG, ...recurringEventsForFG]
+    const compiledBGEvents = [...eventsForBG, ...recurringEventsForBG]
+
+    // console.log(compiledBGEvents)
+
+    setEventsForRender(compiledFGEvents)
+    setEventsForBG(compiledBGEvents)
+
+    // console.log(
+    //   `eventsMapped: ${eventsMapped}`
+    // )
+
+    // console.log(recurringEventsForFG)
+    // console.log(date)
+
+  }, [eventsMapped, getRecurredEvents])
+
   useEffect(() => {
     updateEvents()
-  }, [date])
+  }, [date, updateEvents])
 
   useEffect(() => {
     if (!isLoading) setIsLoading(true)
     fetchAll()
-  }, [])
+  }, [fetchAll, isLoading])
+
+  useEffect(() => updateEvents(), [eventsMapped, updateEvents])
 
   const appointmentsTypesColors = {
     Available: "#dee2e6",
@@ -254,7 +258,7 @@ export default function DragAndDropCalendar({ localizer }) {
         className: 'text-dark',
       }),
     }),
-    []
+    [appointmentsTypesColors.Approved, appointmentsTypesColors.Available, appointmentsTypesColors.Completed, appointmentsTypesColors.Ongoing, appointmentsTypesColors.Pending]
   )
 
   const moveEvent = useCallback(
@@ -293,7 +297,7 @@ export default function DragAndDropCalendar({ localizer }) {
         console.log(err)
       }).finally(() => setIsLoading(false))
     },
-    [setEventsFull]
+    [fetchAll]
   )
 
   const resizeEvent = useCallback(
@@ -327,7 +331,7 @@ export default function DragAndDropCalendar({ localizer }) {
         console.log(err)
       }).finally(() => setIsLoading(false))
     },
-    [setEventsFull]
+    [fetchAll]
   )
 
   const handleSelectSlot = useCallback(
@@ -369,7 +373,7 @@ export default function DragAndDropCalendar({ localizer }) {
 
   useEffect(() => {
     fetchAll();
-  }, [selectedStaffToFilter])
+  }, [selectedStaffToFilter, fetchAll])
 
   const onNavigate = useCallback((newDate) => setDate(newDate), [setDate])
 
