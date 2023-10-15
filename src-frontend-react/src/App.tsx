@@ -91,36 +91,42 @@ type SidebarColBtnType = {
   value: string;
   link: string;
 };
-const radios: SidebarColBtnType[] = [
-  { name: "Dashboard", iconClass: "bi-columns-gap", value: "1", link: "/" },
-  {
-    name: "Appointments",
-    iconClass: "bi-clipboard",
-    value: "2",
-    link: "/appointments",
-  },
-  {
-    name: "Medical Records",
-    iconClass: "bi-bandaid",
-    value: "5",
-    link: "/medrecords",
-  },
-  {
-    name: "Feedback",
-    iconClass: "bi-graph-up",
-    value: "3",
-    link: "/feedback",
-  },
-];
+
 const SidebarCol = () => {
+  const [radios, setRadios] = useState([
+    { name: "Dashboard", iconClass: "bi-columns-gap", value: "1", link: "/" },
+    {
+      name: "Appointments",
+      iconClass: "bi-clipboard",
+      value: "2",
+      link: "/appointments",
+    },
+    {
+      name: "Medical Records",
+      iconClass: "bi-bandaid",
+      value: "5",
+      link: "/medrecords",
+    },
+    {
+      name: "Feedback",
+      iconClass: "bi-graph-up",
+      value: "3",
+      link: "/feedback",
+    },
+  ]);
   useEffect(() => {
-    if (Cookies.get("usertype") == "Admin")
-      radios.push({
-        name: "Admin Tools",
-        iconClass: "bi-terminal",
-        value: "4",
-        link: "/admin",
-      });
+    console.log("usertype: ", Cookies.get("usertype"));
+    console.log("isAdmin: ", Cookies.get("usertype") === "Admin");
+    if (Cookies.get("usertype") === "Admin")
+      setRadios([
+        ...radios,
+        {
+          name: "Admin Tools",
+          iconClass: "bi-terminal",
+          value: "4",
+          link: "/admin",
+        },
+      ]);
   }, []);
 
   return (
