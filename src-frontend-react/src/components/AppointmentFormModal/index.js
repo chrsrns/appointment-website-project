@@ -1,5 +1,5 @@
 import moment from "moment";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Form, ListGroup, Modal, Stack, Tab, Tabs } from "react-bootstrap";
 
 import LoadingOverlay from 'react-loading-overlay-ts';
@@ -57,7 +57,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
 
   };
 
-  const fetchAll = useCallback(async () => {
+  const fetchAll = async () => {
 
     Promise.all([
       customFetch(`${global.server_backend_url}/backend/appointments/scheduletypes`)
@@ -110,7 +110,9 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
       console.log("done")
       setIsLoading(false)
     })
-  }, [scheduleRepeatTypes, scheduleTypes, staffList, studentsList])
+
+
+  }
 
   useEffect(() => {
     setIsLoading(true)
@@ -119,7 +121,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
     //   fetchAll();
     // }, 5000)
     // return () => clearInterval(intervalId); //This is important
-  }, [fetchAll])
+  }, [])
 
   useEffect(() => {
     console.log(`id: ${id}`)
@@ -168,14 +170,14 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
     }
 
 
-  }, [id, show, eventRange.fromDate, eventRange.toDate, formData])
+  }, [id, show])
 
   ///https://stackoverflow.com/questions/62111525/how-i-add-an-object-to-an-existing-array-react 
   //https://stackoverflow.com/questions/45277306/check-if-item-exists-in-array-react
   const addStudentToSelection = () => {
     setSelectedStudentsList(prev => [...prev,
     ...studentsList.filter((student) => {
-      return student.id === selectedStudent && selectedStudentsList.every(x => x.id !== selectedStudent)
+      return student.id == selectedStudent && selectedStudentsList.every(x => x.id !== selectedStudent)
     })
     ])
   }
@@ -183,7 +185,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
   const addStaffToSelection = () => {
     setSelectedStaffList(prev => [...prev,
     ...staffList.filter((staff) => {
-      return staff.id === selectedStaff && selectedStaffList.every(x => x.id !== selectedStaff)
+      return staff.id == selectedStaff && selectedStaffList.every(x => x.id !== selectedStaff)
     })
     ])
   }
