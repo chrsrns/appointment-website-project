@@ -25,7 +25,7 @@ router.get("/users", async (req, res, next) => {
     });
     res.json(user);
   } catch (err) {
-    next(err);
+    res.status(500).json({ msg: err.message });
   }
 });
 
@@ -50,7 +50,7 @@ router.get("/pendingusers", async (req, res, next) => {
     });
     res.json(user);
   } catch (err) {
-    next(err);
+    res.status(500).json({ msg: err.message });
   }
 });
 
@@ -89,7 +89,7 @@ router.get("/usertypes", async (req, res, next) => {
 
     res.json(userTypesToReturn);
   } catch (err) {
-    next(err);
+    res.status(500).json({ msg: err.message });
   }
 });
 
@@ -175,7 +175,7 @@ router.get("/announcements", async (req, res, next) => {
     });
     res.json(announcements);
   } catch (err) {
-    next(err);
+    res.status(500).json({ msg: err.message });
   }
 });
 

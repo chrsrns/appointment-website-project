@@ -25,7 +25,7 @@ router.get("/students", async (req, res, next) => {
     })
     res.json(users);
   } catch (err) {
-    next(err);
+    res.status(500).json({ msg: err.message });
   }
 });
 
@@ -57,7 +57,7 @@ router.get("/staff", async (req, res, next) => {
     })
     res.json(users);
   } catch (err) {
-    next(err);
+    res.status(500).json({ msg: err.message });
   }
 });
 
@@ -71,7 +71,7 @@ router.get("/scheduletypes", async (req, res, next) => {
 
     res.json(result);
   } catch (err) {
-    next(err);
+    res.status(500).json({ msg: err.message });
   }
 });
 
@@ -85,7 +85,7 @@ router.get("/schedulerepeattypes", async (req, res, next) => {
 
     res.json(result);
   } catch (err) {
-    next(err);
+    res.status(500).json({ msg: err.message });
   }
 });
 
@@ -104,7 +104,8 @@ router.get("/schedules", async (req, res, next) => {
     })
     res.json(schedules)
   } catch (err) {
-    next(err)
+    console.error(err)
+    res.status(500).json({ msg: err.message });
   }
 })
 
@@ -135,7 +136,7 @@ router.get("/schedules-summary", async (req, res, next) => {
     })
     res.json(schedules)
   } catch (err) {
-    next(err)
+    res.status(500).json({ msg: err.message });
   }
 })
 
@@ -163,7 +164,7 @@ router.get("/schedules/by-user/:id", async (req, res, next) => {
     })
     res.json(schedules)
   } catch (err) {
-    next(err)
+    res.status(500).json({ msg: err.message });
   }
 })
 
@@ -298,8 +299,7 @@ router.get("/messages/by-schedule/:id", async (req, res, next) => {
     })
     res.json(schedules)
   } catch (err) {
-    console.error(err)
-    next(err)
+    res.status(500).json({ msg: err.message });
   }
 })
 

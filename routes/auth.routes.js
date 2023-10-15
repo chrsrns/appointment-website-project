@@ -162,7 +162,7 @@ router.get("/usertypes", async (req, res, next) => {
 
     res.json(userTypesToReturn);
   } catch (err) {
-    next(err);
+    res.status(500).json({ msg: err.message });
   }
 });
 
@@ -175,7 +175,7 @@ router.post('/revokeRefreshTokens', async (req, res, next) => {
     await revokeTokens(userId);
     res.json({ message: `Tokens revoked for user with id #${userId}` });
   } catch (err) {
-    next(err);
+    res.status(500).json({ msg: err.message });
   }
 });
 

@@ -14,7 +14,7 @@ router.get("/profile", isAuthenticated, async (req, res, next) => {
     delete user.login_password;
     res.json(user);
   } catch (err) {
-    next(err);
+    res.status(500).json({ msg: err.message });
   }
 });
 
