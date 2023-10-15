@@ -38,6 +38,7 @@ import {
   disable as disableDarkMode,
 } from "darkreader";
 import { FeedbackForm } from "./components/FeedbackForm";
+import { LandingPage } from "./components/LandingPage";
 
 /// TODO Separate components to other files
 
@@ -172,6 +173,8 @@ const SidebarColBtn = ({ idx, name, iconClass, value, link }) => {
 
 const App: React.FC = () => {
   const [isActive, setIsActive] = useState(false);
+  const [isLandingPageActive, setIsLandingPageActive] = useState(true);
+
   const sidebarbtn_onClick = () => setIsActive(!isActive);
   const mainRowClassName = `row-offcanvas row-offcanvas-left ${
     isActive ? "active" : ""
@@ -181,6 +184,8 @@ const App: React.FC = () => {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLogInDone, setIsLogInDone] = useState(false);
+
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const [onlineUsers, setOnlineUsers] = useState([]);
 
@@ -248,6 +253,10 @@ const App: React.FC = () => {
 
   useEffect(() => {
     attemptSocketConnection();
+    if (!cookies.accessToken) {
+      setIsLandingPageActive(true);
+      setIsLoggedIn(false);
+    }
   }, [cookies]);
 
   useEffect(() => {
@@ -261,85 +270,95 @@ const App: React.FC = () => {
     };
   }, []);
 
+  const handleLandingPageClick = () => {
+    setIsLandingPageActive(false);
+  };
+
   return (
     <BrowserRouter>
       <LoadingOverlay spinner active={!isLogInDone}>
         <TopBar />
         <LoginFormModal
-          show={!isLoggedIn}
+          show={!isLoggedIn && !isLandingPageActive}
           onHide={setIsLoggedIn}
           isLoggingIn={!isLogInDone}
         />
-        <Stack className="pt-4 px-2 bg-body">
-          <Container fluid>
-            <Row className={mainRowClassName}>
-              <Col sm={12} lg={{ span: 6, order: 3 }} id="ui-body">
-                <Routes>
-                  <Route
-                    path="/"
-                    element={
-                      <Dashboard sidebarbtn_onClick={sidebarbtn_onClick} />
-                    }
-                  />
-                  <Route
-                    path="/appointments"
-                    element={
-                      <Appointments sidebarbtn_onClick={sidebarbtn_onClick} />
-                    }
-                  />
-                  <Route
-                    path="/medrecords"
-                    element={
-                      <MedicalRecords sidebarbtn_onClick={sidebarbtn_onClick} />
-                    }
-                  />
-                  <Route
-                    path="/feedback"
-                    element={
-                      <FeedbackForm sidebarbtn_onClick={sidebarbtn_onClick} />
-                    }
-                  />
-                  <Route
-                    path="/admin"
-                    element={
-                      <AdminTools sidebarbtn_onClick={sidebarbtn_onClick} />
-                    }
-                  />
-                </Routes>
-              </Col>
-              <SidebarCol />
-              <Col
-                sm={12}
-                lg={{ span: 3, order: "last" }}
-                style={{ marginBottom: "3rem" }}
-              >
-                <Card className="shadow-sm mb-3">
-                  <Card.Header as={"h2"}>People Online</Card.Header>
-                  <Card.Body>
-                    <ListGroup>
-                      {onlineUsers.map((user) => {
-                        console.log("online user: ", user);
-                        return (
-                          <ListGroupItem
-                            key={
-                              user.fname + user.mname + user.lname + user.type
-                            }
-                          >{`[${user.type}] ${user.lname}, ${user.fname} ${user.mname[0]}.`}</ListGroupItem>
-                        );
-                      })}
-                    </ListGroup>
-                  </Card.Body>
-                </Card>
-                <Card className="shadow-sm mb-3">
-                  <Card.Header as={"h2"}>Notifications</Card.Header>
-                  <Card.Body>
-                    <SideNotifications />
-                  </Card.Body>
-                </Card>
-              </Col>
-            </Row>
-          </Container>
-        </Stack>
+        {isLandingPageActive || !isLoggedIn ? (
+          <LandingPage onButtonClick={handleLandingPageClick} />
+        ) : (
+          <Stack className="pt-4 px-2 bg-body">
+            <Container fluid>
+              <Row className={mainRowClassName}>
+                <Col sm={12} lg={{ span: 6, order: 3 }} id="ui-body">
+                  <Routes>
+                    <Route
+                      path="/"
+                      element={
+                        <Dashboard sidebarbtn_onClick={sidebarbtn_onClick} />
+                      }
+                    />
+                    <Route
+                      path="/appointments"
+                      element={
+                        <Appointments sidebarbtn_onClick={sidebarbtn_onClick} />
+                      }
+                    />
+                    <Route
+                      path="/medrecords"
+                      element={
+                        <MedicalRecords
+                          sidebarbtn_onClick={sidebarbtn_onClick}
+                        />
+                      }
+                    />
+                    <Route
+                      path="/feedback"
+                      element={
+                        <FeedbackForm sidebarbtn_onClick={sidebarbtn_onClick} />
+                      }
+                    />
+                    <Route
+                      path="/admin"
+                      element={
+                        <AdminTools sidebarbtn_onClick={sidebarbtn_onClick} />
+                      }
+                    />
+                  </Routes>
+                </Col>
+                <SidebarCol />
+                <Col
+                  sm={12}
+                  lg={{ span: 3, order: "last" }}
+                  style={{ marginBottom: "3rem" }}
+                >
+                  <Card className="shadow-sm mb-3">
+                    <Card.Header as={"h2"}>People Online</Card.Header>
+                    <Card.Body>
+                      <ListGroup>
+                        {onlineUsers.map((user) => {
+                          console.log("online user: ", user);
+                          return (
+                            <ListGroupItem
+                              key={
+                                user.fname + user.mname + user.lname + user.type
+                              }
+                            >{`[${user.type}] ${user.lname}, ${user.fname} ${user.mname[0]}.`}</ListGroupItem>
+                          );
+                        })}
+                      </ListGroup>
+                    </Card.Body>
+                  </Card>
+                  <Card className="shadow-sm mb-3">
+                    <Card.Header as={"h2"}>Notifications</Card.Header>
+                    <Card.Body>
+                      <SideNotifications />
+                    </Card.Body>
+                  </Card>
+                </Col>
+              </Row>
+            </Container>
+          </Stack>
+        )}
       </LoadingOverlay>
       <ToastContainer />
     </BrowserRouter>
