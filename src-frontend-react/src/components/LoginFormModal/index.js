@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Modal, Button, Form, Tab, Tabs, ToastContainer, Toast } from 'react-bootstrap';
+import { Modal, Button, Form, Tab, Tabs, ToastContainer, Toast, Stack } from 'react-bootstrap';
 import { useCookies } from 'react-cookie';
 
 import LoadingOverlay from "react-loading-overlay-ts";
@@ -7,9 +7,11 @@ import { customFetch } from '../../utils';
 
 import RegistrationForm from './RegistrationForm';
 import { socket } from '../../socket';
+import { GoogleLogin } from '@react-oauth/google';
 
 export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
   const [, setCookie] = useCookies(['accessToken', 'refreshToken', 'login_username'])
+  const [googleUser, setGoogleUser] = useState()
 
   const [showNotif, setShowNotif] = useState(false)
   const [responseHeader, setResponseHeader] = useState("")
@@ -17,6 +19,27 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+
+  const responseMessage = (response) => {
+    setGoogleUser(response)
+    console.log("Google Login Response: ", response);
+  };
+  const errorMessage = (error) => {
+    console.log(error);
+  };
+  useEffect(() => {
+    if (googleUser) {
+      customFetch(`${global.server_backend_url}/backend/auth/decodeoauth`, {
+        headers: { Authorization: `Bearer ${googleUser.credential}` }
+      }).then((response) => {
+        if (response.ok) return response.json();
+        else throw response;
+      }).then((data) => {
+        console.log("Decoded", data)
+        return data;
+      })
+    }
+  }, [googleUser])
 
   const handleLogin = () => {
     setShowNotif(false)
@@ -48,6 +71,29 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
     // Perform your login logic here
     // For example, you can make an API call to authenticate the user
     // and handle success/failure accordingly
+  };
+
+  const handleGoogleLogin = (response) => {
+    customFetch(`${global.server_backend_url}/backend/auth/googlelogin`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${response.credential}` }
+    }).then((response) => {
+      if (response.ok)
+        return response.json(); else throw response;
+    }).then((data) => {
+      setCookie("login_username", username)
+      setCookie("accessToken", data.accessToken)
+      setCookie("refreshToken", data.refreshToken)
+      setCookie("usertype", data.type)
+      onHide(true)
+    }).catch(async (err) => {
+      /// err.json() returns a Promise, so an async/await is necessary
+      const errorBody = await err.json()
+
+      setResponseHeader("Login Failed")
+      setResponseBody(errorBody.msg)
+      setShowNotif(true)
+    })
   };
 
   useEffect(() => {
@@ -98,9 +144,12 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
                   />
                 </Form.Group>
               </Form>
-              <Button variant="primary" type="button" onClick={handleLogin}>
-                Login
-              </Button>
+              <Stack direction='horizontal' gap={3}>
+                <Button variant="primary" type="button" onClick={handleLogin}>
+                  Login
+                </Button>
+                <GoogleLogin onSuccess={handleGoogleLogin} />
+              </Stack>
             </Tab>
             <Tab eventKey="register" title="Register">
               <RegistrationForm />

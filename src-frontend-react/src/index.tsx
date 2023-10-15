@@ -6,16 +6,18 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
 import { CookiesProvider } from "react-cookie";
-
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import "./global.js";
 
 const container = document.getElementById("root");
 const root = createRoot(container!); // createRoot(container!) if you use TypeScript
 
 root.render(
-  <CookiesProvider>
-    <App />
-  </CookiesProvider>,
+  <GoogleOAuthProvider clientId="703649575342-u1ol3db09ssh3puafl6c8mqd8ht12snm.apps.googleusercontent.com">
+    <CookiesProvider>
+      <App />
+    </CookiesProvider>
+  </GoogleOAuthProvider>,
 );
 
 // If you want to start measuring performance in your app, pass a function

@@ -1,6 +1,7 @@
+import { GoogleLogin } from '@react-oauth/google';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import { Form, Button, Row, Col, ToastContainer, Toast } from 'react-bootstrap';
+import { Form, Button, Row, Col, ToastContainer, Toast, Stack } from 'react-bootstrap';
 
 import LoadingOverlay from 'react-loading-overlay-ts';
 import { customFetch } from '../../utils';
@@ -19,7 +20,7 @@ const DEFAULT_FORM_VALUES = {
   login_password: '', // Add password field
 }
 
-const RegistrationForm = () => {
+const RegistrationForm = ({ googleEmailAddr }) => {
 
   const [userTypes, setUserTypes] = useState([])
 
@@ -198,6 +199,20 @@ const RegistrationForm = () => {
     }
   };
 
+  const handleGoogleLoginSuccess = (response) => {
+    customFetch(`${global.server_backend_url}/backend/auth/emailfromgoogle`, {
+      headers: { Authorization: `Bearer ${response.credential}` }
+    }).then((response) => {
+      if (response.ok) return response.json();
+      else throw response;
+    }).then((data) => {
+      setFormData({
+        ...formData,
+        emailaddr: data,
+      });
+      return data;
+    })
+  };
   return (
     <LoadingOverlay active={isLoading} spinner text='Waiting for update...'>
       <Form onSubmit={handleSubmit}>
@@ -248,18 +263,22 @@ const RegistrationForm = () => {
           <div className="text-danger">{formErrors.addr}</div>
         </Form.Group>
         <Row className="mb-3">
-          <Form.Group as={Col} md="6" controlId="emailaddr">
+          <Form.Group as={Col} lg="8" controlId="emailaddr">
             <Form.Label>Email</Form.Label>
-            <Form.Control
-              type="email"
-              name="emailaddr"
-              value={formData.emailaddr}
-              onChange={handleChange}
-              required
-            />
+            <Stack direction='horizontal' gap={2}>
+              <Form.Control
+                type="email"
+                name="emailaddr"
+                value={formData.emailaddr}
+                onChange={handleChange}
+                placeholder="Use Google Login..."
+                disabled
+              />
+              <GoogleLogin onSuccess={handleGoogleLoginSuccess} />
+            </Stack>
             <div className="text-danger">{formErrors.emailaddr}</div>
           </Form.Group>
-          <Form.Group as={Col} md="6" controlId="cnum">
+          <Form.Group as={Col} lg="4" controlId="cnum">
             <Form.Label>Phone Number</Form.Label>
             <Form.Control
               type="tel"
