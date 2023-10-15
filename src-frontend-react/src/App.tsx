@@ -120,7 +120,10 @@ const SidebarCol = () => {
   useEffect(() => {
     console.log("usertype: ", Cookies.get("usertype"));
     console.log("isAdmin: ", Cookies.get("usertype") === "Admin");
-    if (Cookies.get("usertype") === "Admin")
+    if (
+      Cookies.get("usertype") === "Admin" &&
+      !radios.some((e) => e.name === "Admin Tools")
+    )
       setRadios([
         ...radios,
         {
