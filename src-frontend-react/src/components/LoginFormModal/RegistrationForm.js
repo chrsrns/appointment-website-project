@@ -136,7 +136,7 @@ const RegistrationForm = ({ googleEmailAddr }) => {
     if (formData.login_username.trim() === '') {
       newFormErrors.login_username = 'Username is required';
       isValid = false;
-    } else if (formData.type === 'Student' && !formData.login_username.trim().match(lrnPattern)) {
+    } else if (formData.type == 'Student' && !formData.login_username.trim().match(lrnPattern)) {
       newFormErrors.login_username = 'LRN must be a 10-digit LRN';
       isValid = false;
     } else {

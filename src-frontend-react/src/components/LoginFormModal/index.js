@@ -11,6 +11,7 @@ import { GoogleLogin } from '@react-oauth/google';
 
 export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
   const [, setCookie] = useCookies(['accessToken', 'refreshToken', 'login_username'])
+  const [googleUser, setGoogleUser] = useState()
 
   const [showNotif, setShowNotif] = useState(false)
   const [responseHeader, setResponseHeader] = useState("")
@@ -18,6 +19,27 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+
+  const responseMessage = (response) => {
+    setGoogleUser(response)
+    console.log("Google Login Response: ", response);
+  };
+  const errorMessage = (error) => {
+    console.log(error);
+  };
+  useEffect(() => {
+    if (googleUser) {
+      customFetch(`${global.server_backend_url}/backend/auth/decodeoauth`, {
+        headers: { Authorization: `Bearer ${googleUser.credential}` }
+      }).then((response) => {
+        if (response.ok) return response.json();
+        else throw response;
+      }).then((data) => {
+        console.log("Decoded", data)
+        return data;
+      })
+    }
+  }, [googleUser])
 
   const handleLogin = () => {
     setShowNotif(false)
@@ -78,7 +100,7 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
     socket.on("connect_error", (err) => {
       console.log(err.message)
     });
-  }, [])
+  }, [socket])
   return (
     <Modal size='lg' show={show} backdrop="static">
       <Modal.Header>
