@@ -41,7 +41,7 @@ connect(socketIO)
 // app.use(function(req, res, next) { setTimeout(next, 500) });
 
 // Frontend Static
-const path = __dirname + "/src-frontend-react/build/";
+const path = __dirname + "/src-frontend-react/frontend-build/";
 app.use(express.static(path));
 
 const auth = require("./routes/auth.routes.js");
