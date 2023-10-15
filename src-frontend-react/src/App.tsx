@@ -95,13 +95,6 @@ const TopBar = () => {
   );
 };
 
-type SidebarColBtnType = {
-  name: string;
-  iconClass: string;
-  value: string;
-  link: string;
-};
-
 const SidebarCol = () => {
   const [radios, setRadios] = useState([
     { name: "Dashboard", iconClass: "bi-columns-gap", value: "1", link: "/" },
@@ -137,7 +130,7 @@ const SidebarCol = () => {
           link: "/admin",
         },
       ]);
-  }, []);
+  }, [radios]);
 
   return (
     <Col
@@ -200,8 +193,6 @@ const App: React.FC = () => {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLogInDone, setIsLogInDone] = useState(false);
-
-  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const [onlineUsers, setOnlineUsers] = useState([]);
 
