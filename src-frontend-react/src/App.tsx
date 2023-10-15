@@ -66,7 +66,7 @@ const TopBar = () => {
     <Navbar expand="lg" className="bg-body-tertiary shadow-sm">
       <Container className="justify-contents-between">
         <>
-          <Navbar.Brand href="#home">Integrated School</Navbar.Brand>
+          <Navbar.Brand href="#home">Kapayapaan Integrated School</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
         </>
         <Button onClick={handleDarkModeToggleClick}>
