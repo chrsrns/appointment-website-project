@@ -91,7 +91,21 @@ router.get("/schedulerepeattypes", async (req, res, next) => {
 
 router.get("/schedules", async (req, res, next) => {
   try {
+    const authorizationheader = req.headers.authorization;
+
+    const token = authorizationheader.replace('Bearer ', '');
+    const userId = findUserIdByAccessToken(token)
+    if (!userId) {
+      res.status(400)
+      throw new Error("No user with ID found")
+    }
     const schedules = await prisma.schedule.findMany({
+      where: {
+        OR: [
+          { Users: { some: { id: userId } } },
+          { authorUserId: userId }
+        ]
+      },
       select: {
         id: true,
         state: true,
@@ -122,7 +136,10 @@ router.get("/schedules-summary", async (req, res, next) => {
           { state: schedule_state.Ongoing },
           { state: schedule_state.Approved }
         ],
-        authorUserId: userId
+        OR: [
+          { Users: { some: { id: userId } } },
+          { authorUserId: userId }
+        ]
 
       },
       select: {
@@ -144,13 +161,28 @@ router.get("/schedules/by-user/:id", async (req, res, next) => {
   const { id } = req.params;
 
   try {
+    const authorizationheader = req.headers.authorization;
+
+    const token = authorizationheader.replace('Bearer ', '');
+    const userId = findUserIdByAccessToken(token)
+
     const schedules = await prisma.schedule.findMany({
       where: {
-        Users: {
-          some: {
-            id: id
+        AND: [
+          {
+            Users: {
+              some: {
+                id: id
+              }
+            }
+          },
+          {
+            OR: [
+              { Users: { some: { id: userId } } },
+              { authorUserId: userId }
+            ]
           }
-        }
+        ]
       },
       select: {
         id: true,
