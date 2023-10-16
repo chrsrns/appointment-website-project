@@ -77,11 +77,25 @@ router.get("/scheduletypes", async (req, res, next) => {
 
 router.get("/schedulerepeattypes", async (req, res, next) => {
   try {
+    const authorizationheader = req.headers.authorization;
+
+    const token = authorizationheader.replace('Bearer ', '');
+    const userId = findUserIdByAccessToken(token)
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId
+      }
+    })
+
     const result = (Object.keys(repeat)).map(
       (key, index) => {
         return repeat[key];
       },
     );
+
+    if (user.type === "Student")
+      result.filter(e => e === "Pending")
 
     res.json(result);
   } catch (err) {
