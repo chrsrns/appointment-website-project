@@ -10,15 +10,14 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const resetAll = async () => {
-  console.log("Resetting online status")
-  console.log(await prisma.user.updateMany({
+  await prisma.user.updateMany({
     where: {
       isOnline: true
     },
     data: {
       isOnline: false
     }
-  }))
+  })
 }
 resetAll()
 
@@ -74,7 +73,6 @@ app.post("/backend/fakestudentuser", async (req, res) => {
     );
     res.json(name);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: "An error occurred!" });
   }
 })
@@ -88,7 +86,6 @@ app.post("/backend/fakestaffuser", async (req, res) => {
     );
     res.json(name);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: "An error occurred!" });
   }
 })

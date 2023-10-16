@@ -14,12 +14,12 @@ class Connection {
 
     socket.on('disconnect', () => this.disconnect());
     socket.on('connect_error', (err) => {
-      console.log(`connect_error due to ${err.message}`);
+      // console.log(`connect_error due to ${err.message}`);
     });
   }
 
   disconnect() {
-    console.log('🔥: A user disconnected');
+    // console.log('🔥: A user disconnected');
 
     this.updatePeopleOnline(this.socket.userId, false)
 
@@ -40,7 +40,7 @@ class Connection {
       }
       this.io.emit("users", users);
     } catch (error) {
-      console.error(error);
+      // console.error(error);
     }
   }
 }
@@ -56,7 +56,7 @@ function connect(io) {
 
     const payload = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
     const savedRefreshToken = await findRefreshTokenById(payload.jti);
-    console.log(savedRefreshToken)
+    // console.log(savedRefreshToken)
 
     if (!savedRefreshToken || savedRefreshToken.revoked === true) {
       return next(new Error('unauthorized session'));
@@ -85,7 +85,7 @@ function connect(io) {
     next()
   })
   io.on('connect', (socket) => {
-    console.log(`⚡: ${socket.id} user just connected!`);
+    // console.log(`⚡: ${socket.id} user just connected!`);
     new Connection(io, socket)
     socket.join(socket.userId)
 

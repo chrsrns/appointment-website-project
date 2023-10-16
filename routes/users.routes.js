@@ -30,7 +30,7 @@ router.get("/announcements", async (req, res, next) => {
     );
     res.json(announcements);
   } catch (err) {
-    console.error(err);
+    // console.error(err);
     res
       .status(500)
       .json({ error: "An error occurred while fetching announcements" });
@@ -58,7 +58,7 @@ router.get("/onlineusers", async (req, res, next) => {
     });
     res.json(user);
   } catch (err) {
-    console.error(err);
+    // console.error(err);
     res
       .status(500)
       .json({ error: "An error occurred while fetching online users" });

@@ -11,7 +11,7 @@ router.post("/add", async (req, res, next) => {
 
     const token = authorizationheader.replace('Bearer ', '');
     const userId = findUserIdByAccessToken(token)
-    console.log(userId)
+    // console.log(userId)
 
     const data = req.body
     data.userId = userId
@@ -23,7 +23,7 @@ router.post("/add", async (req, res, next) => {
 
     res.json(feedback);
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     res
       .status(500)
       .json({ error: "An error occurred while creating a medical record" });
