@@ -23,7 +23,7 @@ router.get("/notifications", async (req, res, next) => {
     })
     res.json(notificationsToGet)
   } catch (err) {
-    // console.error(err);
+    console.error(err);
     res.status(500).json({ error: "An error occurred!" });
   }
 });
@@ -51,7 +51,7 @@ router.put("/removeFromUsersToNotify/:id", async (req, res, next) => {
     }
     res.json(notification);
   } catch (error) {
-    // console.error(error);
+    console.error(error);
     res
       .status(500)
       .json({ error: "An error occurred while removing from notification" });

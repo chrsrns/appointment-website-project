@@ -52,7 +52,7 @@ router.post('/register', async (req, res, next) => {
 
     res.status(200).json(user);
   } catch (err) {
-    // console.error(err)
+    console.error(err)
     // TODO Improve error handling
     res.status(500).json({ msg: err.message });
   }
@@ -193,10 +193,10 @@ router.get("/decodeoauth", async (req, res, next) => {
       audience: process.env.GOOGLE_CLIENT_ID,
     })
 
-    // console.log("Decoded: ", decoded)
+    console.log("Decoded: ", decoded)
     res.json(decoded)
   } catch (error) {
-    // console.error(error);
+    console.error(error);
     res
       .status(500)
       .json({ error: "An error occurred." });
@@ -216,7 +216,7 @@ router.get("/emailfromgoogle", async (req, res, next) => {
     const email = await decoded.getPayload().email
     res.json(email)
   } catch (error) {
-    // console.error(error);
+    console.error(error);
     res
       .status(500)
       .json({ error: "An error occurred." });
@@ -279,7 +279,7 @@ router.post('/googlelogin', async (req, res, next) => {
       type: existingUser.type
     });
   } catch (err) {
-    // console.error(err)
+    console.error(err)
     res.status(500).json({ msg: err.message });
   }
 });

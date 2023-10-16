@@ -141,6 +141,7 @@ router.get("/schedules", async (req, res, next) => {
     })
     res.json(schedules)
   } catch (err) {
+    console.error(err)
     res.status(500).json({ msg: err.message });
   }
 })
@@ -256,6 +257,7 @@ router.get("/schedule/:id", async (req, res) => {
     }
     res.json(schedule);
   } catch (error) {
+    console.error(error);
     res
       .status(500)
       .json({ error: "An error occurred while fetching the schedule" });
@@ -278,13 +280,14 @@ router.put("/schedule/:id", async (req, res) => {
     }
 
     schedule.Users.forEach(element => {
+      console.log("Notifying user ", element.id)
       socketIO.to(element.id).emit("schedule updated", {
         schedTitle: schedule.title
       })
     });
     res.json(schedule);
   } catch (error) {
-    // console.error(error);
+    console.error(error);
     res
       .status(500)
       .json({ error: "An error occurred while modifying the schedule" });
@@ -304,9 +307,9 @@ router.delete("/schedule/:id", async (req, res) => {
       return;
     }
     res.json(schedule);
-    // console.log(req.body)
+    console.log(req.body)
   } catch (error) {
-    // console.error(error);
+    console.error(error);
     res
       .status(500)
       .json({ error: "An error occurred while deleting the schedule" });
@@ -327,7 +330,7 @@ router.post("/schedule", async (req, res, next) => {
     })
     res.json()
   } catch (err) {
-    // console.error(err);
+    console.error(err);
     res.status(500).json({ error: "An error occurred!" });
   }
 })
@@ -371,14 +374,14 @@ router.post("/message", async (req, res, next) => {
   const token = authorizationHeader.replace('Bearer ', '');
   messageData.userId = findUserIdByAccessToken(token)
 
-  // console.log(messageData)
+  console.log(messageData)
   res.status(200).json({ msg: "Message sent" })
   try {
     const message = await prisma.message.create({
       data: messageData
     })
   } catch (err) {
-    // console.error(err);
+    console.error(err);
     res.status(500).json({ error: "An error occurred!" });
   }
 })

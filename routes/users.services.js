@@ -29,7 +29,7 @@ function findUserById(id) {
 
 function createUser(user) {
   user.login_password = bcrypt.hashSync(user.login_password, 12);
-  // console.log(user)
+  console.log(user)
   return db.user.create({
     data: user,
   });

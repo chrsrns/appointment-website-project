@@ -22,11 +22,11 @@ const createNotification = async ({ title, message, users = [] }) => {
         usersToNotify: usersToAdd
       },
     });
-    // console.log(createNotification)
+    console.log(createNotification)
 
     return createNotification
   } catch (err) {
-    // console.error(err)
+    console.error(err)
   }
 }
 

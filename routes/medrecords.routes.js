@@ -18,7 +18,7 @@ router.get("/records", async (req, res, next) => {
     })
     res.json(medRecordsToGet)
   } catch (err) {
-    // console.error(err);
+    console.error(err);
     res.status(500).json({ error: "an error occurred!" });
   }
 });
@@ -36,7 +36,7 @@ router.get("/users", async (req, res, next) => {
     })
     res.json(users)
   } catch (err) {
-    // console.error(err);
+    console.error(err);
     res.status(500).json({ error: "an error occurred!" });
   }
 });
@@ -54,7 +54,7 @@ router.post("/record", async (req, res, next) => {
 
     res.json(record);
   } catch (error) {
-    // console.error(error);
+    console.error(error);
     res
       .status(500)
       .json({ error: "An error occurred while creating a medical record" });

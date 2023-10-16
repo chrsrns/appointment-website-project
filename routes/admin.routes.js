@@ -72,7 +72,7 @@ router.put("/pendinguser/:id", async (req, res) => {
     res.status(200)
     return next()
   } catch (error) {
-    // console.error(error);
+    console.error(error);
     res
       .status(500)
       .json({ error: "An error occurred while modifying the user" });
@@ -109,7 +109,7 @@ router.post("/user", async (req, res, next) => {
     })
     res.status(200)
   } catch (err) {
-    // console.error(err);
+    console.error(err);
     res.status(500).json({ error: "An error occurred when adding the user" });
   }
 
@@ -135,7 +135,7 @@ router.put("/user/:id", async (req, res) => {
     res.status(200)
     return next()
   } catch (error) {
-    // console.error(error);
+    console.error(error);
     res
       .status(500)
       .json({ error: "An error occurred while modifying the user" });
@@ -155,9 +155,9 @@ router.delete("/user/:id", async (req, res) => {
       return;
     }
     res.json(userToDelete);
-    // console.log(req.body)
+    console.log(req.body)
   } catch (error) {
-    // console.error(error);
+    console.error(error);
     res
       .status(500)
       .json({ error: "An error occurred while deleting the user" });
@@ -186,7 +186,7 @@ router.post("/announcement", async (req, res, next) => {
     })
     res.status(200)
   } catch (err) {
-    // console.error(err);
+    console.error(err);
     res.status(500).json({ error: "An error occurred when adding the announcement" });
   }
 
@@ -210,7 +210,7 @@ router.put("/announcement/:id", async (req, res) => {
     res.status(200)
     return next()
   } catch (error) {
-    // console.error(error);
+    console.error(error);
     res
       .status(500)
       .json({ error: "An error occurred while modifying the announcement" });
@@ -230,9 +230,9 @@ router.delete("/announcement/:id", async (req, res) => {
       return;
     }
     res.json(announcementToDelete);
-    // console.log(req.body)
+    console.log(req.body)
   } catch (error) {
-    // console.error(error);
+    console.error(error);
     res
       .status(500)
       .json({ error: "An error occurred while deleting the announcement" });
