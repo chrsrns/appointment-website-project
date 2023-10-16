@@ -26,13 +26,10 @@ jobs:
         working-directory: src-frontend-react
         run: npm run build
 
-      - name: Move Build Files
-        run: mv src-frontend-react/build ./frontend-build
-
       - name: Commit and Push Build Files
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          git add frontend-build
+          git add src-frontend-react/build
           git commit -m "Add frontend build files"
           git push
