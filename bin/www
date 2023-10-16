@@ -27,11 +27,15 @@ var server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port, () => {
-  console.log("REST API server ready at: http://localhost:3000")
-}, 'passenger');
-server.on('error', onError);
-server.on('listening', onListening);
+if (typeof (PhusionPassenger) != 'undefined') {
+  server.listen('passenger');
+} else {
+  server.listen(port, () => {
+    console.log("REST API server ready at: http://localhost:3000")
+  }, 'passenger');
+  server.on('error', onError);
+  server.on('listening', onListening);
+}
 
 /**
  * Normalize a port into a number, string, or false.

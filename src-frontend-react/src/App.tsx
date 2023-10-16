@@ -209,6 +209,7 @@ const App: React.FC = () => {
 
   const getLoggedInStatus = () => {
     const data = { refreshToken: Cookies.get("refreshToken") };
+    console.log(global.server_backend_url);
 
     customFetch(`${global.server_backend_url}/backend/auth/refreshToken`, {
       method: "POST",
