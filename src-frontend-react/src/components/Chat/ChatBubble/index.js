@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Container, Card, Stack, Form, Button } from 'react-bootstrap';
 import { useCookies } from 'react-cookie';
 import LoadingOverlay from 'react-loading-overlay-ts';
@@ -15,7 +15,8 @@ const Chat = ({ scheduleId }) => {
   const [formData, setFormData] = useState(DEFAULT_FORM_VALUES);
   const [isLoading, setIsLoading] = useState(true)
 
-  const fetchAll = () => {
+  const [isFetchingAll, setIsFetchingAll] = useState(true)
+  const fetchAll = useCallback(async () => {
     setIsLoading(true)
     if (scheduleId)
       customFetch(`${global.server_backend_url}/backend/appointments/messages/by-schedule/${scheduleId}`)
@@ -31,9 +32,16 @@ const Chat = ({ scheduleId }) => {
               .slice()
               .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
           )
-          setIsLoading(false)
         })
-  }
+  }, [scheduleId])
+  useEffect(() => {
+    if (isFetchingAll) {
+      fetchAll().then(() => {
+        setIsLoading(false)
+        setIsFetchingAll(false)
+      })
+    }
+  }, [fetchAll, isFetchingAll])
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -49,27 +57,19 @@ const Chat = ({ scheduleId }) => {
       body: JSON.stringify(formData),
     }).then((response) => {
       if (response.ok) {
-        fetchAll()
+        setIsFetchingAll(true)
         return response.json();
       } throw response;
     })
   }
 
   useEffect(() => {
-    fetchAll()
+    setIsFetchingAll(true)
     setFormData({
       ...formData,
       scheduleId: scheduleId,
     });
-  }, [scheduleId])
-  useEffect(() => {
-    fetchAll()
-    setFormData({
-      ...formData,
-      scheduleId: scheduleId,
-    });
-
-  }, [])
+  }, [fetchAll, formData, scheduleId])
   return (
     <LoadingOverlay spinner active={isLoading}>
       <Container className='px-3 mb-4'>

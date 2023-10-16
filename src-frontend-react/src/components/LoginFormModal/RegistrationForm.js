@@ -1,6 +1,6 @@
 import { GoogleLogin } from '@react-oauth/google';
 import moment from 'moment';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Form, Button, Row, Col, ToastContainer, Toast, Stack } from 'react-bootstrap';
 
 import LoadingOverlay from 'react-loading-overlay-ts';
@@ -20,7 +20,7 @@ const DEFAULT_FORM_VALUES = {
   login_password: '', // Add password field
 }
 
-const RegistrationForm = ({ googleEmailAddr }) => {
+const RegistrationForm = () => {
 
   const [userTypes, setUserTypes] = useState([])
 
@@ -51,8 +51,7 @@ const RegistrationForm = ({ googleEmailAddr }) => {
           setUserTypes(data)
           return data;
         })
-    ]).then(responses => {
-      console.log("done")
+    ]).then(() => {
       setIsLoading(false)
     })
   }
@@ -136,7 +135,7 @@ const RegistrationForm = ({ googleEmailAddr }) => {
     if (formData.login_username.trim() === '') {
       newFormErrors.login_username = 'Username is required';
       isValid = false;
-    } else if (formData.type == 'Student' && !formData.login_username.trim().match(lrnPattern)) {
+    } else if (formData.type === 'Student' && !formData.login_username.trim().match(lrnPattern)) {
       newFormErrors.login_username = 'LRN must be a 10-digit LRN';
       isValid = false;
     } else {

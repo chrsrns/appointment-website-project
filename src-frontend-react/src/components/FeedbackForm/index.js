@@ -118,7 +118,7 @@ export const FeedbackForm = ({ sidebarbtn_onClick }) => {
                             label={ratingNum}
                             value={ratingNum}
                             onChange={handleChange}
-                            checked={formData.rating == ratingNum} />
+                            checked={formData.rating === ratingNum} />
 
                         )
                         )}

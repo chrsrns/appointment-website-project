@@ -1,5 +1,5 @@
 import moment from "moment";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button, Form, ListGroup, Modal, Stack, Tab, Tabs } from "react-bootstrap";
 
 import LoadingOverlay from 'react-loading-overlay-ts';
@@ -57,8 +57,8 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
 
   };
 
-  const fetchAll = async () => {
-
+  const [isFetchingAll, setIsFetchingAll] = useState(true)
+  const fetchAll = useCallback(async () => {
     Promise.all([
       customFetch(`${global.server_backend_url}/backend/appointments/scheduletypes`)
         .then((response) => {
@@ -105,18 +105,20 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
           if (data !== staffList)
             setStaffList(data);
         }),
-
-    ]).then(() => {
-      console.log("done")
-      setIsLoading(false)
-    })
-
-
-  }
+    ])
+  }, [scheduleRepeatTypes, scheduleTypes, staffList, studentsList])
+  useEffect(() => {
+    if (isFetchingAll) {
+      fetchAll().then(() => {
+        setIsLoading(false)
+        setIsFetchingAll(false)
+      })
+    }
+  }, [fetchAll, isFetchingAll])
 
   useEffect(() => {
     setIsLoading(true)
-    fetchAll();
+    setIsFetchingAll(true)
     // const intervalId = setInterval(() => {  //assign interval to a variable to clear it.
     //   fetchAll();
     // }, 5000)
@@ -170,14 +172,14 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
     }
 
 
-  }, [id, show])
+  }, [id, show, eventRange.fromDate, eventRange.toDate, formData])
 
   ///https://stackoverflow.com/questions/62111525/how-i-add-an-object-to-an-existing-array-react 
   //https://stackoverflow.com/questions/45277306/check-if-item-exists-in-array-react
   const addStudentToSelection = () => {
     setSelectedStudentsList(prev => [...prev,
     ...studentsList.filter((student) => {
-      return student.id == selectedStudent && selectedStudentsList.every(x => x.id !== selectedStudent)
+      return student.id === selectedStudent && selectedStudentsList.every(x => x.id !== selectedStudent)
     })
     ])
   }
@@ -185,7 +187,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
   const addStaffToSelection = () => {
     setSelectedStaffList(prev => [...prev,
     ...staffList.filter((staff) => {
-      return staff.id == selectedStaff && selectedStaffList.every(x => x.id !== selectedStaff)
+      return staff.id === selectedStaff && selectedStaffList.every(x => x.id !== selectedStaff)
     })
     ])
   }
@@ -273,7 +275,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
   }
 
   const onModalOpen = () => {
-    fetchAll();
+    setIsFetchingAll()
   }
 
   const handleDelete = () => {

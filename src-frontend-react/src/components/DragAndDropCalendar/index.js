@@ -50,7 +50,8 @@ export default function DragAndDropCalendar({ localizer }) {
     toDate: Date.now(),
   })
 
-  const fetchAll = () => {
+  const [isFetchingAll, setIsFetchingAll] = useState(true)
+  const fetchAll = useCallback(async () => {
     const request = selectedStaffToFilter.value.id ?
       `${global.server_backend_url}/backend/appointments/schedules/by-user/${selectedStaffToFilter.value.id}`
       : `${global.server_backend_url}/backend/appointments/schedules`
@@ -109,46 +110,19 @@ export default function DragAndDropCalendar({ localizer }) {
       console.error(err)
     }).finally(() => {
       setIsLoading(false)
+      setIsFetchingAll(false)
     })
-  }
-  useEffect(() => updateEvents(), [eventsMapped])
+  }, [eventsFull, selectedStaffToFilter.value])
+  useEffect(() => {
+    if (isFetchingAll) {
+      fetchAll().then(() => {
+        setIsLoading(false)
+        setIsFetchingAll(false)
+      })
+    }
+  }, [fetchAll, isFetchingAll])
 
-  const updateEvents = () => {
-
-    const eventsForBG = [...eventsMapped.filter((event) => event.state === "Available" && event.repeat === "None")]
-
-    const eventsForFG = [...eventsMapped.filter((event) => event.state !== "Available" && event.repeat === "None")]
-
-    const recurringEventsForBG = [].concat(...eventsMapped
-      .filter((event) => event.state === "Available" && event.repeat !== "None")
-      .map((event) => {
-        return getRecurredEvents(event)
-      }))
-
-    const recurringEventsForFG = [].concat(...eventsMapped
-      .filter((event) => event.state !== "Available" && event.repeat !== "None")
-      .map((event) => {
-        return getRecurredEvents(event)
-      }))
-
-    const compiledFGEvents = [...eventsForFG, ...recurringEventsForFG]
-    const compiledBGEvents = [...eventsForBG, ...recurringEventsForBG]
-
-    // console.log(compiledBGEvents)
-
-    setEventsForRender(compiledFGEvents)
-    setEventsForBG(compiledBGEvents)
-
-    // console.log(
-    //   `eventsMapped: ${eventsMapped}`
-    // )
-
-    // console.log(recurringEventsForFG)
-    // console.log(date)
-
-  }
-
-  const getRecurredEvents = (event) => {
+  const getRecurredEvents = useCallback((event) => {
     var repeatRule;
     switch (event.repeat) {
       case "Daily":
@@ -160,6 +134,7 @@ export default function DragAndDropCalendar({ localizer }) {
       case "Monthly":
         repeatRule = RRule.MONTHLY
         break
+      default: break
     }
     console.log(`rule: ${event.repeat}`)
 
@@ -204,15 +179,53 @@ export default function DragAndDropCalendar({ localizer }) {
         repeat: event.repeat
       }
     })
-  }
+  }, [date])
+
+  const updateEvents = useCallback(() => {
+    console.log('updateEvents ran')
+
+    const eventsForBG = [...eventsMapped.filter((event) => event.state === "Available" && event.repeat === "None")]
+
+    const eventsForFG = [...eventsMapped.filter((event) => event.state !== "Available" && event.repeat === "None")]
+
+    const recurringEventsForBG = [].concat(...eventsMapped
+      .filter((event) => event.state === "Available" && event.repeat !== "None")
+      .map((event) => {
+        return getRecurredEvents(event)
+      }))
+
+    const recurringEventsForFG = [].concat(...eventsMapped
+      .filter((event) => event.state !== "Available" && event.repeat !== "None")
+      .map((event) => {
+        return getRecurredEvents(event)
+      }))
+
+    const compiledFGEvents = [...eventsForFG, ...recurringEventsForFG]
+    const compiledBGEvents = [...eventsForBG, ...recurringEventsForBG]
+
+    // console.log(compiledBGEvents)
+
+    setEventsForRender(compiledFGEvents)
+    setEventsForBG(compiledBGEvents)
+
+    // console.log(
+    //   `eventsMapped: ${eventsMapped}`
+    // )
+
+    // console.log(recurringEventsForFG)
+    // console.log(date)
+
+  }, [eventsMapped, getRecurredEvents])
+
+  useEffect(() => updateEvents(), [eventsMapped, updateEvents])
   useEffect(() => {
     updateEvents()
-  }, [date])
+  }, [date, updateEvents])
 
   useEffect(() => {
     if (!isLoading) setIsLoading(true)
-    fetchAll()
-  }, [])
+    setIsFetchingAll(true)
+  }, [isLoading])
 
   const appointmentsTypesColors = {
     Available: "#dee2e6",
@@ -254,7 +267,11 @@ export default function DragAndDropCalendar({ localizer }) {
         className: 'text-dark',
       }),
     }),
-    []
+    [appointmentsTypesColors.Approved,
+    appointmentsTypesColors.Ongoing,
+    appointmentsTypesColors.Pending,
+    appointmentsTypesColors.Available,
+    appointmentsTypesColors.Completed]
   )
 
   const moveEvent = useCallback(
@@ -285,7 +302,7 @@ export default function DragAndDropCalendar({ localizer }) {
       }).then((response) => {
         console.log(response)
         if (response.ok) {
-          fetchAll();
+          setIsFetchingAll(true)
           return response.json();
         } else throw response;
 
@@ -293,7 +310,7 @@ export default function DragAndDropCalendar({ localizer }) {
         console.log(err)
       }).finally(() => setIsLoading(false))
     },
-    [setEventsFull]
+    []
   )
 
   const resizeEvent = useCallback(
@@ -319,7 +336,7 @@ export default function DragAndDropCalendar({ localizer }) {
       }).then((response) => {
         console.log(response)
         if (response.ok) {
-          fetchAll();
+          setIsFetchingAll(true)
           return response.json();
         } else throw response;
 
@@ -327,7 +344,7 @@ export default function DragAndDropCalendar({ localizer }) {
         console.log(err)
       }).finally(() => setIsLoading(false))
     },
-    [setEventsFull]
+    []
   )
 
   const handleSelectSlot = useCallback(
@@ -368,7 +385,7 @@ export default function DragAndDropCalendar({ localizer }) {
   }
 
   useEffect(() => {
-    fetchAll();
+    setIsFetchingAll(true)
   }, [selectedStaffToFilter])
 
   const onNavigate = useCallback((newDate) => setDate(newDate), [setDate])
@@ -382,7 +399,7 @@ export default function DragAndDropCalendar({ localizer }) {
           eventRange={eventRange}
           handleClose={() => {
             setShowModal(false)
-            fetchAll()
+            setIsFetchingAll(true)
           }}
         />
         <PrintModal

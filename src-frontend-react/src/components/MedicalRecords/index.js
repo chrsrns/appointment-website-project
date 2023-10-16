@@ -59,7 +59,7 @@ export const MedicalRecords = ({ sidebarbtn_onClick }) => {
           </Card>
         </Col>
       </Row>
-      {usertype == "Clinic" ?
+      {usertype === "Clinic" ?
         <Row>
           <Col>
             <Card>

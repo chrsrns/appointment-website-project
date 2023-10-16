@@ -95,13 +95,6 @@ const TopBar = () => {
   );
 };
 
-type SidebarColBtnType = {
-  name: string;
-  iconClass: string;
-  value: string;
-  link: string;
-};
-
 const SidebarCol = () => {
   const [radios, setRadios] = useState([
     { name: "Dashboard", iconClass: "bi-columns-gap", value: "1", link: "/" },
@@ -140,11 +133,11 @@ const SidebarCol = () => {
           link: "/admin",
         },
       ]);
-  }, []);
+  }, [radios]);
 
   return (
     <Col
-      sm={6}
+      xs={6}
       lg={{ span: 3, order: "1" }}
       className="sidebar-offcanvas"
       id="sidebar"
@@ -190,6 +183,14 @@ const SidebarColBtn = ({ idx, name, iconClass, value, link }) => {
   );
 };
 
+type user = {
+  self: boolean;
+  login_username: string;
+};
+type sort_obj = {
+  self: number;
+  username: string;
+};
 const App: React.FC = () => {
   const [isActive, setIsActive] = useState(false);
   const [isLandingPageActive, setIsLandingPageActive] = useState(true);
@@ -203,8 +204,6 @@ const App: React.FC = () => {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLogInDone, setIsLogInDone] = useState(false);
-
-  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const [onlineUsers, setOnlineUsers] = useState([]);
 
@@ -250,12 +249,12 @@ const App: React.FC = () => {
       console.log(event, args);
     });
     socket.on("users", (users) => {
-      users.forEach((user) => {
+      users.forEach((user: user) => {
         user.self = user.login_username === Cookies.get("login_username");
         // initReactiveProperties(user);
       });
       // put the current user first, and then sort by username
-      users = users.sort((a, b) => {
+      users = users.sort((a: sort_obj, b: sort_obj) => {
         if (a.self) return -1;
         if (b.self) return 1;
         if (a.username < b.username) return -1;
