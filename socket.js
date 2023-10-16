@@ -8,7 +8,7 @@ function initializeSocket(httpServer) {
   if (!ioInstance) {
     ioInstance = socketIO(httpServer, {
       cors: {
-        origin: "*"
+        origin: "http://localhost:3000"
       }
     });
   }
