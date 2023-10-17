@@ -8,7 +8,6 @@ const express = require("express");
 const router = express.Router();
 
 const { getSocketInstance } = require("../socket");
-const socketIO = getSocketInstance()
 
 router.get("/students", async (req, res, next) => {
   try {
@@ -282,7 +281,7 @@ router.put("/schedule/:id", async (req, res) => {
 
     schedule.Users.forEach(element => {
       console.log("Notifying user ", element.id)
-      socketIO.to(element.id).emit("schedule updated", {
+      getSocketInstance().to(element.id).emit("schedule updated", {
         schedTitle: schedule.title
       })
     });
