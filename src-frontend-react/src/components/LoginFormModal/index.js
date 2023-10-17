@@ -74,11 +74,6 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
     })
   };
 
-  useEffect(() => {
-    socket.on("connect_error", (err) => {
-      console.log(err.message)
-    });
-  }, [])
   return (
     <Modal size='lg' show={show} backdrop="static">
       <Modal.Header>

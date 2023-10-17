@@ -261,6 +261,10 @@ const App: React.FC = () => {
         if (a.username < b.username) return -1;
         return a.username > b.username ? 1 : 0;
       });
+      socket.on("connect_error", (err) => {
+        console.log(`Socket.io error due to: ${err.message}`);
+        console.log(err);
+      });
 
       setOnlineUsers(users);
     });
