@@ -1,11 +1,7 @@
 const cors = require("cors");
 const express = require("express");
 const app = express();
-
-const { initializeSocket, getSocketInstance } = require("./socket");
-
 const fakedata = require("./prisma/fake-data")
-
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
@@ -24,18 +20,6 @@ resetAll()
 
 app.use(express.json());
 app.use(cors());
-
-var http = require('http').Server(app);
-const connect = require('./socket/connection.socket')
-// const socketIO = require('socket.io')(http, {
-//   cors: {
-//     origin: "http://localhost:3001"
-//   }
-// });
-initializeSocket(http)
-const socketIO = getSocketInstance()
-socketIO.listen(4000)
-connect(socketIO)
 
 // For testing, add intentional delay
 // app.use(function(req, res, next) { setTimeout(next, 500) });

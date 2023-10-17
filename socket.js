@@ -5,12 +5,16 @@ const socketIO = require('socket.io');
 let ioInstance = null
 
 function initializeSocket(httpServer) {
-  if (!ioInstance) {
-    ioInstance = socketIO(httpServer, {
-      cors: {
-        origin: "http://localhost:3000"
-      }
-    });
+  try {
+    if (!ioInstance) {
+      ioInstance = socketIO(httpServer, {
+        cors: {
+          origin: ["https://woddafi.domcloud.io", "localhost"],
+        }
+      });
+    }
+  } catch (err) {
+    logger.error(err)
   }
 }
 

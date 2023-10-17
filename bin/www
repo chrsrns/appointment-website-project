@@ -37,6 +37,12 @@ if (typeof (PhusionPassenger) != 'undefined') {
   server.on('listening', onListening);
 }
 
+const { initializeSocket, getSocketInstance } = require("../socket");
+const connect = require('../socket/connection.socket')
+initializeSocket(server)
+const socketIO = getSocketInstance()
+connect(socketIO)
+
 /**
  * Normalize a port into a number, string, or false.
  */
