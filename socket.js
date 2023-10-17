@@ -9,7 +9,7 @@ function initializeSocket(httpServer) {
     if (!ioInstance) {
       ioInstance = socketIO(httpServer, {
         cors: {
-          origin: ["https://woddafi.domcloud.io", "localhost"],
+          origin: ["https://woddafi.domcloud.io", "http://localhost:3001"],
         }
       });
     }
