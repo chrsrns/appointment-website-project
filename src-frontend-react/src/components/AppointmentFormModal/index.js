@@ -143,7 +143,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
             setSelectedStudentsList(students);
             setSelectedStaffList(staff);
 
-            setFormData({
+            setFormData(formData => ({
               ...formData,
               title: data.title,
               content: data.desc,
@@ -152,14 +152,14 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
               end: moment(data.toDate).format('YYYY-MM-DDThh:mm'),
               repeat: data.repeat,
 
-            });
+            }));
 
           }).catch((err) => {
             console.log(err)
           })
         console.log(`test ${id}`)
       } else {
-        setFormData({
+        setFormData(formData => ({
           ...formData,
           title: "",
           content: "",
@@ -167,12 +167,12 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
           start: moment(eventRange.fromDate).format('YYYY-MM-DDThh:mm'),
           end: moment(eventRange.toDate).format('YYYY-MM-DDThh:mm'),
           repeat: ""
-        });
+        }));
       }
     }
 
 
-  }, [id, show, eventRange.fromDate, eventRange.toDate, formData])
+  }, [id, show, eventRange.fromDate, eventRange.toDate])
 
   ///https://stackoverflow.com/questions/62111525/how-i-add-an-object-to-an-existing-array-react 
   //https://stackoverflow.com/questions/45277306/check-if-item-exists-in-array-react
@@ -275,7 +275,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
   }
 
   const onModalOpen = () => {
-    setIsFetchingAll()
+    setIsFetchingAll(true)
   }
 
   const handleDelete = () => {
