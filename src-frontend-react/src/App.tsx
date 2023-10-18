@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./App.css";
 import "./Custom.scss";
 
@@ -44,23 +44,34 @@ import { LandingPage } from "./components/LandingPage";
 
 const TopBar = () => {
   const [darkMode, setDarkMode] = useState(false);
+  const [cookies, setCookies] = useCookies(["darkmode"]);
+  const cookiesRef = useRef();
 
   const handleDarkModeToggleClick = () => {
     setDarkMode(!darkMode);
   };
+  useEffect(() => {
+    cookiesRef.current = cookies.darkmode;
+  });
 
   useEffect(() => {
-    // if (darkMode)
-    //   document.documentElement.setAttribute("data-bs-theme", "dark");
-    // else document.documentElement.setAttribute("data-bs-theme", "light");
-    //
-    if (darkMode)
+    console.log("cookies changed");
+    setDarkMode(cookiesRef.current);
+  }, []);
+
+  useEffect(() => {
+    console.log("darkmode changed");
+    if (darkMode) {
       enableDarkMode({
         brightness: 100,
         contrast: 100,
       });
-    else disableDarkMode();
-  }, [darkMode]);
+      setCookies("darkmode", true);
+    } else {
+      disableDarkMode();
+      setCookies("darkmode", false);
+    }
+  }, [darkMode, setCookies]);
 
   return (
     <Navbar expand="lg" className="bg-body-tertiary shadow-sm">
