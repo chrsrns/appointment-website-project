@@ -13,7 +13,7 @@
   "devDependencies": {
     "@types/express": "^4.17.17",
     "@types/node": "^20.5.9",
-    "prisma": "^5.2.0",
+    "prisma": "^5.4.2",
     "prisma-generator-fake-data": "^0.10.0"
   },
   "dependencies": {
