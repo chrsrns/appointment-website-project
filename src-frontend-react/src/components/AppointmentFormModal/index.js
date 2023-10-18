@@ -1,6 +1,8 @@
+import { repeat, schedule_state } from "@prisma/client";
 import moment from "moment";
 import { useCallback, useEffect, useState } from "react";
 import { Button, Form, ListGroup, Modal, Stack, Tab, Tabs } from "react-bootstrap";
+import Cookies from "js-cookie";
 
 import LoadingOverlay from 'react-loading-overlay-ts';
 import { customFetch } from "../../utils";
@@ -43,9 +45,10 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
     end: "",
     title: "",
     content: "",
-    scheduletype: "",
-    repeat: ""
+    scheduletype: schedule_state.Pending,
+    repeat: repeat.None
   });
+  const [authorUserId, setAuthorUserId] = useState("")
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -59,7 +62,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
 
   const [isFetchingAll, setIsFetchingAll] = useState(true)
   const fetchAll = useCallback(async () => {
-    Promise.all([
+    return Promise.all([
       customFetch(`${global.server_backend_url}/backend/appointments/scheduletypes`)
         .then((response) => {
           if (response.ok) return response.json();
@@ -110,6 +113,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
   useEffect(() => {
     if (isFetchingAll) {
       fetchAll().then(() => {
+        console.log("fetching done")
         setIsLoading(false)
         setIsFetchingAll(false)
       })
@@ -151,8 +155,8 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
               start: moment(data.fromDate).format('YYYY-MM-DDThh:mm'),
               end: moment(data.toDate).format('YYYY-MM-DDThh:mm'),
               repeat: data.repeat,
-
             }));
+            setAuthorUserId(data.authorUserId)
 
           }).catch((err) => {
             console.log(err)
@@ -163,11 +167,12 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
           ...formData,
           title: "",
           content: "",
-          scheduletype: "",
+          scheduletype: schedule_state.Pending,
           start: moment(eventRange.fromDate).format('YYYY-MM-DDThh:mm'),
           end: moment(eventRange.toDate).format('YYYY-MM-DDThh:mm'),
-          repeat: ""
+          repeat: repeat.None,
         }));
+        setAuthorUserId("")
       }
     }
 
@@ -275,6 +280,8 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
   }
 
   const onModalOpen = () => {
+    console.log("modal opened")
+    setIsLoading(true)
     setIsFetchingAll(true)
   }
 
@@ -295,6 +302,9 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
     }
   }
 
+  const disableForms = ((formData.scheduletype !== schedule_state.Pending &&
+    formData.scheduletype !== schedule_state.Available) ||
+    Cookies.get("usertype") === "Student") && !Cookies.get("userid") === authorUserId
   return (
     <Modal
       show={show}
@@ -307,7 +317,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
       <Modal.Header>
         <Modal.Title>{id ? "Modifying Existing Appointment" : "Create New Appointment"}</Modal.Title>
       </Modal.Header>
-      <LoadingOverlay active={isLoading} spinner text={loadingText}>
+      <LoadingOverlay active={isLoading || !show} spinner text={loadingText}>
         <Modal.Body>
           <Tabs defaultActiveKey="form" className="mb-3">
             <Tab eventKey="form" title="Edit">
@@ -315,9 +325,12 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
                 <Form.Group className="mb-3">
                   <Form.Label>Students Involved</Form.Label>
                   <Stack direction="horizontal" gap={3}>
-                    <Form.Select size="lg" onChange={(e) => {
-                      setSelectedStudent(e.target.value)
-                    }}>
+                    <Form.Select
+                      size="lg"
+                      disabled={disableForms}
+                      onChange={(e) => {
+                        setSelectedStudent(e.target.value)
+                      }}>
                       <option key='blankChoice' hidden value>Select students...</option>
                       {studentsList.map((student) => {
                         return <option key={student.id} value={student.id}>{`${student.fname} ${student.mname} ${student.lname}`}</option>
@@ -358,10 +371,13 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
                 <Form.Group className="mb-3">
                   <Form.Label>Staff Involved</Form.Label>
                   <Stack direction="horizontal" gap={3}>
-                    <Form.Select size="lg" onChange={(e) => {
-                      setSelectedStaff(e.target.value)
-                      console.log("test")
-                    }}>
+                    <Form.Select
+                      size="lg"
+                      disabled={disableForms}
+                      onChange={(e) => {
+                        setSelectedStaff(e.target.value)
+                        console.log("test")
+                      }}>
                       <option key='blankChoice' hidden value>Select staff...</option>
                       {staffList.map((staff) => {
                         return <option key={staff.id} value={staff.id}>{`${staff.fname} ${staff.mname} ${staff.lname}`}</option>
@@ -396,20 +412,38 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
                 <Form.Group>
 
                   <Form.Label>Schedule Status</Form.Label>
-                  <div key='inline-radio' className="mb-3">
-                    {scheduleTypes.map((scheduleType) => (
-                      <Form.Check
-                        key={scheduleType}
-                        inline
-                        name="scheduletype"
-                        type="radio"
-                        id={`inline-radio-${scheduleType}`}
-                        label={scheduleType}
-                        value={scheduleType}
-                        onChange={handleChange}
-                        checked={formData.scheduletype === scheduleType} />
+                  <div key='inline-radio' className="mb-3 mx-3">
+                    {scheduleTypes.filter((x) => {
+                      console.log("filtering data...")
+                      console.log(id, x, formData.scheduletype)
+                      if (id) {
+                        if (formData.scheduletype === schedule_state.Available)
+                          return x === schedule_state.Available
 
-                    ))}
+                        if (formData.scheduletype === schedule_state.Pending)
+                          return x !== schedule_state.Available
+
+                        return !(x === schedule_state.Available || x === schedule_state.Pending
+                        )
+                      }
+
+                      return true;
+                    })
+                      .map((scheduleType) => (
+                        <Form.Check
+                          key={scheduleType}
+                          inline
+                          name="scheduletype"
+                          type="radio"
+                          id={`inline-radio-${scheduleType}`}
+                          label={scheduleType}
+                          value={scheduleType}
+                          disabled={
+                            Cookies.get("usertype") === "Student" && Cookies.get("userid") === authorUserId}
+                          onChange={handleChange}
+                          checked={formData.scheduletype === scheduleType} />
+
+                      ))}
                   </div>
                 </Form.Group>
 
@@ -418,6 +452,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
                   <Form.Control
                     name="title"
                     placeholder="Required"
+                    disabled={disableForms}
                     onChange={handleChange}
                     value={formData.title} />
                 </Form.Group>
@@ -429,6 +464,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
                     name="content"
                     rows={5}
                     placeholder="Can either be appointment details, etc..."
+                    disabled={disableForms}
                     onChange={handleChange}
                     value={formData.content} />
                 </Form.Group>
@@ -440,6 +476,9 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
                       type="datetime-local"
                       name="start"
                       value={formData.start}
+                      disabled={
+                        (formData.scheduletype !== schedule_state.Pending &&
+                          formData.scheduletype !== schedule_state.Available && id)}
                       onChange={handleChange}
                       required
                     />
@@ -450,6 +489,9 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
                       type="datetime-local"
                       name="end"
                       value={formData.end}
+                      disabled={
+                        (formData.scheduletype !== schedule_state.Pending &&
+                          formData.scheduletype !== schedule_state.Available && id)}
                       onChange={handleChange}
                       required
                     />
@@ -468,6 +510,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
                       id={`inline-radio-${scheduleRepeatType}`}
                       label={scheduleRepeatType}
                       value={scheduleRepeatType}
+                      disabled={disableForms}
                       onChange={handleChange}
                       checked={formData.repeat === scheduleRepeatType} />
 
@@ -501,4 +544,3 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
     </Modal>
   );
 }
-
