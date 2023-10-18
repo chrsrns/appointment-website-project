@@ -32,7 +32,7 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
       if (response.ok)
         return response.json(); else throw response;
     }).then((data) => {
-      setCookie("login_username", username)
+      setCookie("login_username", data.login_username)
       setCookie("accessToken", data.accessToken)
       setCookie("refreshToken", data.refreshToken)
       setCookie("usertype", data.type)
@@ -59,7 +59,7 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
       if (response.ok)
         return response.json(); else throw response;
     }).then((data) => {
-      setCookie("login_username", username)
+      setCookie("login_username", data.login_username)
       setCookie("accessToken", data.accessToken)
       setCookie("refreshToken", data.refreshToken)
       setCookie("usertype", data.type)

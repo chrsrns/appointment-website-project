@@ -105,7 +105,8 @@ router.post('/login', async (req, res, next) => {
       accessToken,
       refreshToken,
       type: existingUser.type,
-      id: existingUser.id
+      id: existingUser.id,
+      login_username: existingUser.login_username
     });
   } catch (err) {
 
@@ -278,7 +279,8 @@ router.post('/googlelogin', async (req, res, next) => {
       accessToken,
       refreshToken,
       type: existingUser.type,
-      id: existingUser.id
+      id: existingUser.id,
+      login_username: existingUser.login_username
     });
   } catch (err) {
     console.error(err)
