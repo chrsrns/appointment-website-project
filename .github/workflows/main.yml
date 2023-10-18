@@ -22,6 +22,10 @@ jobs:
         working-directory: src-frontend-react
         run: npm install
 
+      - name: Install Prisma Client
+        working-directory: src-frontend-react
+        run: npx prisma generate
+        
       - name: Build Frontend
         working-directory: src-frontend-react
         run: npm run build
