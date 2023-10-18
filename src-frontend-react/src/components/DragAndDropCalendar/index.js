@@ -203,7 +203,8 @@ export default function DragAndDropCalendar({ localizer }) {
     const compiledFGEvents = [...eventsForFG, ...recurringEventsForFG]
     const compiledBGEvents = [...eventsForBG, ...recurringEventsForBG]
 
-    // console.log(compiledBGEvents)
+    console.log("Compiled BG Events: ", compiledBGEvents)
+    console.log("Compiled FG Events: ", compiledFGEvents)
 
     setEventsForRender(compiledFGEvents)
     setEventsForBG(compiledBGEvents)
