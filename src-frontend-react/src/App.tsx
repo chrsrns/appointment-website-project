@@ -65,10 +65,18 @@ const TopBar = () => {
   return (
     <Navbar expand="lg" className="bg-body-tertiary shadow-sm">
       <Container className="justify-contents-between">
-        <>
-          <Navbar.Brand href="#home">Kapayapaan Integrated School</Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        </>
+        <div>
+          <Navbar.Brand href="/">
+            <img
+              src={process.env.PUBLIC_URL + "/school_logo.png"}
+              alt="Logo"
+              width={40}
+              height={40}
+              className="me-2"
+            />
+            Kapayapaan Integrated School
+          </Navbar.Brand>
+        </div>
         <Stack direction="horizontal" gap={3}>
           <Button onClick={handleDarkModeToggleClick}>
             {darkMode ? (
@@ -245,6 +253,8 @@ const App: React.FC = () => {
     socket.connect();
   };
   useEffect(() => {
+    document.title =
+      "Kapayapaan Integrated School Scheduler System | JB Lustre";
     getLoggedInStatus();
     socket.onAny((event, ...args) => {
       console.log("Socket onAny: ");
