@@ -305,6 +305,7 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    console.log("will disconnect trigger: ", !cookies.accessToken);
     if (!cookies.accessToken) {
       setIsLandingPageActive(true);
       setIsLoggedIn(false);
