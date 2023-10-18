@@ -264,6 +264,7 @@ const App: React.FC = () => {
     socket.connect();
   };
   useEffect(() => {
+    attemptSocketConnection();
     document.title =
       "Kapayapaan Integrated School Scheduler System | JB Lustre";
     getLoggedInStatus();
@@ -301,7 +302,6 @@ const App: React.FC = () => {
         </div>
       ));
     });
-    attemptSocketConnection();
   }, []);
 
   useEffect(() => {
