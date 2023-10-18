@@ -336,6 +336,9 @@ router.delete("/schedule/:id", async (req, res) => {
       where: {
         id: id,
       },
+      include: {
+        Users: true
+      }
     });
     if (!schedule) {
       res.status(404).json({ error: "Schedule not found" });
@@ -383,7 +386,10 @@ router.post("/schedule", async (req, res, next) => {
 
     scheduleData.authoredBy = { connect: { id: userId } }
     const schedule = await prisma.schedule.create({
-      data: scheduleData
+      data: scheduleData,
+      include: {
+        Users: true
+      }
     })
 
     createNotification({
