@@ -167,7 +167,13 @@ router.get("/schedules-summary", async (req, res, next) => {
         OR: [
           { Users: { some: { id: userId } } },
           { authorUserId: userId }
+        ],
+        state: { not: schedule_state.Completed },
+        OR: [
+          { fromDate: { gte: new Date(Date.now()) } },
+          { toDate: { gte: new Date(Date.now()) } }
         ]
+
       },
       select: {
         id: true,
@@ -195,21 +201,20 @@ router.get("/schedules/by-user/:id", async (req, res, next) => {
 
     const schedules = await prisma.schedule.findMany({
       where: {
-        AND: [
-          {
-            Users: {
-              some: {
-                id: id
-              }
-            }
-          },
-          {
-            OR: [
-              { Users: { some: { id: userId } } },
-              { authorUserId: userId },
-              { state: schedule_state.Available }
-            ]
+        Users: {
+          some: {
+            id: id
           }
+        },
+        OR: [
+          { Users: { some: { id: userId } } },
+          { authorUserId: userId },
+          { state: schedule_state.Available }
+        ],
+        state: { not: schedule_state.Completed },
+        OR: [
+          { fromDate: { gte: new Date(Date.now()) } },
+          { toDate: { gte: new Date(Date.now()) } }
         ]
       },
       select: {
@@ -243,12 +248,6 @@ router.get("/schedule/:id", async (req, res) => {
     const schedule = await prisma.schedule.findUnique({
       where: {
         id: id,
-        state: { not: schedule_state.Completed },
-        OR: [
-          { fromDate: { gte: new Date(Date.now()) } },
-          { toDate: { gte: new Date(Date.now()) } }
-        ]
-
       },
       include: {
         Users: {
