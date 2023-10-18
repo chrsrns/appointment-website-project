@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Modal, Button, Form, Tab, Tabs, ToastContainer, Toast, Stack } from 'react-bootstrap';
 import { useCookies } from 'react-cookie';
 
@@ -6,7 +6,6 @@ import LoadingOverlay from "react-loading-overlay-ts";
 import { customFetch } from '../../utils';
 
 import RegistrationForm from './RegistrationForm';
-import { socket } from '../../socket';
 import { GoogleLogin } from '@react-oauth/google';
 
 export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
