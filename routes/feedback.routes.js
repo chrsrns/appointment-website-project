@@ -21,6 +21,15 @@ router.post("/add", async (req, res, next) => {
       data: data,
     });
 
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId
+      }
+    })
+    createNotification({
+      title: `User ${user.login_username} left their feedback.`,
+      message: `Rating: ${data.rating}`
+    })
     res.json(feedback);
   } catch (error) {
     console.error(error);

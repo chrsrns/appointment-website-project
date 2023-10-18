@@ -269,8 +269,16 @@ const App: React.FC = () => {
 
       setOnlineUsers(users);
     });
-    socket.on("schedule updated", ({ schedTitle }) => {
-      toast(`Schedule "${schedTitle}" was updated.`);
+    socket.on("notify", ({ title, message }) => {
+      console.log("Notify detected");
+      toast(() => (
+        <div style={{ fontSize: "0.8rem" }}>
+          <p className="fw-bold mb-2 border-bottom border-secondary pb-2">
+            {title}
+          </p>
+          {message}
+        </div>
+      ));
     });
     attemptSocketConnection();
   }, []);

@@ -48,10 +48,26 @@ router.post("/record", async (req, res, next) => {
     const record = await prisma.medicalRecord.create({
       data: data,
       include: {
-        user: true
+        user: true,
       }
     });
-
+    const authorizationheader = req.headers.authorization;
+    const token = authorizationheader.replace('Bearer ', '');
+    const userId = findUserIdByAccessToken(token)
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId
+      }
+    })
+    createNotification({
+      title: `Medical Record Added`,
+      message: `Medical Record created by ${user.login_username} for ${record.user.login_username}`,
+      users: [record.user]
+    })
+    getSocketInstance().to(record.userId).emit("notify", {
+      title: `Medical Record Added`,
+      message: `Medical Record created by ${user.login_username} for ${record.user.login_username}`,
+    })
     res.json(record);
   } catch (error) {
     console.error(error);

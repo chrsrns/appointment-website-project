@@ -1,11 +1,12 @@
 const { isAuthenticated } = require("../middlewares");
 const bcrypt = require("bcrypt");
 
-const { PrismaClient, Prisma, user_type, user_approval_type } = require("@prisma/client");
+const { PrismaClient, user_type, user_approval_type } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const express = require("express");
 const router = express.Router();
+const { createNotification } = require('../routes/notifications.services');
 
 router.get("/users", async (req, res, next) => {
   try {
@@ -69,6 +70,11 @@ router.put("/pendinguser/:id", async (req, res) => {
       res.status(404).json({ error: "User not found" });
       return;
     }
+    createNotification({
+      title: `User Registration ${req.body.approved}`,
+      message: `User with username ${user.login_username} registration was ${req.body.approved}`
+    })
+
     res.status(200)
     return next()
   } catch (error) {
@@ -107,7 +113,22 @@ router.post("/user", async (req, res, next) => {
     const usercreate = await prisma.user.create({
       data: user
     })
-    res.status(200)
+    const authorizationheader = req.headers.authorization;
+
+    const token = authorizationheader.replace('Bearer ', '');
+    const userId = findUserIdByAccessToken(token)
+
+    const userAdmin = await prisma.user.findUnique({
+      where: {
+        id: userId
+      }
+    })
+
+    createNotification({
+      title: `New User Added by Admin ${userAdmin.login_username} (${userAdmin.lname})`,
+      message: `User with username ${user.login_username} added in the system`
+    })
+    res.status(200).json(usercreate)
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "An error occurred when adding the user" });
@@ -132,8 +153,11 @@ router.put("/user/:id", async (req, res) => {
       res.status(404).json({ error: "User not found" });
       return;
     }
+    createNotification({
+      title: `User Modified by Admin ${userAdmin.login_username} (${userAdmin.lname})`,
+      message: `User with username ${user.login_username} modified in the system`
+    })
     res.status(200)
-    return next()
   } catch (error) {
     console.error(error);
     res
@@ -154,8 +178,11 @@ router.delete("/user/:id", async (req, res) => {
       res.status(404).json({ error: "User not found" });
       return;
     }
+    createNotification({
+      title: `User Removed by Admin ${userAdmin.login_username} (${userAdmin.lname})`,
+      message: `User with username ${user.login_username} removed from the system`
+    })
     res.json(userToDelete);
-    console.log(req.body)
   } catch (error) {
     console.error(error);
     res
@@ -184,13 +211,23 @@ router.post("/announcement", async (req, res, next) => {
     const announcementcreate = await prisma.announcement.create({
       data: req.body
     })
+    const authorizationheader = req.headers.authorization;
+    const token = authorizationheader.replace('Bearer ', '');
+    const userId = findUserIdByAccessToken(token)
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId
+      }
+    })
+    createNotification({
+      title: `Announcement created by Admin ${user.login_username}: ${announcementcreate.title}`,
+      message: `${announcementcreate.content}`
+    })
     res.status(200)
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "An error occurred when adding the announcement" });
   }
-
-  return next();
 })
 
 router.put("/announcement/:id", async (req, res) => {
@@ -207,8 +244,19 @@ router.put("/announcement/:id", async (req, res) => {
       res.status(404).json({ error: "Appointment not found" });
       return;
     }
-    res.status(200)
-    return next()
+    const authorizationheader = req.headers.authorization;
+    const token = authorizationheader.replace('Bearer ', '');
+    const userId = findUserIdByAccessToken(token)
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId
+      }
+    })
+    createNotification({
+      title: `Announcement updated by Admin ${user.login_username}: ${announcementcreate.title}`,
+      message: `${announcementcreate.content}`
+    })
+    res.json(announcementToUpdate)
   } catch (error) {
     console.error(error);
     res
@@ -229,8 +277,19 @@ router.delete("/announcement/:id", async (req, res) => {
       res.status(404).json({ error: "Appointment not found" });
       return;
     }
+    const authorizationheader = req.headers.authorization;
+    const token = authorizationheader.replace('Bearer ', '');
+    const userId = findUserIdByAccessToken(token)
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId
+      }
+    })
+    createNotification({
+      title: `Announcement removed by Admin ${user.login_username}: ${announcementcreate.title}`,
+      message: `${announcementcreate.content}`
+    })
     res.json(announcementToDelete);
-    console.log(req.body)
   } catch (error) {
     console.error(error);
     res

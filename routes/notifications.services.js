@@ -14,7 +14,8 @@ const createNotification = async ({ title, message, users = [] }) => {
       }
     })
 
-    const usersToAdd = (admins.length !== 0 || users.length !== 0) ? { connect: [...admins, ...users] } : {}
+    const usersToAdd = (admins.length !== 0 || users.length !== 0) 
+      ? { connect: [...admins, ...users.map(obj => ({ id: obj.id }))] } : {}
     const createNotification = await db.notifications.create({
       data: {
         title: title,
