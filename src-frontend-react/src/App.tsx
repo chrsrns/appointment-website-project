@@ -85,6 +85,7 @@ const TopBar = () => {
             onClick={() => {
               Cookies.set("refreshToken", "");
               Cookies.set("accessToken", "");
+              Cookies.set("userid", "");
             }}
           >
             Logout
