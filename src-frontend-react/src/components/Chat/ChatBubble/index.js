@@ -65,11 +65,11 @@ const Chat = ({ scheduleId }) => {
 
   useEffect(() => {
     setIsFetchingAll(true)
-    setFormData({
+    setFormData(formData => ({
       ...formData,
       scheduleId: scheduleId,
-    });
-  }, [fetchAll, formData, scheduleId])
+    }));
+  }, [fetchAll, scheduleId])
   return (
     <LoadingOverlay spinner active={isLoading}>
       <Container className='px-3 mb-4'>
