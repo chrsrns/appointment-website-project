@@ -134,6 +134,7 @@ router.get("/schedules", async (req, res, next) => {
         title: true,
         desc: true,
         repeat: true,
+        authorUserId: true,
         Users: {
           select: {
             id: true,
@@ -225,6 +226,7 @@ router.get("/schedules/by-user/:id", async (req, res, next) => {
         title: true,
         desc: true,
         repeat: true,
+        authorUserId: true,
         Users: {
           select: {
             id: true,

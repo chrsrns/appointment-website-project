@@ -11,6 +11,8 @@ import Select from 'react-select';
 import { customFetch } from '../../utils';
 import { Button, Stack } from 'react-bootstrap';
 import { PrintModal } from '../PrintModal';
+import { schedule_state, user_type } from '@prisma/client';
+import Cookies from 'js-cookie';
 
 const DEFAULT_USER_TO_FILTER_VALUES = {
   id: '',
@@ -84,12 +86,17 @@ export default function DragAndDropCalendar({ localizer }) {
               // console.log(`startString: ${startUTC} | endString: ${endUTC}`)
               // console.log(`multiDays: ${isMultiDays}`)
               // console.log("")
+              console.log("is draggable", !Cookies.get("usertype") === user_type.Student)
 
               return {
                 id: eventFull.id,
                 title: eventFull.title,
                 start: new Date(eventFull.fromDate),
                 end: new Date(eventFull.toDate),
+                authorUserId: eventFull.authorUserId,
+                isDraggable: ((eventFull.state === schedule_state.Pending ||
+                  eventFull.state === schedule_state.Available) &&
+                  Cookies.get("usertype") !== user_type.Student),
                 state: eventFull.state,
                 allDay: isMultiDays,
                 repeat: eventFull.repeat
@@ -426,8 +433,8 @@ export default function DragAndDropCalendar({ localizer }) {
           eventPropGetter={eventPropGetter}
           localizer={localizer}
 
-          min={new Date(1972, 0, 1, 6)}
-          max={new Date(1972, 0, 1, 18)}
+          min={new Date(1972, 0, 1, 8)}
+          max={new Date(1972, 0, 1, 17)}
 
           date={date}
           onNavigate={onNavigate}
@@ -439,6 +446,7 @@ export default function DragAndDropCalendar({ localizer }) {
           onSelectSlot={handleSelectSlot}
 
           popup
+          draggableAccessor="isDraggable"
           resizable
           selectable
           style={{ height: '40rem' }}
