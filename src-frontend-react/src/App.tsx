@@ -276,11 +276,11 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    attemptSocketConnection();
     if (!cookies.accessToken) {
       setIsLandingPageActive(true);
       setIsLoggedIn(false);
-    }
+      socket.disconnect();
+    } else attemptSocketConnection();
   }, [cookies]);
 
   useEffect(() => {
