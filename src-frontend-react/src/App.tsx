@@ -226,6 +226,7 @@ const App: React.FC = () => {
   const [isLogInDone, setIsLogInDone] = useState(false);
 
   const [onlineUsers, setOnlineUsers] = useState([]);
+  const socketConnected = useRef(false);
 
   const getLoggedInStatus = () => {
     const data = { refreshToken: Cookies.get("refreshToken") };
@@ -257,20 +258,28 @@ const App: React.FC = () => {
   };
 
   const attemptSocketConnection = () => {
+    console.log("connecting...");
     socket.auth = {
       accessToken: Cookies.get("accessToken"),
       refreshToken: Cookies.get("refreshToken"),
     };
+    console.log("socket auth: ", socket.auth);
     socket.connect();
   };
+  const disconnectSocketConnection = () => {
+    socket.disconnect();
+  };
   useEffect(() => {
-    attemptSocketConnection();
     document.title =
       "Kapayapaan Integrated School Scheduler System | JB Lustre";
     getLoggedInStatus();
     socket.onAny((event, ...args) => {
       console.log("Socket onAny: ");
       console.log(event, args);
+    });
+    socket.on("connect", () => {
+      console.log("Socket connected");
+      socketConnected.current = true;
     });
     socket.on("users", (users) => {
       users.forEach((user: user) => {
@@ -302,14 +311,14 @@ const App: React.FC = () => {
         </div>
       ));
     });
+    attemptSocketConnection();
   }, []);
 
   useEffect(() => {
-    console.log("will disconnect trigger: ", !cookies.accessToken);
     if (!cookies.accessToken) {
       setIsLandingPageActive(true);
       setIsLoggedIn(false);
-      socket.disconnect();
+      disconnectSocketConnection();
     } else attemptSocketConnection();
   }, [cookies]);
 
@@ -318,9 +327,13 @@ const App: React.FC = () => {
       getLoggedInStatus();
       // console.log('This code runs every 1 minute');
     }, 60000);
+    const socketinterval = setInterval(() => {
+      if (!socketConnected.current) attemptSocketConnection();
+    }, 1000);
     // Clean up the interval when the component unmounts
     return () => {
       clearInterval(intervalId);
+      clearInterval(socketinterval);
     };
   }, []);
 
