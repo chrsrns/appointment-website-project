@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Alert, ListGroup } from "react-bootstrap";
 import { toast } from "react-toastify";
+import { socket } from "../../socket";
 import { customFetch } from "../../utils";
 
 const SideNotifications = () => {
@@ -29,6 +30,9 @@ const SideNotifications = () => {
 
   useEffect(() => {
     fetchAll()
+    socket.on("notify", () => {
+      fetchAll()
+    });
   }, [])
 
   const dismissNotification = (id) => {
