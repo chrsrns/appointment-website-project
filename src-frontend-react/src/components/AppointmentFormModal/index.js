@@ -1,6 +1,6 @@
 import { repeat, schedule_state } from "@prisma/client";
 import moment from "moment";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Button, Form, ListGroup, Modal, Stack, Tab, Tabs } from "react-bootstrap";
 import Cookies from "js-cookie";
 
@@ -33,6 +33,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
   // const [isStudentSelectionEmpty, setIsStudentSelectionEmpty] = useState([]);
 
   const [scheduleTypes, setScheduleTypes] = useState([])
+  const [filteredScheduleTypes, setFilteredScheduleTypes] = useState([])
   const [scheduleRepeatTypes, setScheduleRepeatTypes] = useState([])
 
   const [isLoading, setIsLoading] = useState(true);
@@ -119,7 +120,6 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
       })
     }
   }, [fetchAll, isFetchingAll])
-
   useEffect(() => {
     setIsLoading(true)
     setIsFetchingAll(true)
@@ -128,6 +128,27 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
     // }, 5000)
     // return () => clearInterval(intervalId); //This is important
   }, [])
+  const scheduleTypeRef = useRef("")
+  const idRef = useRef("")
+  useEffect(() => {
+    scheduleTypeRef.current = formData.scheduletype
+    idRef.current = id
+  })
+  useEffect(() => {
+    setFilteredScheduleTypes(scheduleTypes.filter((x) => {
+      if (idRef.current) {
+        if (scheduleTypeRef.current === schedule_state.Available)
+          return x === schedule_state.Available
+
+        if (scheduleTypeRef.current === schedule_state.Pending)
+          return x !== schedule_state.Available
+
+        return !(x === schedule_state.Available || x === schedule_state.Pending
+        )
+      }
+      return true;
+    }))
+  }, [scheduleTypes])
 
   useEffect(() => {
     console.log(`id: ${id}`)
@@ -413,37 +434,21 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
 
                   <Form.Label>Schedule Status</Form.Label>
                   <div key='inline-radio' className="mb-3 mx-3">
-                    {scheduleTypes.filter((x) => {
-                      console.log("filtering data...")
-                      console.log(id, x, formData.scheduletype)
-                      if (id) {
-                        if (formData.scheduletype === schedule_state.Available)
-                          return x === schedule_state.Available
+                    {filteredScheduleTypes.map((scheduleType) => (
+                      <Form.Check
+                        key={scheduleType}
+                        inline
+                        name="scheduletype"
+                        type="radio"
+                        id={`inline-radio-${scheduleType}`}
+                        label={scheduleType}
+                        value={scheduleType}
+                        disabled={
+                          Cookies.get("usertype") === "Student" && Cookies.get("userid") === authorUserId}
+                        onChange={handleChange}
+                        checked={formData.scheduletype === scheduleType} />
 
-                        if (formData.scheduletype === schedule_state.Pending)
-                          return x !== schedule_state.Available
-
-                        return !(x === schedule_state.Available || x === schedule_state.Pending
-                        )
-                      }
-
-                      return true;
-                    })
-                      .map((scheduleType) => (
-                        <Form.Check
-                          key={scheduleType}
-                          inline
-                          name="scheduletype"
-                          type="radio"
-                          id={`inline-radio-${scheduleType}`}
-                          label={scheduleType}
-                          value={scheduleType}
-                          disabled={
-                            Cookies.get("usertype") === "Student" && Cookies.get("userid") === authorUserId}
-                          onChange={handleChange}
-                          checked={formData.scheduletype === scheduleType} />
-
-                      ))}
+                    ))}
                   </div>
                 </Form.Group>
 
