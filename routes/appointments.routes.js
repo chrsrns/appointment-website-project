@@ -117,7 +117,13 @@ router.get("/schedules", async (req, res, next) => {
         OR: [
           { Users: { some: { id: userId } } },
           { authorUserId: userId }
+        ],
+        state: { not: schedule_state.Completed },
+        OR: [
+          { fromDate: { gte: new Date(Date.now()) } },
+          { toDate: { gte: new Date(Date.now()) } }
         ]
+
       },
       select: {
         id: true,
@@ -162,7 +168,6 @@ router.get("/schedules-summary", async (req, res, next) => {
           { Users: { some: { id: userId } } },
           { authorUserId: userId }
         ]
-
       },
       select: {
         id: true,
@@ -238,6 +243,12 @@ router.get("/schedule/:id", async (req, res) => {
     const schedule = await prisma.schedule.findUnique({
       where: {
         id: id,
+        state: { not: schedule_state.Completed },
+        OR: [
+          { fromDate: { gte: new Date(Date.now()) } },
+          { toDate: { gte: new Date(Date.now()) } }
+        ]
+
       },
       include: {
         Users: {
