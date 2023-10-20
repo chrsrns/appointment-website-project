@@ -311,7 +311,14 @@ const App: React.FC = () => {
         </div>
       ));
     });
-    attemptSocketConnection();
+
+    return () => {
+      socket.off("connect");
+      socket.off("users");
+      socket.off("connect_error");
+      socket.off("notify");
+      socket.offAny();
+    };
   }, []);
 
   useEffect(() => {

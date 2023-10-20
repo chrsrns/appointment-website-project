@@ -94,6 +94,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
           throw response;
         })
         .then((data) => {
+          data = data.filter((user) => user.id !== authorUserId)
           if (data !== studentsList)
             setStudentsList(data);
         }),
@@ -106,11 +107,12 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
           throw response;
         })
         .then((data) => {
+          data = data.filter((user) => user.id !== authorUserId)
           if (data !== staffList)
             setStaffList(data);
         }),
     ])
-  }, [scheduleRepeatTypes, scheduleTypes, staffList, studentsList])
+  }, [scheduleRepeatTypes, scheduleTypes, staffList, studentsList, authorUserId])
   useEffect(() => {
     if (isFetchingAll) {
       fetchAll().then(() => {
