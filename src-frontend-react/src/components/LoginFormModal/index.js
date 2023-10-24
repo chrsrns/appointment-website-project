@@ -6,7 +6,7 @@ import LoadingOverlay from "react-loading-overlay-ts";
 import { customFetch } from '../../utils';
 
 import RegistrationForm from './RegistrationForm';
-import { GoogleLogin, useGoogleLogin } from '@react-oauth/google';
+import { useGoogleLogin } from '@react-oauth/google';
 
 export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
   const [, setCookie] = useCookies(['accessToken', 'refreshToken', 'login_username'])
