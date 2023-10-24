@@ -26,6 +26,8 @@ const { hashToken } = require('../hashTokens');
 const { createNotification } = require('../routes/notifications.services');
 const { OAuth2Client } = require('google-auth-library');
 
+const axios = require('axios');
+
 const nodemailer = require("nodemailer");
 require("dotenv").config();
 let transporter = nodemailer.createTransport({
@@ -301,12 +303,13 @@ router.get("/emailfromgoogle", async (req, res, next) => {
   try {
     const authorizationheader = req.headers.authorization;
     const token = authorizationheader.replace('Bearer ', '');
-    const profile = await fetch(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${token}`, {
+    const profile = await axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${token}`, {
       headers: {
         Authorization: `Bearer ${token}`,
         Accept: 'application/json'
       }
-    }).then((res) => res.json())
+    }).then((res) => res.data)
+    console.log(profile)
 
     const email = profile.email;
     const wherequery = {
@@ -353,13 +356,13 @@ router.post('/googlelogin', async (req, res, next) => {
     const authorizationheader = req.headers.authorization;
     const token = authorizationheader.replace('Bearer ', '');
 
-    const profileReq = await fetch(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${token}`, {
+    const profileReq = await axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${token}`, {
       headers: {
         Authorization: `Bearer ${token}`,
         Accept: 'application/json'
       }
     })
-    const profile = await profileReq.json()
+    const profile = await profileReq.data
 
     const email = profile.email;
 
