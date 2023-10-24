@@ -122,6 +122,14 @@ model Notifications {
   usersToNotify User[]
 }
 
+model Otp {
+  id        String   @id @default(uuid())
+  revoked   Boolean  @default(false)
+  emailaddr String   @unique
+  otp       Int
+  createdAt DateTime @default(now())
+}
+
 enum user_type {
   Student
   Teacher

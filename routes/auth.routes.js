@@ -6,7 +6,8 @@ const {
   addRefreshTokenToWhitelist,
   findRefreshTokenById,
   deleteRefreshToken,
-  revokeTokens
+  revokeTokens,
+  verifyOtp
 } = require('./auth.services');
 const jwt = require('jsonwebtoken');
 
@@ -25,9 +26,90 @@ const { hashToken } = require('../hashTokens');
 const { createNotification } = require('../routes/notifications.services');
 const { OAuth2Client } = require('google-auth-library');
 
+const nodemailer = require("nodemailer");
+require("dotenv").config();
+let transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL,
+    pass: process.env.WORD,
+  },
+});
+
+transporter.verify((err, success) => {
+  err
+    ? console.log(err)
+    : console.log(`=== Server is ready to take messages: ${success} ===`);
+});
+
+router.post("/sendotp", async (req, res) => {
+  try {
+    const email = req.body.email;
+    const wherequery = {
+      where: {
+        emailaddr: email
+      }
+    }
+
+    let otp = await prisma.otp.findUnique(wherequery)
+    if (otp) await prisma.otp.delete(wherequery)
+    otp = await prisma.otp.create({
+      data: {
+        emailaddr: email,
+        otp: Math.floor(Math.random() * 900000 + 100000)
+      }
+    })
+
+    let mailOptions = {
+      from: "Kapayapaan Integrated School Scheduler",
+      to: email,
+      subject: "Verify OTP",
+      text: `Your OTP is ${otp.otp}. Ignore this if you did not request this.`,
+    };
+
+    transporter.sendMail(mailOptions, function(err, data) {
+      if (err) {
+        console.log("Error " + err);
+      } else {
+        console.log("Email sent successfully");
+        res.json({ status: "Email sent" });
+      }
+    });
+    console.log(otp)
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ err: err })
+  }
+});
+
+router.get('/verifyotp', async (req, res) => {
+  try {
+    const { email, otp: otpInReq } = req.body;
+    const wherequery = {
+      where: {
+        emailaddr: email
+      }
+    }
+
+    let otp = await prisma.otp.findUnique(wherequery)
+
+    verifyOtp(otp, otpInReq);
+
+    console.log("Verified")
+    res.status(200).json({
+      msg: "OTP Verified"
+    })
+
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ err: err.message })
+  }
+});
+
 router.post('/register', async (req, res, next) => {
   try {
-    const { fname, mname, lname, login_username, login_password, addr, cnum, emailaddr, bdate, type } = req.body;
+    const { fname, mname, lname, login_username, login_password, addr, cnum, emailaddr, bdate, type, otp: otpInReq } = req.body;
+    console.log(req.body)
     if (!login_username || !login_password || !fname || !mname || !lname || !addr || !cnum || !emailaddr || !bdate || !type) {
       res.status(400);
       throw new Error(`You must provide an all required fields.`);
@@ -39,10 +121,20 @@ router.post('/register', async (req, res, next) => {
       res.status(400);
       throw new Error('LRN/Username already in use');
     }
+
+    let otpInDatabase = await prisma.otp.findUnique({
+      where: {
+        emailaddr: emailaddr
+      }
+    })
+
+    verifyOtp(otpInDatabase, otpInReq)
+
     if (type == user_type.Admin) {
       res.status(400);
       throw new Error('Unauthorized')
     }
+    delete req.body.otp;
 
     const user = await createUser(req.body);
     createNotification({
@@ -209,14 +301,45 @@ router.get("/emailfromgoogle", async (req, res, next) => {
   try {
     const authorizationheader = req.headers.authorization;
     const token = authorizationheader.replace('Bearer ', '');
-    const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
+    const profile = await fetch(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${token}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/json'
+      }
+    }).then((res) => res.json())
 
-    const decoded = await client.verifyIdToken({
-      idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
+    const email = profile.email;
+    const wherequery = {
+      where: {
+        emailaddr: email
+      }
+    }
+
+    let otp = await prisma.otp.findUnique(wherequery)
+    if (otp) await prisma.otp.delete(wherequery)
+    otp = await prisma.otp.create({
+      data: {
+        emailaddr: email,
+        otp: Math.floor(Math.random() * 900000 + 100000)
+      }
     })
-    const email = await decoded.getPayload().email
-    res.json(email)
+
+    let mailOptions = {
+      from: "Kapayapaan Integrated School Scheduler",
+      to: email,
+      subject: "Verify OTP",
+      text: `Your OTP is ${otp.otp}. Ignore this if you did not request this.`,
+    };
+
+    transporter.sendMail(mailOptions, function(err, data) {
+      if (err) {
+        console.log("Error " + err);
+      } else {
+        console.log("Email sent successfully");
+        res.json({ status: "Email sent", email: email });
+      }
+    });
+    console.log(otp)
   } catch (error) {
     console.error(error);
     res

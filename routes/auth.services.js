@@ -44,10 +44,28 @@ function revokeTokens(userId) {
   });
 }
 
+function verifyOtp(otp, otpInReq) {
+  if (!otp)
+    throw new Error("No OTP in database");
+
+  console.log(otp.otp, otpInReq)
+  if (otp.otp != otpInReq)
+    throw new Error("OTP did not match");
+
+  const entryDate = otp.createdAt;
+  const timeDiff = Date.now() - entryDate;
+  const expiration = 5 * 60 * 1000; // minutesToExpire * secToMinMultiplier * millisecToSecMultiplier
+
+  if (timeDiff > expiration)
+    throw new Error("OTP expired");
+}
+
+
 module.exports = {
   addRefreshTokenToWhitelist,
   findRefreshTokenById,
   deleteRefreshToken,
-  revokeTokens
+  revokeTokens,
+  verifyOtp
 };
 

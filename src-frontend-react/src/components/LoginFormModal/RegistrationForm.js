@@ -5,6 +5,8 @@ import { Form, Button, Row, Col, ToastContainer, Toast, Stack } from 'react-boot
 
 import LoadingOverlay from 'react-loading-overlay-ts';
 import { customFetch } from '../../utils';
+import { useGoogleLogin } from '@react-oauth/google';
+import { toast } from 'react-toastify';
 
 const DEFAULT_FORM_VALUES = {
   id: '',
@@ -18,6 +20,7 @@ const DEFAULT_FORM_VALUES = {
   type: '',
   login_username: '', // Add username field
   login_password: '', // Add password field
+  otp: '',
 }
 
 const RegistrationForm = () => {
@@ -38,6 +41,10 @@ const RegistrationForm = () => {
     setFormErrors({ ...DEFAULT_FORM_VALUES })
 
   }
+
+  const glogin = useGoogleLogin({
+    onSuccess: tokenResponse => handleGoogleLoginSuccess(tokenResponse),
+  });
 
   const fetchAll = () => {
     setIsLoading(true)
@@ -174,7 +181,8 @@ const RegistrationForm = () => {
         bdate: moment(new Date(formData.bdate)).toISOString(),
         type: formData.type,
         login_username: formData.login_username,
-        login_password: formData.login_password
+        login_password: formData.login_password,
+        otp: formData.otp
       }
 
       customFetch(`${global.server_backend_url}/backend/auth/register`, {
@@ -194,23 +202,31 @@ const RegistrationForm = () => {
         setResponseBody(errorBody.msg)
         setShowNotif(true)
       })
-    } else {
     }
   };
 
+  // TODO Enhance security by sending access_token to register endpoint then verifying again if the email from field is similar from email fetched by access token from Google.
   const handleGoogleLoginSuccess = (response) => {
+    setFormData({
+      ...formData,
+      gaccesstoken: response.access_token,
+    });
+    setIsLoading(true)
+
     customFetch(`${global.server_backend_url}/backend/auth/emailfromgoogle`, {
-      headers: { Authorization: `Bearer ${response.credential}` }
+      headers: { Authorization: `Bearer ${response.access_token}` }
     }).then((response) => {
       if (response.ok) return response.json();
       else throw response;
     }).then((data) => {
+      console.log("Data: ", data)
       setFormData({
         ...formData,
-        emailaddr: data,
+        emailaddr: data.email,
       });
+      toast("OTP sent to your Gmail. Please put it in the OTP field.")
       return data;
-    })
+    }).finally(() => setIsLoading(false))
   };
   return (
     <LoadingOverlay active={isLoading} spinner text='Waiting for update...'>
@@ -262,22 +278,33 @@ const RegistrationForm = () => {
           <div className="text-danger">{formErrors.addr}</div>
         </Form.Group>
         <Row className="mb-3">
-          <Form.Group as={Col} lg="8" controlId="emailaddr">
+          <Form.Group as={Col} lg="6" controlId="emailaddr">
             <Form.Label>Email</Form.Label>
-            <Stack direction='horizontal' gap={2}>
+            <Stack gap={2}>
+              <Stack direction='horizontal' gap={2}>
+                <Form.Control
+                  type="email"
+                  name="emailaddr"
+                  value={formData.emailaddr}
+                  onChange={handleChange}
+                  placeholder="Use Google Login..."
+                  disabled
+                />
+                <Button onClick={() => glogin()}><i class="bi bi-google"></i></Button>
+              </Stack>
+              <div className="text-danger">{formErrors.emailaddr}</div>
               <Form.Control
-                type="email"
-                name="emailaddr"
-                value={formData.emailaddr}
+                type="text"
+                pattern='[0-9]{6}'
+                name="otp"
+                value={formData.otp}
                 onChange={handleChange}
-                placeholder="Use Google Login..."
-                disabled
+                placeholder="6-Digit OTP (Google Login Required) "
+                disabled={!formData.emailaddr}
               />
-              <GoogleLogin onSuccess={handleGoogleLoginSuccess} />
             </Stack>
-            <div className="text-danger">{formErrors.emailaddr}</div>
           </Form.Group>
-          <Form.Group as={Col} lg="4" controlId="cnum">
+          <Form.Group as={Col} lg="6" controlId="cnum">
             <Form.Label>Phone Number</Form.Label>
             <Form.Control
               type="tel"
