@@ -6,7 +6,7 @@ import LoadingOverlay from "react-loading-overlay-ts";
 import { customFetch } from '../../utils';
 
 import RegistrationForm from './RegistrationForm';
-import { GoogleLogin } from '@react-oauth/google';
+import { GoogleLogin, useGoogleLogin } from '@react-oauth/google';
 
 export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
   const [, setCookie] = useCookies(['accessToken', 'refreshToken', 'login_username'])
@@ -17,6 +17,10 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+
+  const glogin = useGoogleLogin({
+    onSuccess: tokenResponse => handleGoogleLogin(tokenResponse),
+  });
 
   const handleLogin = () => {
     setShowNotif(false)
@@ -54,7 +58,7 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
   const handleGoogleLogin = (response) => {
     customFetch(`${global.server_backend_url}/backend/auth/googlelogin`, {
       method: 'POST',
-      headers: { Authorization: `Bearer ${response.credential}` }
+      headers: { Authorization: `Bearer ${response.access_token}` }
     }).then((response) => {
       if (response.ok)
         return response.json(); else throw response;
@@ -121,7 +125,7 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
                 <Button variant="primary" type="button" onClick={handleLogin}>
                   Login
                 </Button>
-                <GoogleLogin onSuccess={handleGoogleLogin} />
+                <Button onClick={() => glogin()}><i class="bi bi-google"></i></Button>
               </Stack>
             </Tab>
             <Tab eventKey="register" title="Register">

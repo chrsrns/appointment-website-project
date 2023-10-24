@@ -352,13 +352,16 @@ router.post('/googlelogin', async (req, res, next) => {
   try {
     const authorizationheader = req.headers.authorization;
     const token = authorizationheader.replace('Bearer ', '');
-    const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 
-    const decoded = await client.verifyIdToken({
-      idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
+    const profileReq = await fetch(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${token}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/json'
+      }
     })
-    const email = await decoded.getPayload().email
+    const profile = await profileReq.json()
+
+    const email = profile.email;
 
     if (!email) {
       res.status(400);
