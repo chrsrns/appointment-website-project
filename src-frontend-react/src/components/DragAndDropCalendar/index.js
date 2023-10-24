@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 import { Calendar, Views, DateLocalizer } from 'react-big-calendar'
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
@@ -52,6 +52,9 @@ export default function DragAndDropCalendar({ localizer }) {
     toDate: Date.now(),
   })
 
+  const eventsFullRef = useRef([])
+  useEffect(() => eventsFullRef.current = eventsFull, [eventsFull])
+
   const [isFetchingAll, setIsFetchingAll] = useState(true)
   const fetchAll = useCallback(async () => {
     const request = selectedStaffToFilter.value.id ?
@@ -65,7 +68,7 @@ export default function DragAndDropCalendar({ localizer }) {
           if (response.ok) return response.json();
           else throw response;
         }).then((data) => {
-          if (data !== eventsFull) {
+          if (data !== eventsFullRef.current) {
             setEventsFull(data);
 
             setEventsMapped([...data.map((eventFull) => {
@@ -119,7 +122,7 @@ export default function DragAndDropCalendar({ localizer }) {
       setIsLoading(false)
       setIsFetchingAll(false)
     })
-  }, [eventsFull, selectedStaffToFilter.value])
+  }, [selectedStaffToFilter.value])
   useEffect(() => {
     if (isFetchingAll) {
       fetchAll().then(() => {
@@ -426,7 +429,6 @@ export default function DragAndDropCalendar({ localizer }) {
           ))}
         </Stack>
         <CalendarWithDragAndDrop
-          dayLayoutAlgorithm="no-overlap"
           defaultView={Views.WEEK}
           backgroundEvents={eventsForBG}
           events={eventsForRender}
