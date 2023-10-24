@@ -53,7 +53,7 @@ export default function DragAndDropCalendar({ localizer }) {
   })
 
   const eventsFullRef = useRef([])
-  useEffect(() => eventsFullRef.current = eventsFull, [eventsFull])
+  useEffect(() => { eventsFullRef.current = eventsFull }, [eventsFull])
 
   const [isFetchingAll, setIsFetchingAll] = useState(true)
   const fetchAll = useCallback(async () => {
