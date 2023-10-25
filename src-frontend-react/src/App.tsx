@@ -410,7 +410,6 @@ const App: React.FC = () => {
                     <Card.Body>
                       <ListGroup>
                         {onlineUsers.map((user) => {
-                          console.log("online user: ", user);
                           return (
                             <ListGroupItem
                               key={
