@@ -231,11 +231,6 @@ export default function DragAndDropCalendar({ localizer }) {
     updateEvents()
   }, [date, updateEvents])
 
-  useEffect(() => {
-    if (!isLoading) setIsLoading(true)
-    setIsFetchingAll(true)
-  }, [isLoading])
-
   const appointmentsTypesColors = {
     Available: "#dee2e6",
     Pending: "#fff3cd",
