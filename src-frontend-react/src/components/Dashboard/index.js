@@ -150,7 +150,7 @@ export const Dashboard = ({ sidebarbtn_onClick }) => {
                         {availableSchedules.map(appointment => (
                           <tr>
                             <td>{appointment.title}</td>
-                            <td>{appointment.fromDate} to {appointment.toDate}</td>
+                            <td>{moment(appointment.fromDate).format('dddd')}, {moment(appointment.fromDate).format('hh:mm A')} to {moment(appointment.toDate).format('hh:mm A')}</td>
                             <td>{appointment.repeat}</td>
                           </tr>
                         ))}
