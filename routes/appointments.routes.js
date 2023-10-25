@@ -122,7 +122,8 @@ router.get("/schedules", async (req, res, next) => {
         state: { not: schedule_state.Completed },
         OR: [
           { fromDate: { gte: new Date(Date.now()) } },
-          { toDate: { gte: new Date(Date.now()) } }
+          { toDate: { gte: new Date(Date.now()) } },
+          { repeat: { not: repeat.None } }
         ]
 
       },
@@ -173,7 +174,8 @@ router.get("/schedules-summary", async (req, res, next) => {
         state: { not: schedule_state.Completed },
         OR: [
           { fromDate: { gte: new Date(Date.now()) } },
-          { toDate: { gte: new Date(Date.now()) } }
+          { toDate: { gte: new Date(Date.now()) } },
+          { repeat: { not: repeat.None } }
         ]
       },
       select: {
@@ -215,7 +217,9 @@ router.get("/schedules/by-user/:id", async (req, res, next) => {
         state: { not: schedule_state.Completed },
         OR: [
           { fromDate: { gte: new Date(Date.now()) } },
-          { toDate: { gte: new Date(Date.now()) } }
+          { toDate: { gte: new Date(Date.now()) } },
+          { repeat: { not: repeat.None } }
+
         ]
       },
       select: {
