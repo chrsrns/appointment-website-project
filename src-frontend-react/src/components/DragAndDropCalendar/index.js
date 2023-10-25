@@ -102,7 +102,9 @@ export default function DragAndDropCalendar({ localizer }) {
                   Cookies.get("usertype") !== user_type.Student),
                 state: eventFull.state,
                 allDay: isMultiDays,
-                repeat: eventFull.repeat
+                repeat: eventFull.repeat,
+                selectable: eventFull.authorUserId === Cookies.get('userid') || !eventFull.state === schedule_state.Available
+
               }
             })])
           }
@@ -180,13 +182,9 @@ export default function DragAndDropCalendar({ localizer }) {
 
     return start_dates.map((date, index) => {
       return {
-        id: event.id,
-        title: event.title,
+        ...event,
         start: new Date(date),
         end: new Date(end_dates[index]),
-        state: event.state,
-        allDay: event.allDay,
-        repeat: event.repeat
       }
     })
   }, [date])
@@ -361,8 +359,6 @@ export default function DragAndDropCalendar({ localizer }) {
   const handleSelectSlot = useCallback(
     ({ start, end }) => {
       // const title = window.prompt(`New Event name ${start} ${end}`)
-      console.log(start)
-      console.log(end)
       setIsLoading(true)
       setEventRange({ fromDate: start, toDate: end })
       setModalId("")
@@ -378,11 +374,9 @@ export default function DragAndDropCalendar({ localizer }) {
   const handleSelectEvent = useCallback(
     (event) => {
       // window.alert(event.title)
-      console.log(event)
       setIsLoading(true)
       setEventRange({ fromDate: event.start, toDate: event.end })
       setModalId(event.id)
-      console.log(event.id)
       setShowModal(true);
     },
     [setShowModal, setEventRange]
