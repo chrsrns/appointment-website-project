@@ -105,6 +105,7 @@ const TopBar = () => {
               Cookies.set("refreshToken", "");
               Cookies.set("accessToken", "");
               Cookies.set("userid", "");
+              Cookies.set("login_username", "");
             }}
           >
             Logout

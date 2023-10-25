@@ -67,6 +67,7 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
       setCookie("accessToken", data.accessToken)
       setCookie("refreshToken", data.refreshToken)
       setCookie("usertype", data.type)
+      setCookie("userid", data.id)
       onHide(true)
     }).catch(async (err) => {
       /// err.json() returns a Promise, so an async/await is necessary
