@@ -148,7 +148,6 @@ export default function DragAndDropCalendar({ localizer }) {
         break
       default: break
     }
-    console.log(`rule: ${event.repeat}`)
 
     const start_rruleset = new RRuleSet()
     start_rruleset.rrule(new RRule({
@@ -176,6 +175,7 @@ export default function DragAndDropCalendar({ localizer }) {
 
     const start_dates = start_rruleset.all()
     const end_dates = end_rruleset.all()
+    console.log(start_dates)
 
     // console.log(`starts: ${start_dates}`)
     // console.log(`ends: ${end_dates}`)

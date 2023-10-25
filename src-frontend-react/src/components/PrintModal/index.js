@@ -17,7 +17,7 @@ export const PrintModal = ({ show, onClose, records }) => {
       </Modal.Header>
       <Modal.Body className='m-3' ref={componentRef}>
         <Stack direction='horizontal' gap={3} className='align-items-center mb-3'>
-          <div>This record was taken on {moment(Date.now()).format('MMM DD, YYYY hh:mm')}</div>
+          <div>This record was taken on {moment(Date.now()).format('MMM DD, YYYY hh:mm A')}</div>
           <Button onClick={handlePrint}>Print</Button>
         </Stack>
         {records.map((record) => (
@@ -26,8 +26,8 @@ export const PrintModal = ({ show, onClose, records }) => {
             <Card.Body>
               <p>Description: {record.desc}</p>
               <p>Schedule State: {record.state}</p>
-              <p>Schedule Start: {moment(record.fromDate).format('MMM DD, YYYY hh:mm')}</p>
-              <p>Schedule End: {moment(record.toDate).format('MMM DD, YYYY hh:mm')}</p>
+              <p>Schedule Start: {moment(record.fromDate).format('MMM DD, YYYY hh:mm A')}</p>
+              <p>Schedule End: {moment(record.toDate).format('MMM DD, YYYY hh:mm A')}</p>
               <p>Repeat: {record.repeat}</p>
               <ListGroup>
                 {record.Users.map((user) => (

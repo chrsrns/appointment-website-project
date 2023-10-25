@@ -45,7 +45,7 @@ export const MedicalRecords = ({ sidebarbtn_onClick }) => {
                   {medicalRecords.map((record, index) => (
                     <Accordion.Item eventKey={index} key={index}>
                       <Accordion.Header>
-                        {moment(record.createdAt).format('MMM DD, YYYY hh:mm')}
+                        {moment(record.createdAt).format('MMM DD, YYYY hh:mm A')}
                       </Accordion.Header>
                       <Accordion.Body>
                         <span style={{ whiteSpace: "pre-line" }}>

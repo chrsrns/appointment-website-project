@@ -35,8 +35,8 @@ export const Dashboard = ({ sidebarbtn_onClick }) => {
             .slice()
             .sort((a, b) => new Date(a.createdAt) + new Date(b.createdAt))
             .map((x) => {
-              x.fromDate = moment(x.fromDate).format('MMM DD, YYYY hh:mm')
-              x.toDate = moment(x.toDate).format('MMM DD, YYYY hh:mm')
+              x.fromDate = moment(x.fromDate).format('MMM DD, YYYY hh:mm A')
+              x.toDate = moment(x.toDate).format('MMM DD, YYYY hh:mm A')
               return x
             })
 
@@ -73,7 +73,7 @@ export const Dashboard = ({ sidebarbtn_onClick }) => {
                         {announcement.content}
                         <p className="mt-1 mb-0 text-muted" style={{ fontSize: '.8rem' }}>
                           {
-                            moment(announcement.createdAt).format('MMM DD, YYYY hh:mm')
+                            moment(announcement.createdAt).format('MMM DD, YYYY hh:mm A')
                           }
                         </p>
                       </ListGroupItem>;
