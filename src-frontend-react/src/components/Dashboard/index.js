@@ -93,13 +93,13 @@ export const Dashboard = ({ sidebarbtn_onClick }) => {
                 nonAvailableSchedules.length === 0
                   ? <div className='text-secondary align-self-center'>Nothing to show</div> :
                   <div
-                    className="table-responsive"
+                    className="table-responsive w-100"
                     style={{
                       height: "25rem",
                       position: "relative",
                     }}
                   >
-                    <Table className="appointments-table">
+                    <Table className="appointments-table w-100">
                       <thead>
                         <tr className="text-uppercase">
                           <th scope="col">Title</th>
@@ -111,7 +111,7 @@ export const Dashboard = ({ sidebarbtn_onClick }) => {
                         {nonAvailableSchedules.map(appointment => (
                           <tr>
                             <td>{appointment.title}</td>
-                            <td>{appointment.fromDate} to {appointment.toDate}</td>
+                            <td>{appointment.fromDate} to<br />{appointment.toDate}</td>
                             <td>{appointment.state}</td>
                           </tr>
                         ))}
@@ -132,13 +132,13 @@ export const Dashboard = ({ sidebarbtn_onClick }) => {
                 availableSchedules.length === 0
                   ? <div className='text-secondary align-self-center'>Nothing to show</div> :
                   <div
-                    className="table-responsive"
+                    className="table-responsive w-100"
                     style={{
                       height: "25rem",
                       position: "relative",
                     }}
                   >
-                    <Table className="appointments-table">
+                    <Table className="appointments-table w-100">
                       <thead>
                         <tr className="text-uppercase">
                           <th scope="col">Title</th>
