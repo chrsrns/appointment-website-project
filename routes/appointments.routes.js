@@ -264,7 +264,8 @@ router.get("/schedule/:id", async (req, res) => {
             lname: true,
             type: true
           }
-        }
+        },
+        authoredBy: true
       }
     });
     if (!schedule) {

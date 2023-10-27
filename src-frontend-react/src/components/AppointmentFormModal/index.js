@@ -178,6 +178,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
               start: moment(data.fromDate).format('YYYY-MM-DDThh:mm'),
               end: moment(data.toDate).format('YYYY-MM-DDThh:mm'),
               repeat: data.repeat,
+              authoredBy: data.authoredBy,
             }));
             setAuthorUserId(data.authorUserId)
 
@@ -342,6 +343,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
       </Modal.Header>
       <LoadingOverlay active={isLoading || !show} spinner text={loadingText}>
         <Modal.Body>
+          {id && formData.authoredBy ? `By ${formData.authoredBy.lname}` : ''}
           <Tabs defaultActiveKey="form" className="mb-3">
             <Tab eventKey="form" title="Edit">
               <Form>
@@ -446,7 +448,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
                         label={scheduleType}
                         value={scheduleType}
                         disabled={
-                          Cookies.get("usertype") === "Student" || (Cookies.get("userid") !== authorUserId && Cookies.get("usertype") !== "Admin")}
+                          Cookies.get("usertype") === "Student"}
                         onChange={handleChange}
                         checked={formData.scheduletype === scheduleType} />
 
