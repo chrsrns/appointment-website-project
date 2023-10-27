@@ -343,7 +343,9 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
       </Modal.Header>
       <LoadingOverlay active={isLoading || !show} spinner text={loadingText}>
         <Modal.Body>
-          {id && formData.authoredBy ? `By ${formData.authoredBy.lname}` : ''}
+          <div className="mb-2">
+            {id && formData.authoredBy ? `Schedule Author: ${formData.authoredBy.lname}, ${formData.authoredBy.fname}` : ''}
+          </div>
           <Tabs defaultActiveKey="form" className="mb-3">
             <Tab eventKey="form" title="Edit">
               <Form>
@@ -550,6 +552,6 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
           </Tabs>
         </Modal.Body>
       </LoadingOverlay>
-    </Modal>
+    </Modal >
   );
 }
