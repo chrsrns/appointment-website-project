@@ -446,7 +446,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
                         label={scheduleType}
                         value={scheduleType}
                         disabled={
-                          Cookies.get("usertype") === "Student" && Cookies.get("userid") === authorUserId}
+                          Cookies.get("usertype") === "Student" || (Cookies.get("userid") !== authorUserId && Cookies.get("usertype") !== "Admin")}
                         onChange={handleChange}
                         checked={formData.scheduletype === scheduleType} />
 
