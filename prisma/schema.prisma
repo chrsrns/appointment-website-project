@@ -70,7 +70,7 @@ model Schedule {
   Messages Message[]
   Users    User[]
 
-  authoredBy   User   @relation(name: "authoredByUser", fields: [authorUserId], references: [id])
+  authoredBy   User   @relation(name: "authoredByUser", fields: [authorUserId], references: [id], onDelete: Cascade)
   authorUserId String
 
   exists Boolean @default(true)
@@ -83,8 +83,8 @@ model Message {
   scheduleId String?
   userId     String?
 
-  Schedule Schedule? @relation(fields: [scheduleId], references: [id])
-  User     User?     @relation(fields: [userId], references: [id])
+  Schedule Schedule? @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  User     User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([scheduleId], map: "Message_scheduleId_fkey")
 }
@@ -98,7 +98,7 @@ model Announcement {
 
 model MedicalRecord {
   id        String   @id @default(uuid())
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   content   String   @db.LongText
   userId    String
@@ -106,7 +106,7 @@ model MedicalRecord {
 
 model Feedback {
   id           String   @id @default(uuid())
-  user         User     @relation(fields: [userId], references: [id])
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt    DateTime @default(now())
   rating       Int      @db.TinyInt
   feedbackText String   @db.Text
