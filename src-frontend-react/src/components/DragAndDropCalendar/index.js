@@ -13,6 +13,7 @@ import { Button, Stack } from 'react-bootstrap';
 import { PrintModal } from '../PrintModal';
 import { schedule_state, user_type } from '@prisma/client';
 import Cookies from 'js-cookie';
+import { socket } from '../../socket';
 
 const DEFAULT_USER_TO_FILTER_VALUES = {
   id: '',
@@ -133,6 +134,12 @@ export default function DragAndDropCalendar({ localizer }) {
       })
     }
   }, [fetchAll, isFetchingAll])
+  useEffect(() => {
+    socket.on("update appointments", () => {
+      setIsLoading(true)
+      setIsFetchingAll(true)
+    });
+  }, [])
 
   const getRecurredEvents = useCallback((event) => {
     var repeatRule;

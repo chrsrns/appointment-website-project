@@ -318,6 +318,7 @@ router.put("/schedule/:id", async (req, res) => {
       title: `Schedule Modified: ${schedule.title}`,
       message: `Schedule updated by ${user.lname}, ${user.fname}.`,
     })
+    getSocketInstance().emit("update appointments")
     res.json(schedule);
   } catch (error) {
     console.error(error);
@@ -367,6 +368,7 @@ router.delete("/schedule/:id", async (req, res) => {
       title: `Schedule Deleted: ${schedule.title}`,
       message: `Schedule deleted by ${user.lname}, ${user.fname}.`,
     })
+    getSocketInstance().emit("update appointments")
     res.json(schedule);
     console.log(req.body)
   } catch (error) {
@@ -414,6 +416,7 @@ router.post("/schedule", async (req, res, next) => {
       title: `Schedule Made: ${schedule.title}`,
       message: `Schedule created by ${user.lname}, ${user.fname}.`,
     })
+    getSocketInstance().emit("update appointments")
     res.json()
   } catch (err) {
     console.error(err);
@@ -493,6 +496,8 @@ router.post("/message", async (req, res, next) => {
       title: `New Message to Schedule: ${message.Schedule.title}`,
       message: `Message from ${user.lname}, ${user.fname}.`,
     })
+    getSocketInstance().emit("update appointments")
+    getSocketInstance().emit("update chats")
     res.status(200).json({ msg: "Message sent" })
   } catch (err) {
     console.error(err);

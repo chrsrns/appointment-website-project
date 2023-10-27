@@ -68,6 +68,7 @@ router.post("/record", async (req, res, next) => {
       title: `Medical Record Added`,
       message: `Medical Record created by ${user.login_username} for ${record.user.login_username}`,
     })
+    getSocketInstance().emit("update medrecords")
     res.json(record);
   } catch (error) {
     console.error(error);

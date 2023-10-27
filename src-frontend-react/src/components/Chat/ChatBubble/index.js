@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Container, Card, Stack, Form, Button } from 'react-bootstrap';
 import { useCookies } from 'react-cookie';
 import LoadingOverlay from 'react-loading-overlay-ts';
+import { socket } from '../../../socket';
 import { customFetch } from '../../../utils';
 
 const DEFAULT_FORM_VALUES = {
@@ -42,6 +43,12 @@ const Chat = ({ scheduleId }) => {
       })
     }
   }, [fetchAll, isFetchingAll])
+  useEffect(() => {
+    socket.on("update chats", () => {
+      setIsLoading(true)
+      setIsFetchingAll(true)
+    });
+  }, [])
 
   const handleChange = (e) => {
     const { name, value } = e.target;

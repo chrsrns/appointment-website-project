@@ -1,16 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Accordion, Card, Button, Col, Row } from 'react-bootstrap';
 import { customFetch } from '../../utils';
 import { Jumbotron } from "../Jumbotron";
 import { MedicalRecordsForm } from './MedicalRecordsForm';
 import Cookies from 'js-cookie';
 import moment from 'moment';
+import { socket } from '../../socket';
+import LoadingOverlay from 'react-loading-overlay-ts';
 
 export const MedicalRecords = ({ sidebarbtn_onClick }) => {
   const usertype = Cookies.get("usertype")
   const [medicalRecords, setMedicalRecords] = useState([]);
 
-  useEffect(() => {
+  const [isLoading, setIsLoading] = useState(false)
+  const [isFetchingAll, setIsFetchingAll] = useState(true)
+  const fetchAll = useCallback(async () => {
+    setIsLoading(true)
     customFetch(`${global.server_backend_url}/backend/medrecords/records`)
       .then((response) => {
         if (response.ok) {
@@ -22,11 +27,30 @@ export const MedicalRecords = ({ sidebarbtn_onClick }) => {
         data = data.slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
         setMedicalRecords(data);
         console.log(data);
+      })
+      .finally(() => {
+        setIsLoading(false);
+        setIsFetchingAll(false);
       });
-  }, []);
+  }, [])
+  useEffect(() => {
+    if (isFetchingAll) {
+      fetchAll().then(() => {
+        setIsLoading(false)
+        setIsFetchingAll(false)
+      })
+    }
+  }, [fetchAll, isFetchingAll])
+
+  useEffect(() => {
+    socket.on("update medrecords", () => {
+      setIsLoading(true)
+      setIsFetchingAll(true)
+    });
+  }, [])
 
   return (
-    <>
+    <LoadingOverlay active={isLoading} spinner text='Waiting for update...'>
       <p className="float-start d-lg-none d-md-block">
         <Button variant="primary" size="sm" onClick={sidebarbtn_onClick}>
           <i className="bi bi-chevron-right"></i>
@@ -70,6 +94,6 @@ export const MedicalRecords = ({ sidebarbtn_onClick }) => {
             </Card>
           </Col>
         </Row> : null}
-    </>
+    </LoadingOverlay>
   );
 };
