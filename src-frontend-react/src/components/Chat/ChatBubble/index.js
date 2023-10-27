@@ -67,7 +67,7 @@ const Chat = ({ scheduleId }) => {
         setIsFetchingAll(true)
         return response.json();
       } throw response;
-    })
+    }).finally(() => setFormData(DEFAULT_FORM_VALUES))
   }
 
   useEffect(() => {
