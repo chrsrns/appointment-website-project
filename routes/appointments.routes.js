@@ -116,16 +116,17 @@ router.get("/schedules", async (req, res, next) => {
     }
     const schedules = await prisma.schedule.findMany({
       where: {
-        OR: [
-          { Users: { some: { id: userId } } },
-          { authorUserId: userId }
-        ],
-        OR: [
-          { fromDate: { gte: new Date(Date.now()) } },
-          { toDate: { gte: new Date(Date.now()) } },
-          { repeat: { not: repeat.None } }
-        ]
-
+        AND: {
+          OR: [
+            { Users: { some: { id: userId } } },
+            { authorUserId: userId }
+          ],
+          OR: [
+            { fromDate: { gte: new Date(Date.now()) } },
+            { toDate: { gte: new Date(Date.now()) } },
+            { repeat: { not: repeat.None } }
+          ]
+        }
       },
       select: {
         id: true,
@@ -163,19 +164,27 @@ router.get("/schedules-summary", async (req, res, next) => {
 
     const schedules = await prisma.schedule.findMany({
       where: {
-        OR: [
-          { state: schedule_state.Ongoing },
-          { state: schedule_state.Approved }
-        ],
-        OR: [
-          { Users: { some: { id: userId } } },
-          { authorUserId: userId }
-        ],
-        state: { not: schedule_state.Completed },
-        OR: [
-          { fromDate: { gte: new Date(Date.now()) } },
-          { toDate: { gte: new Date(Date.now()) } },
-          { repeat: { not: repeat.None } }
+        AND: [
+          {
+            OR: [
+              { state: schedule_state.Ongoing },
+              { state: schedule_state.Approved }
+            ]
+          },
+          {
+            OR: [
+              { Users: { some: { id: userId } } },
+              { authorUserId: userId }
+            ]
+          },
+          { state: { not: schedule_state.Completed } },
+          {
+            OR: [
+              { fromDate: { gte: new Date(Date.now()) } },
+              { toDate: { gte: new Date(Date.now()) } },
+              { repeat: { not: repeat.None } }
+            ]
+          }
         ]
       },
       select: {
@@ -204,22 +213,27 @@ router.get("/schedules/by-user/:id", async (req, res, next) => {
 
     const schedules = await prisma.schedule.findMany({
       where: {
-        Users: {
-          some: {
-            id: id
-          }
-        },
-        OR: [
-          { Users: { some: { id: userId } } },
-          { authorUserId: userId },
-          { state: schedule_state.Available }
-        ],
-        state: { not: schedule_state.Completed },
-        OR: [
-          { fromDate: { gte: new Date(Date.now()) } },
-          { toDate: { gte: new Date(Date.now()) } },
-          { repeat: { not: repeat.None } }
-
+        AND: [
+          {
+            OR: [
+              { Users: { some: { id: id } }, },
+              { authorUserId: id },
+            ]
+          },
+          {
+            OR: [
+              { fromDate: { gte: new Date(Date.now()) } },
+              { toDate: { gte: new Date(Date.now()) } },
+              { repeat: { not: repeat.None } }
+            ]
+          },
+          {
+            OR: [
+              { Users: { some: { id: userId } } },
+              { state: schedule_state.Available }
+            ]
+          },
+          { state: { not: schedule_state.Completed } },
         ]
       },
       select: {
@@ -242,8 +256,10 @@ router.get("/schedules/by-user/:id", async (req, res, next) => {
         }
       },
     })
+    console.log(schedules)
     res.json(schedules)
   } catch (err) {
+    console.log(err)
     res.status(500).json({ msg: err.message });
   }
 })
