@@ -72,7 +72,7 @@ router.put("/pendinguser/:id", async (req, res) => {
     }
     createNotification({
       title: `User Registration ${req.body.approved}`,
-      message: `User with username ${user.login_username} registration was ${req.body.approved}`
+      message: `User with username ${userToUpdate.login_username} registration was ${req.body.approved}`
     })
 
     res.status(200)
