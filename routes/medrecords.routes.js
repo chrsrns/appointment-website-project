@@ -1,6 +1,7 @@
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient, user_type } = require("@prisma/client");
 const prisma = new PrismaClient();
 const express = require('express');
+const { isAuthenticated } = require("../middlewares");
 const { findUserIdByAccessToken } = require("../routes/users.services");
 
 const router = express.Router();
@@ -20,6 +21,39 @@ router.get("/records", async (req, res, next) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "an error occurred!" });
+  }
+});
+
+router.get("/records-by/:id", isAuthenticated, async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const authorizationheader = req.headers.authorization
+
+    const token = authorizationheader.replace('Bearer ', '')
+    const userId = findUserIdByAccessToken(token)
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        type: true
+      }
+    });
+    if (user.type == user_type.Student) {
+      res.sendStatus(401)
+      return
+    }
+
+    const medRecordsToGet = await prisma.medicalRecord.findMany({
+      where: {
+        userId: id
+      }
+    })
+    res.json(medRecordsToGet)
+  } catch (err) {
+    console.error(err);
+    res.json({ error: err.message });
   }
 });
 

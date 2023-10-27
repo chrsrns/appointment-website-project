@@ -7,6 +7,7 @@ import Cookies from 'js-cookie';
 import moment from 'moment';
 import { socket } from '../../socket';
 import LoadingOverlay from 'react-loading-overlay-ts';
+import { SelectedMedicalRecords } from './SelectedMedicalRecords';
 
 export const MedicalRecords = ({ sidebarbtn_onClick }) => {
   const usertype = Cookies.get("usertype")
@@ -14,7 +15,7 @@ export const MedicalRecords = ({ sidebarbtn_onClick }) => {
 
   const [isLoading, setIsLoading] = useState(false)
   const [isFetchingAll, setIsFetchingAll] = useState(true)
-  const fetchAll = useCallback(async () => {
+  const fetchAll = useCallback(() => {
     setIsLoading(true)
     customFetch(`${global.server_backend_url}/backend/medrecords/records`)
       .then((response) => {
@@ -26,7 +27,6 @@ export const MedicalRecords = ({ sidebarbtn_onClick }) => {
       .then((data) => {
         data = data.slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
         setMedicalRecords(data);
-        console.log(data);
       })
       .finally(() => {
         setIsLoading(false);
@@ -34,12 +34,7 @@ export const MedicalRecords = ({ sidebarbtn_onClick }) => {
       });
   }, [])
   useEffect(() => {
-    if (isFetchingAll) {
-      fetchAll().then(() => {
-        setIsLoading(false)
-        setIsFetchingAll(false)
-      })
-    }
+    if (isFetchingAll) fetchAll()
   }, [fetchAll, isFetchingAll])
 
   useEffect(() => {
@@ -61,8 +56,8 @@ export const MedicalRecords = ({ sidebarbtn_onClick }) => {
       </Jumbotron>
       <Row>
         <Col>
-          <Card>
-            <Card.Header as="h2">Records</Card.Header>
+          <Card className='mb-3'>
+            <Card.Header as="h2">My Medical Records</Card.Header>
             <Card.Body className="d-flex flex-column overflow-scroll" style={{ maxHeight: "40rem" }}>
               {medicalRecords.length !== 0 ?
                 <Accordion>
@@ -83,10 +78,15 @@ export const MedicalRecords = ({ sidebarbtn_onClick }) => {
           </Card>
         </Col>
       </Row>
+      <Row>
+        <Col>
+          <SelectedMedicalRecords />
+        </Col>
+      </Row>
       {usertype === "Clinic" ?
         <Row>
           <Col>
-            <Card>
+            <Card className='mb-3'>
               <Card.Header as="h2">Add Medical Record To User</Card.Header>
               <Card.Body>
                 <MedicalRecordsForm />
