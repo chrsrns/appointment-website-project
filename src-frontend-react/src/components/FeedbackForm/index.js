@@ -11,7 +11,7 @@ const DEFAULT_FORM_VALUES = {
   feedbackText: '',
 }
 
-const availableRating = [1, 2, 3, 4, 5]
+const availableRating = ['1', '2', '3', '4', '5']
 
 export const FeedbackForm = ({ sidebarbtn_onClick }) => {
 

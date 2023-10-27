@@ -2,6 +2,7 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const express = require('express');
 const { findUserIdByAccessToken } = require("../routes/users.services");
+const { createNotification } = require("./notifications.services");
 
 const router = express.Router();
 
