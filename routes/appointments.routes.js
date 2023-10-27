@@ -103,6 +103,7 @@ router.get("/schedulerepeattypes", async (req, res, next) => {
   }
 });
 
+/// TODO Add another route for only completed appointments, and PrintModal would use that.
 router.get("/schedules", async (req, res, next) => {
   try {
     const authorizationheader = req.headers.authorization;
@@ -119,7 +120,6 @@ router.get("/schedules", async (req, res, next) => {
           { Users: { some: { id: userId } } },
           { authorUserId: userId }
         ],
-        state: { not: schedule_state.Completed },
         OR: [
           { fromDate: { gte: new Date(Date.now()) } },
           { toDate: { gte: new Date(Date.now()) } },

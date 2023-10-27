@@ -72,42 +72,44 @@ export default function DragAndDropCalendar({ localizer }) {
           if (data !== eventsFullRef.current) {
             setEventsFull(data);
 
-            setEventsMapped([...data.map((eventFull) => {
+            setEventsMapped([...data
+              .filter((event) => event.state !== schedule_state.Completed)
+              .map((eventFull) => {
 
-              /// Check if date range spans multiple days
-              const startDate = new Date(eventFull.fromDate)
-              const endDate = new Date(eventFull.toDate)
+                /// Check if date range spans multiple days
+                const startDate = new Date(eventFull.fromDate)
+                const endDate = new Date(eventFull.toDate)
 
-              const startUTC = startDate.getDate();
-              const endUTC = endDate.getDate();
+                const startUTC = startDate.getDate();
+                const endUTC = endDate.getDate();
 
-              const isMultiDays = startUTC !== endUTC
-              ///
+                const isMultiDays = startUTC !== endUTC
+                ///
 
-              // console.log(`title: ${eventFull.title}`)
-              // console.log(`start: ${startDate} | end: ${endDate}`)
-              // console.log(`multiDays: ${isMultiDays}`)
-              // console.log(`startString: ${startUTC} | endString: ${endUTC}`)
-              // console.log(`multiDays: ${isMultiDays}`)
-              // console.log("")
-              console.log("is draggable", !Cookies.get("usertype") === user_type.Student)
+                // console.log(`title: ${eventFull.title}`)
+                // console.log(`start: ${startDate} | end: ${endDate}`)
+                // console.log(`multiDays: ${isMultiDays}`)
+                // console.log(`startString: ${startUTC} | endString: ${endUTC}`)
+                // console.log(`multiDays: ${isMultiDays}`)
+                // console.log("")
+                console.log("is draggable", !Cookies.get("usertype") === user_type.Student)
 
-              return {
-                id: eventFull.id,
-                title: eventFull.title,
-                start: new Date(eventFull.fromDate),
-                end: new Date(eventFull.toDate),
-                authorUserId: eventFull.authorUserId,
-                isDraggable: ((eventFull.state === schedule_state.Pending ||
-                  eventFull.state === schedule_state.Available) &&
-                  Cookies.get("usertype") !== user_type.Student),
-                state: eventFull.state,
-                allDay: isMultiDays,
-                repeat: eventFull.repeat,
-                selectable: eventFull.authorUserId === Cookies.get('userid') || !eventFull.state === schedule_state.Available
+                return {
+                  id: eventFull.id,
+                  title: eventFull.title,
+                  start: new Date(eventFull.fromDate),
+                  end: new Date(eventFull.toDate),
+                  authorUserId: eventFull.authorUserId,
+                  isDraggable: ((eventFull.state === schedule_state.Pending ||
+                    eventFull.state === schedule_state.Available) &&
+                    Cookies.get("usertype") !== user_type.Student),
+                  state: eventFull.state,
+                  allDay: isMultiDays,
+                  repeat: eventFull.repeat,
+                  selectable: eventFull.authorUserId === Cookies.get('userid') || !eventFull.state === schedule_state.Available
 
-              }
-            })])
+                }
+              })])
           }
         }),
       customFetch(`${global.server_backend_url}/backend/appointments/staff`)
@@ -411,7 +413,9 @@ export default function DragAndDropCalendar({ localizer }) {
         />
         <PrintModal
           show={showPrintModal}
-          records={eventsFull}
+          records={eventsFull.filter((event) => {
+            return event.state === schedule_state.Completed
+          })}
           onClose={() => {
             setShowPrintModal(false)
           }} />
