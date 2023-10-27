@@ -18,8 +18,12 @@ router.post("/add", async (req, res, next) => {
     data.userId = userId
     data.rating = Number(data.rating)
 
-    const feedback = await prisma.feedback.create({
-      data: data,
+    const feedback = await prisma.feedback.upsert({
+      where: {
+        userId: userId
+      },
+      update: data,
+      create: data
     });
 
     const user = await prisma.user.findUnique({
