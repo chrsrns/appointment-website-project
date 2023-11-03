@@ -58,5 +58,5 @@ jobs:
         with:
           app-name: 'kapayapaanscheduler'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_2A8D2E3EA28A4467A7C7555F6C4758E2 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_970018D2365B49A9BE9B46BBD1080293 }}
           package: .
