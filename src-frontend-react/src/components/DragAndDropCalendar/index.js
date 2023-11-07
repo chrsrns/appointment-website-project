@@ -118,7 +118,7 @@ export default function DragAndDropCalendar({ localizer }) {
           else throw response;
         }).then((data) => {
           setStaffListOptions([{ ...DEFAULT_STAFF_TO_FILTER_VALUE }, ...data.map((staff) => {
-            return { value: staff, label: `[${staff.type}] ${staff.lname}, ${staff.fname} ${staff.mname}` }
+            return { value: staff, label: `[${staff.type}] ${staff.lname}, ${staff.fname} ${staff.mname ? staff.mname[0] + "." : ""}` }
           })])
         })
     ]).catch((err) => {

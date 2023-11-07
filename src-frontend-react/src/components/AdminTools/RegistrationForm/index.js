@@ -80,7 +80,7 @@ function RegistrationForm() {
 
   useEffect(() => {
     setUsersListOptions([{ ...DEFAULT_SELECT_VALUE }, ...usersList.map((user) => {
-      return { value: user, label: `[${user.type}] ${user.lname}, ${user.fname} ${user.mname}` }
+      return { value: user, label: `[${user.type}] ${user.lname}, ${user.fname}${user.mname ? ' ' + user.mname : ""}` }
     })])
     console.log(usersList)
   }, [usersList])
@@ -119,14 +119,6 @@ function RegistrationForm() {
       isValid = false;
     } else {
       newFormErrors.fname = '';
-    }
-
-    // Validate Middle Name
-    if (formData.mname.trim() === '') {
-      newFormErrors.mname = 'Middle Name is required';
-      isValid = false;
-    } else {
-      newFormErrors.mname = '';
     }
 
     // Validate Last Name
@@ -310,9 +302,7 @@ function RegistrationForm() {
               name="mname"
               value={formData.mname}
               onChange={handleChange}
-              required
             />
-            <div className="text-danger">{formErrors.mname}</div>
           </Form.Group>
           <Form.Group as={Col} md="4" controlId="lastName">
             <Form.Label>Last Name</Form.Label>

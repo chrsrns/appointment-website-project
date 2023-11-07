@@ -16,7 +16,7 @@ datasource db {
 model User {
   id       String   @id @default(uuid())
   fname    String   @db.VarChar(30)
-  mname    String   @db.VarChar(30)
+  mname    String?  @db.VarChar(30)
   lname    String   @db.VarChar(30)
   isOnline Boolean? @default(false)
 

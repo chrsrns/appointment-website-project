@@ -425,7 +425,9 @@ const App: React.FC = () => {
                               key={
                                 user.fname + user.mname + user.lname + user.type
                               }
-                            >{`[${user.type}] ${user.lname}, ${user.fname} ${user.mname[0]}.`}</ListGroupItem>
+                            >{`[${user.type}] ${user.lname}, ${user.fname} ${
+                              user.mname ? user.mname[0] + "." : ""
+                            }`}</ListGroupItem>
                           );
                         })}
                       </ListGroup>

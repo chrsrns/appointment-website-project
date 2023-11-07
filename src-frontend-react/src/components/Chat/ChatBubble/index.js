@@ -89,7 +89,7 @@ const Chat = ({ scheduleId }) => {
               <Card className='d-inline-block text-break m-1 px-1 rounded-3 shadow-sm' style={{ width: 'auto', maxWidth: '60%' }}>
                 <Card.Body>
                   <p className="fw-bold mb-2 border-bottom border-secondary pb-2">
-                    {`${message.User.lname}, ${message.User.fname} ${message.User.mname[0]}.`}
+                    {`${message.User.lname}, ${message.User.fname} ${message.mname ? message.mname[0] + "." : ""}`}
                   </p>
                   {message.content}
                   <p className={`mt-1 mb-0 text-black-50 ${message.User.login_username === cookies.login_username ? 'text-end' : 'text-start'}`} style={{ fontSize: '.8rem' }}>

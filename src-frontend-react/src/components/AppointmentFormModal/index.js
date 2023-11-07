@@ -12,7 +12,7 @@ const AppointmentFormUserList = ({ fname, mname, lname, onButtonClick }) => {
   return (
     <ListGroup.Item className="d-flex justify-content-between align-items-center">
       <>
-        {`${fname} ${mname} ${lname}`}
+        {`${fname} ${mname ? mname : ""} ${lname}`}
       </>
       <Button variant="danger" size="sm" onClick={onButtonClick}>Remove</Button>
 
@@ -360,7 +360,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
                       }}>
                       <option key='blankChoice' hidden value>Select students...</option>
                       {studentsList.map((student) => {
-                        return <option key={student.id} value={student.id}>{`${student.fname} ${student.mname} ${student.lname}`}</option>
+                        return <option key={student.id} value={student.id}>{`${student.fname} ${student.mname ? student.mname + " " : ""}${student.lname}`}</option>
                       })}
                     </Form.Select>
                     <Button variant="primary" size="lg" onClick={addStudentToSelection}>Select</Button>
@@ -407,7 +407,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
                       }}>
                       <option key='blankChoice' hidden value>Select staff...</option>
                       {staffList.map((staff) => {
-                        return <option key={staff.id} value={staff.id}>{`${staff.fname} ${staff.mname} ${staff.lname}`}</option>
+                        return <option key={staff.id} value={staff.id}>{`${staff.fname} ${staff.mname ? staff.mname + " " : ""}${staff.lname}`}</option>
                       })}
                     </Form.Select>
                     <Button variant="primary" size="lg" onClick={addStaffToSelection}>Select</Button>

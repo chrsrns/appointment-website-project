@@ -31,7 +31,7 @@ export const PrintModal = ({ show, onClose, records }) => {
               <p>Repeat: {record.repeat}</p>
               <ListGroup>
                 {record.Users.map((user) => (
-                  <ListGroup.Item>{`[${user.type}] ${user.lname}, ${user.fname} ${user.mname[0]}.`}</ListGroup.Item>
+                  <ListGroup.Item>{`[${user.type}] ${user.lname}, ${user.fname} ${user.mname ? user.mname[0] + "." : ""}`}</ListGroup.Item>
                 )
                 )}
               </ListGroup>

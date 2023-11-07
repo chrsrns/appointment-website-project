@@ -112,7 +112,7 @@ export const MedicalRecordsForm = () => {
 
   useEffect(() => {
     setUsersListOptions([...usersList.map((user) => {
-      return { value: user, label: `[${user.type}] ${user.lname}, ${user.fname} ${user.mname[0]}.` }
+      return { value: user, label: `[${user.type}] ${user.lname}, ${user.fname} ${user.mname ? user.mname[0] + "." : ""}` }
     })])
     console.log(usersList)
   }, [usersList])
