@@ -172,11 +172,13 @@ function RegistrationForm() {
     }
 
     // Validate Password
-    if (formData.login_password.length < 6 && formData.login_password.length !== 0 && formData.id) {
-      newFormErrors.login_password = 'Password must be at least 6 characters long or be left blank to leave unchanged';
+    const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@#$%^&+=!_]).{8,}$/;
+    if (!formData.login_password.trim().match(passwordPattern) && formData.login_password.length !== 0 && formData.id) {
+      newFormErrors.login_password = "Password must be left blank to leave unchanged or:\n- be at least 8 characters long\n- contain at least 1 alphabet and 1 numeric character\n- contain at least 1 special character (@#$%^&+=!_)";
+
       isValid = false;
-    } else if (formData.login_password.length < 6 && !formData.id) {
-      newFormErrors.login_password = 'Password must be at least 6 characters long when creating a user';
+    } else if (!formData.login_password.trim().match(passwordPattern) && !formData.id) {
+      newFormErrors.login_password = "Password must be:\n- be at least 8 characters long\n- contain at least 1 alphabet and 1 numeric character\n- contain at least 1 special character (@#$%^&+=!_)";
       isValid = false;
     } else {
       newFormErrors.login_password = '';
