@@ -105,10 +105,10 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
               </ToastContainer>
               <Form className='d-grid gap-3' noValidate onSubmit={handleLogin} >
                 <Form.Group controlId="formBasicEmail">
-                  <Form.Label>Username</Form.Label>
+                  <Form.Label>Username/LRN</Form.Label>
                   <Form.Control
                     type="email"
-                    placeholder="Enter username"
+                    placeholder="Enter your username or LRN"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                   />
