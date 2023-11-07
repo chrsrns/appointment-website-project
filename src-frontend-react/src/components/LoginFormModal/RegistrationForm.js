@@ -129,12 +129,12 @@ const RegistrationForm = () => {
     }
 
     // Validate Username
-    const lrnPattern = /^\d{10}$/;
+    const lrnPattern = /^\d{12}$/;
     if (formData.login_username.trim() === '') {
       newFormErrors.login_username = 'Username is required';
       isValid = false;
     } else if (formData.type === 'Student' && !formData.login_username.trim().match(lrnPattern)) {
-      newFormErrors.login_username = 'LRN must be a 10-digit LRN';
+      newFormErrors.login_username = 'LRN must be a 12-digit LRN';
       isValid = false;
     } else {
       newFormErrors.login_username = '';
