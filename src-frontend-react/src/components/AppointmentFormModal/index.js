@@ -338,7 +338,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
       keyboard={false}
       size="lg"
     >
-      <Modal.Header>
+      <Modal.Header closeButton>
         <Modal.Title>{id ? "Modifying Existing Appointment" : "Create New Appointment"}</Modal.Title>
       </Modal.Header>
       <LoadingOverlay active={isLoading || !show} spinner text={loadingText}>

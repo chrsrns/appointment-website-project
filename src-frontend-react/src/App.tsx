@@ -215,6 +215,7 @@ type sort_obj = {
 const App: React.FC = () => {
   const [isActive, setIsActive] = useState(false);
   const [isLandingPageActive, setIsLandingPageActive] = useState(true);
+  const [isModalShow, setIsModalShow] = useState(false);
 
   const sidebarbtn_onClick = () => setIsActive(!isActive);
   const mainRowClassName = `row-offcanvas row-offcanvas-left ${
@@ -347,6 +348,14 @@ const App: React.FC = () => {
 
   const handleLandingPageClick = () => {
     setIsLandingPageActive(false);
+    if (!isLoggedIn) setIsModalShow(true);
+  };
+
+  /// TODO Improve/clarify how states represent logged in status (LoginFormModal should set state here if login/registration offured or the close button is merely clicked.)
+  const handleModalClose = (isCloseButtonClicked) => {
+    setIsModalShow(false);
+    if (!isCloseButtonClicked) setIsLoggedIn(true);
+    else setIsLandingPageActive(true);
   };
 
   return (
@@ -354,8 +363,8 @@ const App: React.FC = () => {
       <LoadingOverlay spinner active={!isLogInDone}>
         <TopBar />
         <LoginFormModal
-          show={!isLoggedIn && !isLandingPageActive}
-          onHide={setIsLoggedIn}
+          show={isModalShow}
+          onHide={handleModalClose}
           isLoggingIn={!isLogInDone}
         />
         {isLandingPageActive || !isLoggedIn ? (

@@ -41,7 +41,7 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
       setCookie("refreshToken", data.refreshToken)
       setCookie("usertype", data.type)
       setCookie("userid", data.id)
-      onHide(true)
+      onHide(false)
     }).catch(async (err) => {
       /// err.json() returns a Promise, so an async/await is necessary
       const errorBody = await err.json()
@@ -68,7 +68,7 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
       setCookie("refreshToken", data.refreshToken)
       setCookie("usertype", data.type)
       setCookie("userid", data.id)
-      onHide(true)
+      onHide(false)
     }).catch(async (err) => {
       /// err.json() returns a Promise, so an async/await is necessary
       const errorBody = await err.json()
@@ -80,8 +80,8 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
   };
 
   return (
-    <Modal size='lg' show={show} backdrop="static">
-      <Modal.Header>
+    <Modal size='lg' show={show} backdrop="static" onHide={() => onHide(true)}>
+      <Modal.Header closeButton>
         <Modal.Title>Login</Modal.Title>
       </Modal.Header>
       <LoadingOverlay active={isLoggingIn} spinner>
