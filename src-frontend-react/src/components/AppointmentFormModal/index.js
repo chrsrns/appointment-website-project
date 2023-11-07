@@ -287,7 +287,8 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
     })
   }
 
-  const onModalSubmit = () => {
+  const onModalSubmit = (event) => {
+    event.preventDefault()
     if (id) {
       modifyScheduleToDB();
     } else addScheduleToDB();
@@ -334,8 +335,6 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
       show={show}
       onHide={onModalClose}
       onShow={onModalOpen}
-      backdrop="static"
-      keyboard={false}
       size="lg"
     >
       <Modal.Header closeButton>
@@ -348,7 +347,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
           </div>
           <Tabs defaultActiveKey="form" className="mb-3">
             <Tab eventKey="form" title="Edit">
-              <Form>
+              <Form noValidate onSubmit={onModalSubmit}>
                 <Form.Group className="mb-3">
                   <Form.Label>Students Involved</Form.Label>
                   <Stack direction="horizontal" gap={3}>
@@ -533,7 +532,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
                     <Button variant="secondary" onClick={onModalClose}>
                       Close
                     </Button>{' '}
-                    <Button variant="primary" onClick={onModalSubmit}>
+                    <Button variant="primary" type="submit">
                       Submit
                     </Button>{' '}
                   </div>
