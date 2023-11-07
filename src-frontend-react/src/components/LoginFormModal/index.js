@@ -22,7 +22,9 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
     onSuccess: tokenResponse => handleGoogleLogin(tokenResponse),
   });
 
-  const handleLogin = () => {
+  const handleLogin = (event) => {
+    event.preventDefault();
+    console.log("test submit")
     setShowNotif(false)
     const data = {
       login_username: username,
@@ -49,7 +51,7 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
       setResponseHeader("Login Failed")
       setResponseBody(errorBody.msg)
       setShowNotif(true)
-    })
+    }).finally(() => setPassword(""))
     // Perform your login logic here
     // For example, you can make an API call to authenticate the user
     // and handle success/failure accordingly
@@ -76,7 +78,7 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
       setResponseHeader("Login Failed")
       setResponseBody(errorBody.msg)
       setShowNotif(true)
-    })
+    }).finally(() => setPassword(""))
   };
 
   return (
@@ -101,7 +103,7 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
                   <Toast.Body>{responseBody}</Toast.Body>
                 </Toast>
               </ToastContainer>
-              <Form className='d-grid gap-3 mb-3' >
+              <Form className='d-grid gap-3' noValidate onSubmit={handleLogin} >
                 <Form.Group controlId="formBasicEmail">
                   <Form.Label>Username</Form.Label>
                   <Form.Control
@@ -121,13 +123,13 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
                     onChange={(e) => setPassword(e.target.value)}
                   />
                 </Form.Group>
+                <Stack direction='horizontal' gap={3}>
+                  <Button variant="primary" type="submit">
+                    Login
+                  </Button>
+                  <Button onClick={() => glogin()}><i class="bi bi-google"></i></Button>
+                </Stack>
               </Form>
-              <Stack direction='horizontal' gap={3}>
-                <Button variant="primary" type="button" onClick={handleLogin}>
-                  Login
-                </Button>
-                <Button onClick={() => glogin()}><i class="bi bi-google"></i></Button>
-              </Stack>
             </Tab>
             <Tab eventKey="register" title="Register">
               <RegistrationForm />
