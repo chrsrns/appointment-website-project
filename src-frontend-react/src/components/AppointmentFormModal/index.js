@@ -464,7 +464,9 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
                     placeholder="Required"
                     disabled={disableForms}
                     onChange={handleChange}
-                    value={formData.title} />
+                    value={formData.title}
+                    required
+                  />
                 </Form.Group>
 
                 <Form.Group className="mb-3">
