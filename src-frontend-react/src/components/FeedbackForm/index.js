@@ -106,7 +106,7 @@ export const FeedbackForm = ({ sidebarbtn_onClick }) => {
                 <LoadingOverlay active={isLoading} spinner text="Waiting for update">
                   <Form onSubmit={handleSubmit}>
                     <Form.Group as={Col} md="8" >
-                      <Form.Label>User Type</Form.Label>
+                      <Form.Label>Rating</Form.Label>
                       <div key='inline-radio' className="mb-3">
                         {availableRating.map((ratingNum) => (
                           <Form.Check
