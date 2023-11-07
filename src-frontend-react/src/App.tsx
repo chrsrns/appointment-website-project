@@ -2,20 +2,16 @@ import { useEffect, useRef, useState } from "react";
 import "./App.css";
 import "./Custom.scss";
 
-import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import {
-  Button,
   Card,
   Col,
   Container,
-  Navbar,
   Row,
   Stack,
   ListGroup,
-  ButtonGroup,
   ListGroupItem,
 } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
 
 import { LoginFormModal } from "./components/LoginFormModal";
 import LoadingOverlay from "react-loading-overlay-ts";
@@ -33,188 +29,12 @@ import Cookies from "js-cookie";
 import { useCookies } from "react-cookie";
 import SideNotifications from "./components/Notifications";
 
-import {
-  enable as enableDarkMode,
-  disable as disableDarkMode,
-} from "darkreader";
 import { FeedbackForm } from "./components/FeedbackForm";
 import { LandingPage } from "./components/LandingPage";
+import { TopBar } from "./components/TopBar";
+import { SideBar } from "./components/SideBar";
 
 /// TODO Separate components to other files
-
-const TopBar = () => {
-  const [darkMode, setDarkMode] = useState(false);
-  const [cookies, setCookies] = useCookies(["darkmode", "login_username"]);
-  const cookiesRef = useRef();
-
-  const handleDarkModeToggleClick = () => {
-    setDarkMode(!darkMode);
-  };
-  useEffect(() => {
-    cookiesRef.current = cookies.darkmode;
-  });
-
-  useEffect(() => {
-    setDarkMode(cookiesRef.current);
-  }, []);
-
-  useEffect(() => {
-    console.log("darkmode changed");
-    if (darkMode) {
-      enableDarkMode({
-        brightness: 100,
-        contrast: 100,
-      });
-      setCookies("darkmode", true);
-    } else {
-      disableDarkMode();
-      setCookies("darkmode", false);
-    }
-  }, [darkMode, setCookies]);
-
-  return (
-    <Navbar expand="lg" className="bg-body-tertiary shadow-sm">
-      <Container className="justify-contents-between">
-        <div>
-          <Navbar.Brand href="/">
-            <img
-              src={process.env.PUBLIC_URL + "/school_logo.png"}
-              alt="Logo"
-              width={40}
-              height={40}
-              className="me-2"
-            />
-            Kapayapaan Integrated School
-          </Navbar.Brand>
-        </div>
-        <Stack direction="horizontal" gap={3}>
-          {cookies.login_username ? (
-            <Stack direction="horizontal" gap={2}>
-              <i className="bi bi-person" />
-              {cookies.login_username}
-            </Stack>
-          ) : (
-            ""
-          )}
-
-          <Button onClick={handleDarkModeToggleClick}>
-            {darkMode ? (
-              <>
-                <i className="bi bi-moon-stars-fill" /> Dark
-              </>
-            ) : (
-              <>
-                <i className="bi bi-brightness-high" /> Light
-              </>
-            )}
-          </Button>
-          {cookies.login_username ? (
-            <Button
-              onClick={() => {
-                Cookies.set("refreshToken", "");
-                Cookies.set("accessToken", "");
-                Cookies.set("userid", "");
-                Cookies.set("login_username", "");
-              }}
-            >
-              Logout
-            </Button>
-          ) : (
-            ""
-          )}
-        </Stack>
-      </Container>
-    </Navbar>
-  );
-};
-
-const SidebarCol = () => {
-  const [radios, setRadios] = useState([
-    { name: "Dashboard", iconClass: "bi-columns-gap", value: "1", link: "/" },
-    {
-      name: "Appointments",
-      iconClass: "bi-clipboard",
-      value: "2",
-      link: "/appointments",
-    },
-    {
-      name: "Medical Records",
-      iconClass: "bi-bandaid",
-      value: "5",
-      link: "/medrecords",
-    },
-    {
-      name: "Feedback",
-      iconClass: "bi-graph-up",
-      value: "3",
-      link: "/feedback",
-    },
-  ]);
-  useEffect(() => {
-    console.log("usertype: ", Cookies.get("usertype"));
-    console.log("isAdmin: ", Cookies.get("usertype") === "Admin");
-    if (
-      Cookies.get("usertype") === "Admin" &&
-      !radios.some((e) => e.name === "Admin Tools")
-    )
-      setRadios([
-        ...radios,
-        {
-          name: "Admin Tools",
-          iconClass: "bi-terminal",
-          value: "4",
-          link: "/admin",
-        },
-      ]);
-  }, [radios]);
-
-  return (
-    <Col
-      xs={6}
-      lg={{ span: 3, order: "1" }}
-      className="sidebar-offcanvas"
-      id="sidebar"
-    >
-      <div>
-        <ButtonGroup className="d-grid gap-2">
-          {radios.map((radio, idx) => (
-            <SidebarColBtn
-              idx={idx}
-              key={idx}
-              name={radio.name}
-              iconClass={radio.iconClass}
-              value={radio.value}
-              link={radio.link}
-            />
-          ))}
-        </ButtonGroup>
-      </div>
-    </Col>
-  );
-};
-
-const SidebarColBtn = ({ idx, name, iconClass, value, link }) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  return (
-    <Button
-      key={idx}
-      variant={link === location.pathname ? "primary" : "secondary"}
-      name="radio"
-      value={value}
-      onClick={() => {
-        navigate(link);
-      }}
-      size="lg"
-      className="shadow-sm rounded-pill"
-      style={{ fontSize: "1.5rem" }}
-    >
-      <i className={`bi ${iconClass} mx-2`}></i>
-      {name}
-    </Button>
-  );
-};
 
 type user = {
   self: boolean;
@@ -364,7 +184,7 @@ const App: React.FC = () => {
   };
 
   /// TODO Improve/clarify how states represent logged in status (LoginFormModal should set state here if login/registration offured or the close button is merely clicked.)
-  const handleModalClose = (isCloseButtonClicked) => {
+  const handleModalClose = (isCloseButtonClicked: boolean) => {
     setIsModalShow(false);
     if (!isCloseButtonClicked) setIsLoggedIn(true);
     else setIsLandingPageActive(true);
@@ -421,7 +241,7 @@ const App: React.FC = () => {
                     />
                   </Routes>
                 </Col>
-                <SidebarCol />
+                <SideBar />
                 <Col
                   sm={12}
                   lg={{ span: 3, order: "last" }}
