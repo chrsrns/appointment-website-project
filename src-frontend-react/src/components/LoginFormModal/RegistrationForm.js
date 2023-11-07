@@ -67,7 +67,16 @@ const RegistrationForm = () => {
   }, [])
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    let { name, value } = e.target;
+    if (name === "fname" || name === "mname" || name === "lname") {
+      console.log('triggered')
+      value = value.replace(
+        /\w\S*/g,
+        function(txt) {
+          return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+        }
+      );
+    }
     setFormData({
       ...formData,
       [name]: value,
