@@ -175,8 +175,8 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
               title: data.title,
               content: data.desc,
               scheduletype: data.state,
-              start: moment(data.fromDate).format('YYYY-MM-DDThh:mm'),
-              end: moment(data.toDate).format('YYYY-MM-DDThh:mm'),
+              start: moment(data.fromDate).format('YYYY-MM-DDTHH:mm'),
+              end: moment(data.toDate).format('YYYY-MM-DDTHH:mm'),
               repeat: data.repeat,
               authoredBy: data.authoredBy,
             }));
@@ -192,8 +192,8 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
           title: "",
           content: "",
           scheduletype: schedule_state.Pending,
-          start: moment(eventRange.fromDate).format('YYYY-MM-DDThh:mm'),
-          end: moment(eventRange.toDate).format('YYYY-MM-DDThh:mm'),
+          start: moment(eventRange.fromDate).format('YYYY-MM-DDTHH:mm'),
+          end: moment(eventRange.toDate).format('YYYY-MM-DDTHH:mm'),
           repeat: repeat.None,
         }));
         setAuthorUserId("")
