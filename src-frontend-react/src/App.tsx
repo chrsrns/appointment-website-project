@@ -44,7 +44,7 @@ import { LandingPage } from "./components/LandingPage";
 
 const TopBar = () => {
   const [darkMode, setDarkMode] = useState(false);
-  const [cookies, setCookies] = useCookies(["darkmode"]);
+  const [cookies, setCookies] = useCookies(["darkmode", "login_username"]);
   const cookiesRef = useRef();
 
   const handleDarkModeToggleClick = () => {
@@ -55,7 +55,6 @@ const TopBar = () => {
   });
 
   useEffect(() => {
-    console.log("cookies changed");
     setDarkMode(cookiesRef.current);
   }, []);
 
@@ -89,6 +88,15 @@ const TopBar = () => {
           </Navbar.Brand>
         </div>
         <Stack direction="horizontal" gap={3}>
+          {cookies.login_username ? (
+            <Stack direction="horizontal" gap={2}>
+              <i className="bi bi-person" />
+              {cookies.login_username}
+            </Stack>
+          ) : (
+            ""
+          )}
+
           <Button onClick={handleDarkModeToggleClick}>
             {darkMode ? (
               <>
@@ -100,16 +108,20 @@ const TopBar = () => {
               </>
             )}
           </Button>
-          <Button
-            onClick={() => {
-              Cookies.set("refreshToken", "");
-              Cookies.set("accessToken", "");
-              Cookies.set("userid", "");
-              Cookies.set("login_username", "");
-            }}
-          >
-            Logout
-          </Button>
+          {cookies.login_username ? (
+            <Button
+              onClick={() => {
+                Cookies.set("refreshToken", "");
+                Cookies.set("accessToken", "");
+                Cookies.set("userid", "");
+                Cookies.set("login_username", "");
+              }}
+            >
+              Logout
+            </Button>
+          ) : (
+            ""
+          )}
         </Stack>
       </Container>
     </Navbar>
