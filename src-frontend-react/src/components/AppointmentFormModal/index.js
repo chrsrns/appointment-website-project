@@ -327,9 +327,15 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
     }
   }
 
-  const disableForms = ((formData.scheduletype !== schedule_state.Pending &&
-    formData.scheduletype !== schedule_state.Available) ||
-    Cookies.get("usertype") === "Student") && !Cookies.get("userid") === authorUserId
+  const [disableForms, setDisableForms] = useState(false)
+  useEffect(() => {
+    setDisableForms(
+      (((formData.scheduletype !== schedule_state.Pending &&
+        formData.scheduletype !== schedule_state.Available) ||
+        Cookies.get("usertype") === "Student") && Cookies.get("userid") !== authorUserId) && id
+    )
+  }, [authorUserId, formData.scheduletype, id])
+
   return (
     <Modal
       show={show}
@@ -488,9 +494,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
                       type="datetime-local"
                       name="start"
                       value={formData.start}
-                      disabled={
-                        (formData.scheduletype !== schedule_state.Pending &&
-                          formData.scheduletype !== schedule_state.Available && id)}
+                      disabled={disableForms}
                       onChange={handleChange}
                       required
                     />
@@ -501,9 +505,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
                       type="datetime-local"
                       name="end"
                       value={formData.end}
-                      disabled={
-                        (formData.scheduletype !== schedule_state.Pending &&
-                          formData.scheduletype !== schedule_state.Available && id)}
+                      disabled={disableForms}
                       onChange={handleChange}
                       required
                     />
