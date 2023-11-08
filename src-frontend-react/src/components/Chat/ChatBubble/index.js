@@ -18,7 +18,7 @@ const Chat = ({ scheduleId, hideTextBox = false }) => {
   const [isLoading, setIsLoading] = useState(true)
 
   const [isFetchingAll, setIsFetchingAll] = useState(true)
-  const fetchAll = useCallback(async () => {
+  const fetchAll = useCallback(() => {
     setIsLoading(true)
     if (scheduleId)
       customFetch(`${global.server_backend_url}/backend/appointments/messages/by-schedule/${scheduleId}`)
@@ -32,16 +32,17 @@ const Chat = ({ scheduleId, hideTextBox = false }) => {
           setMessages(
             data
               .slice()
-              .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+              .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
           )
+        }).finally(() => {
+          setIsLoading(false)
+          setIsFetchingAll(false)
         })
+
   }, [scheduleId])
   useEffect(() => {
     if (isFetchingAll) {
-      fetchAll().then(() => {
-        setIsLoading(false)
-        setIsFetchingAll(false)
-      })
+      fetchAll()
     }
   }, [fetchAll, isFetchingAll])
   useEffect(() => {
@@ -59,7 +60,9 @@ const Chat = ({ scheduleId, hideTextBox = false }) => {
     });
   };
 
-  const handleMessageSend = () => {
+  const handleMessageSend = (event) => {
+
+    event.preventDefault()
     customFetch(`${global.server_backend_url}/backend/appointments/message`, {
       method: "POST",
       body: JSON.stringify(formData),
@@ -84,7 +87,7 @@ const Chat = ({ scheduleId, hideTextBox = false }) => {
   return (
     <LoadingOverlay spinner active={isLoading}>
       <Container className='px-3 mb-4'>
-        <div className="overflow-scroll p-3 mb-4" style={{ maxHeight: "30rem", borderBottom: '1px solid #ccc' }}>
+        <div className="overflow-scroll p-3 mb-4 d-flex flex-column-reverse" style={{ maxHeight: "30rem", borderBottom: '1px solid #ccc' }}>
           {messages.map((message, index) => (
             <div
               key={index}
@@ -105,19 +108,20 @@ const Chat = ({ scheduleId, hideTextBox = false }) => {
           ))}
         </div>
         {hideTextBox ?
-          '' : <Stack direction="horizontal" gap={3}>
-            <Form.Control
-              className="me-auto"
-              as={'textarea'}
-              name="content"
-              rows={3}
-              placeholder="Type your message here..."
-              onChange={handleChange}
-              value={formData.content} />
-            <Button variant="primary" onClick={handleMessageSend}>
-              Send
-            </Button>
-          </Stack>
+          '' :
+          <Form onSubmit={handleMessageSend}>
+            <Stack direction="horizontal" gap={3}>
+              <Form.Control
+                className="me-auto"
+                name="content"
+                placeholder="Type your message here..."
+                onChange={handleChange}
+                value={formData.content} />
+              <Button variant="primary" type='submit'>
+                Send
+              </Button>
+            </Stack>
+          </Form>
         }
       </Container>
 
