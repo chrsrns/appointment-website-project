@@ -14,6 +14,8 @@ import { PrintModal } from '../PrintModal';
 import { schedule_state, user_type } from '@prisma/client';
 import Cookies from 'js-cookie';
 import { socket } from '../../socket';
+import { useSearchParams } from 'react-router-dom';
+import moment from 'moment';
 
 const DEFAULT_USER_TO_FILTER_VALUES = {
   id: '',
@@ -31,8 +33,11 @@ const DEFAULT_STAFF_TO_FILTER_VALUE = { value: { ...DEFAULT_USER_TO_FILTER_VALUE
 const CalendarWithDragAndDrop = withDragAndDrop(Calendar)
 
 export default function DragAndDropCalendar({ localizer }) {
+  let [searchParams, setSearchParams] = useSearchParams();
+
   const [showPrintModal, setShowPrintModal] = useState(false)
   const [date, setDate] = useState(new Date())
+  const [calendarView, setCalendarView] = useState(Views.WEEK)
 
   const [eventsFull, setEventsFull] = useState([])
   const [eventsMapped, setEventsMapped] = useState([])
@@ -142,6 +147,14 @@ export default function DragAndDropCalendar({ localizer }) {
       setIsFetchingAll(true)
     });
   }, [])
+  useEffect(() => {
+    const datetimeParams = searchParams.get('datetime');
+    if (datetimeParams && moment(datetimeParams).isValid()) {
+      setDate(moment(datetimeParams).toString())
+      setCalendarView(Views.DAY)
+    }
+    else setDate(Date.now())
+  }, [searchParams])
 
   const getRecurredEvents = useCallback((event) => {
     var repeatRule;
@@ -386,18 +399,15 @@ export default function DragAndDropCalendar({ localizer }) {
     [setShowModal, setEventRange]
   )
 
-  const handleStaffToFilterSelectionChange = (e) => {
-    setSelectedStaffToFilter({ value: e.value, label: e.label })
-    // const announcement = e.value
+  const handleStaffToFilterSelectionChange = (e) => setSelectedStaffToFilter({ value: e.value, label: e.label })
 
-    // setFormData(announcement)
-  }
 
   useEffect(() => {
     setIsFetchingAll(true)
   }, [selectedStaffToFilter])
 
   const onNavigate = useCallback((newDate) => setDate(newDate), [setDate])
+  const onView = useCallback((newView) => setCalendarView(newView), [setCalendarView])
 
   return (
     <LoadingOverlay active={isLoading} spinner text='Waiting for update...'>
@@ -439,7 +449,9 @@ export default function DragAndDropCalendar({ localizer }) {
           max={new Date(1972, 0, 1, 17)}
 
           date={date}
+          view={calendarView}
           onNavigate={onNavigate}
+          onView={onView}
 
           onEventDrop={moveEvent}
           onEventResize={resizeEvent}

@@ -196,6 +196,51 @@ router.get("/schedules-summary", async (req, res, next) => {
   }
 })
 
+router.get("/staff-availability", async (req, res, next) => {
+  try {
+    const schedules = await prisma.schedule.findMany({
+      where: {
+        AND: [
+          {
+            state: schedule_state.Available,
+          },
+          {
+            NOT: [
+              { authoredBy: { type: user_type.Student } }
+            ]
+          },
+          {
+            OR: [
+              { fromDate: { gte: new Date(Date.now()) } },
+              { toDate: { gte: new Date(Date.now()) } },
+              { repeat: { not: repeat.None } }
+            ]
+          }
+        ]
+      },
+      select: {
+        id: true,
+        state: true,
+        fromDate: true,
+        toDate: true,
+        title: true,
+        repeat: true,
+        authoredBy: {
+          select: {
+            id: true,
+            fname: true,
+            mname: true,
+            lname: true
+          }
+        }
+      }
+    })
+    res.json(schedules)
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
+})
+
 router.get("/schedules/by-user/:id", async (req, res, next) => {
   const { id } = req.params;
 
