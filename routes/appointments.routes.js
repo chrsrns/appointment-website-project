@@ -114,19 +114,25 @@ router.get("/schedules", async (req, res, next) => {
       res.status(400)
       throw new Error("No user with ID found")
     }
+    console.log(userId)
     const schedules = await prisma.schedule.findMany({
       where: {
-        AND: {
-          OR: [
-            { Users: { some: { id: userId } } },
-            { authorUserId: userId }
-          ],
-          OR: [
-            { fromDate: { gte: new Date(Date.now()) } },
-            { toDate: { gte: new Date(Date.now()) } },
-            { repeat: { not: repeat.None } }
-          ]
-        }
+        AND: [
+          {
+            OR: [
+              { Users: { some: { id: userId } } },
+              { authorUserId: userId },
+              { state: schedule_state.Available }
+            ]
+          },
+          {
+            OR: [
+              { fromDate: { gte: new Date(Date.now()) } },
+              { toDate: { gte: new Date(Date.now()) } },
+              { repeat: { not: repeat.None } }
+            ]
+          }
+        ]
       },
       select: {
         id: true,
@@ -148,6 +154,7 @@ router.get("/schedules", async (req, res, next) => {
         }
       },
     })
+    console.log(schedules)
     res.json(schedules)
   } catch (err) {
     console.error(err)
