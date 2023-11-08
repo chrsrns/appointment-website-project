@@ -10,7 +10,7 @@ import { useGoogleLogin } from '@react-oauth/google';
 import { toast } from 'react-toastify';
 
 export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
-  const [, setCookie] = useCookies(['accessToken', 'refreshToken', 'login_username'])
+  const [cookies, setCookie] = useCookies(['accessToken', 'refreshToken', 'login_username', 'darkmode'])
 
   const [showNotif, setShowNotif] = useState(false)
   const [responseHeader, setResponseHeader] = useState("")
@@ -84,8 +84,13 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
   };
 
   return (
-    <Modal size='lg' show={show} backdrop="static" onHide={() => onHide(true)}>
-      <Modal.Header closeButton>
+    <Modal
+      size='lg'
+      show={show}
+      backdrop="static"
+      onHide={() => onHide(true)}
+    >
+      <Modal.Header closeButton data-bs-theme={cookies.darkmode ? "dark" : "light"}>
         <Modal.Title>Login</Modal.Title>
       </Modal.Header>
       <LoadingOverlay active={isLoggingIn} spinner>

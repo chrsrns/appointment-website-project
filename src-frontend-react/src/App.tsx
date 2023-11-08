@@ -54,7 +54,17 @@ const App: React.FC = () => {
     isActive ? "active" : ""
   }`;
 
-  const [cookies] = useCookies(["accessToken"]);
+  const [cookies] = useCookies(["accessToken", "darkmode"]);
+  // useEffect(() => {
+  //   document.documentElement.setAttribute(
+  //     "data-bs-theme",
+  //     cookies.darkmode ? "dark" : "light",
+  //   );
+  //   document.documentElement.setAttribute(
+  //     "data-theme",
+  //     cookies.darkmode ? "dark" : "light",
+  //   );
+  // });
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLogInDone, setIsLogInDone] = useState(false);

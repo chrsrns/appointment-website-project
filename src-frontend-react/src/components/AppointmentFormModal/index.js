@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 import LoadingOverlay from 'react-loading-overlay-ts';
 import { customFetch } from "../../utils";
 import Chat from "../Chat/ChatBubble";
+import { useCookies } from "react-cookie";
 
 const AppointmentFormUserList = ({ fname, mname, lname, onButtonClick }) => {
   return (
@@ -22,6 +23,8 @@ const AppointmentFormUserList = ({ fname, mname, lname, onButtonClick }) => {
 
 /// TODO Refactor this component to imitate use of default values in RegistrationForm
 export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handleCloseCallback }) => {
+
+  const [cookies,] = useCookies(["darkmode"]);
 
   const [staffList, setStaffList] = useState([])
   const [selectedStaffList, setSelectedStaffList] = useState([]);
@@ -343,7 +346,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
       onShow={onModalOpen}
       size="lg"
     >
-      <Modal.Header closeButton>
+      <Modal.Header closeButton data-bs-theme={cookies.darkmode ? "dark" : "light"}>
         <Modal.Title>{id ? "Modifying Existing Appointment" : "Create New Appointment"}</Modal.Title>
       </Modal.Header>
       <LoadingOverlay active={isLoading || !show} spinner text={loadingText}>

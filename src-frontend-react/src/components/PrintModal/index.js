@@ -1,9 +1,13 @@
 import moment from 'moment';
 import { useRef } from 'react';
 import { Modal, Card, ListGroup, Button, Stack } from 'react-bootstrap';
+import { useCookies } from 'react-cookie';
 import { useReactToPrint } from 'react-to-print';
 
 export const PrintModal = ({ show, onClose, records }) => {
+
+  const [cookies,] = useCookies(['darkmode'])
+
   const componentRef = useRef()
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
@@ -12,7 +16,7 @@ export const PrintModal = ({ show, onClose, records }) => {
 
   return (
     <Modal size='lg' show={show} onHide={onClose}>
-      <Modal.Header closeButton>
+      <Modal.Header closeButton data-bs-theme={cookies.darkmode ? "dark" : "light"}>
         <Modal.Title>Print Schedule Data</Modal.Title>
       </Modal.Header>
       <Modal.Body className='m-3' ref={componentRef}>
