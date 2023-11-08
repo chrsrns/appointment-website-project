@@ -60,8 +60,6 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
       ...formData,
       [name]: value,
     });
-    console.log(formData)
-
   };
 
   const [isFetchingAll, setIsFetchingAll] = useState(true)

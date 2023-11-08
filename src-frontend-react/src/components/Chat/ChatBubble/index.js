@@ -9,7 +9,8 @@ const DEFAULT_FORM_VALUES = {
   content: ''
 }
 
-const Chat = ({ scheduleId }) => {
+const Chat = ({ scheduleId, hideTextBox = false }) => {
+
   const [cookies] = useCookies(['login_username'])
 
   const [messages, setMessages] = useState([])
@@ -103,19 +104,21 @@ const Chat = ({ scheduleId }) => {
             </div>
           ))}
         </div>
-        <Stack direction="horizontal" gap={3}>
-          <Form.Control
-            className="me-auto"
-            as={'textarea'}
-            name="content"
-            rows={3}
-            placeholder="Type your message here..."
-            onChange={handleChange}
-            value={formData.content} />
-          <Button variant="primary" onClick={handleMessageSend}>
-            Send
-          </Button>
-        </Stack>
+        {hideTextBox ?
+          '' : <Stack direction="horizontal" gap={3}>
+            <Form.Control
+              className="me-auto"
+              as={'textarea'}
+              name="content"
+              rows={3}
+              placeholder="Type your message here..."
+              onChange={handleChange}
+              value={formData.content} />
+            <Button variant="primary" onClick={handleMessageSend}>
+              Send
+            </Button>
+          </Stack>
+        }
       </Container>
 
     </LoadingOverlay>
