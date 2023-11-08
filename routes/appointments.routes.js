@@ -167,12 +167,6 @@ router.get("/schedules-summary", async (req, res, next) => {
         AND: [
           {
             OR: [
-              { state: schedule_state.Ongoing },
-              { state: schedule_state.Approved }
-            ]
-          },
-          {
-            OR: [
               { Users: { some: { id: userId } } },
               { authorUserId: userId }
             ]
@@ -303,6 +297,7 @@ router.put("/schedule/:id", async (req, res) => {
     const authorizationheader = req.headers.authorization;
     const token = authorizationheader.replace('Bearer ', '');
     const userId = findUserIdByAccessToken(token)
+
     const user = await prisma.user.findUnique({
       where: {
         id: userId
@@ -331,6 +326,7 @@ router.put("/schedule/:id", async (req, res) => {
         message: `Schedule updated by ${user.lname}, ${user.fname}.`,
       })
     });
+
     getSocketInstance().to(schedule.authorUserId).emit("notify", {
       title: `Schedule Modified: ${schedule.title}`,
       message: `Schedule updated by ${user.lname}, ${user.fname}.`,

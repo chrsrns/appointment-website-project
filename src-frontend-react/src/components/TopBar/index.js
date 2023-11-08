@@ -78,6 +78,7 @@ export const TopBar = () => {
               onClick={() => {
                 Cookies.set("refreshToken", "");
                 Cookies.set("accessToken", "");
+                Cookies.set("usertype", "");
                 Cookies.set("userid", "");
                 Cookies.set("login_username", "");
               }}

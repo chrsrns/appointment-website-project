@@ -157,9 +157,9 @@ function RegistrationForm() {
     }
 
     // Validate Phone Number
-    const phonePattern = /^\d{11}$/;
-    if (!formData.cnum.trim().match(phonePattern)) {
-      newFormErrors.cnum = 'Phone number must be 11 digits';
+    const phonepattern = /^(09|\+639)\d{9}$/;
+    if (!formData.cnum.trim().match(phonepattern)) {
+      newFormErrors.cnum = 'phone number must be in 09xxxxxxxxx or in +639xxxxxxxxx format';
       isValid = false;
     } else {
       newFormErrors.cnum = '';

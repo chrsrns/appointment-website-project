@@ -347,7 +347,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
           </div>
           <Tabs defaultActiveKey="form" className="mb-3">
             <Tab eventKey="form" title="Edit">
-              <Form noValidate onSubmit={onModalSubmit}>
+              <Form onSubmit={onModalSubmit}>
                 <Form.Group className="mb-3">
                   <Form.Label>Students Involved</Form.Label>
                   <Stack direction="horizontal" gap={3}>
