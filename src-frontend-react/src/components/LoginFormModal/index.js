@@ -7,6 +7,7 @@ import { customFetch } from '../../utils';
 
 import RegistrationForm from './RegistrationForm';
 import { useGoogleLogin } from '@react-oauth/google';
+import { toast } from 'react-toastify';
 
 export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
   const [, setCookie] = useCookies(['accessToken', 'refreshToken', 'login_username'])
@@ -20,6 +21,7 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
 
   const glogin = useGoogleLogin({
     onSuccess: tokenResponse => handleGoogleLogin(tokenResponse),
+    onError: response => toast("An error occured on Google's OAuth")
   });
 
   const handleLogin = (event) => {

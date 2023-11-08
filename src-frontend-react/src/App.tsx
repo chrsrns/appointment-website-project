@@ -86,8 +86,12 @@ const App: React.FC = () => {
         setIsLoggedIn(true);
         setIsLogInDone(true);
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
+        Cookies.set("refreshToken", "");
+        Cookies.set("accessToken", "");
+        Cookies.set("userid", "");
+        Cookies.set("usertype", "");
+        Cookies.set("login_username", "");
       });
   };
 
@@ -104,8 +108,7 @@ const App: React.FC = () => {
     socket.disconnect();
   };
   useEffect(() => {
-    document.title =
-      "Kapayapaan Integrated School Scheduler System | JB Lustre";
+    document.title = "Kapayapaan Integrated School Scheduler System";
     getLoggedInStatus();
     socket.onAny((event, ...args) => {
       console.log("Socket onAny: ");
