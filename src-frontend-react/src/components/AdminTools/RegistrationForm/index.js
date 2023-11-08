@@ -5,6 +5,7 @@ import Select from 'react-select'
 
 import LoadingOverlay from 'react-loading-overlay-ts';
 import { customFetch } from '../../../utils';
+import { toast } from 'react-toastify';
 
 const DEFAULT_FORM_VALUES = {
   id: '',
@@ -224,14 +225,13 @@ function RegistrationForm() {
           method: 'PUT',
           body: JSON.stringify(formatted)
         }).then((response) => {
-          console.log(response)
           fetchAll()
           resetToDefault()
-
           if (response.ok) {
             return response.json();
           } else throw response;
-        }).catch((err) => {
+        }).then((data) => toast(data.msg)
+        ).catch((err) => {
           console.log(err)
         })
 
@@ -250,7 +250,8 @@ function RegistrationForm() {
           if (response.ok) {
             return response.json();
           } else throw response;
-        }).catch((err) => {
+        }).then((data) => toast(data.msg)
+        ).catch((err) => {
           console.log(err)
         })
 
@@ -271,9 +272,10 @@ function RegistrationForm() {
         if (response.ok) {
           fetchAll()
           resetToDefault()
-          console.log(response)
           return response.json();
         } else throw response;
+      }).then((data) => {
+        toast(data.msg)
       }).catch((err) => {
         console.log(err)
       })

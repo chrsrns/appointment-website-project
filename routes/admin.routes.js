@@ -7,6 +7,7 @@ const prisma = new PrismaClient();
 const express = require("express");
 const router = express.Router();
 const { createNotification } = require('../routes/notifications.services');
+const { findUserIdByAccessToken } = require("./users.services");
 
 router.get("/users", async (req, res, next) => {
   try {
@@ -76,7 +77,6 @@ router.put("/pendinguser/:id", async (req, res) => {
     })
 
     res.status(200)
-    return next()
   } catch (error) {
     console.error(error);
     res
@@ -113,8 +113,8 @@ router.post("/user", async (req, res, next) => {
     const usercreate = await prisma.user.create({
       data: user
     })
-    const authorizationheader = req.headers.authorization;
 
+    const authorizationheader = req.headers.authorization;
     const token = authorizationheader.replace('Bearer ', '');
     const userId = findUserIdByAccessToken(token)
 
@@ -124,11 +124,12 @@ router.post("/user", async (req, res, next) => {
       }
     })
 
+    const message = `User with username ${usercreate.login_username} added in the system`
     createNotification({
       title: `New User Added by Admin ${userAdmin.login_username} (${userAdmin.lname})`,
-      message: `User with username ${user.login_username} added in the system`
+      message: message
     })
-    res.status(200).json(usercreate)
+    res.status(200).json({ msg: message })
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "An error occurred when adding the user" });
@@ -140,6 +141,17 @@ router.post("/user", async (req, res, next) => {
 router.put("/user/:id", async (req, res) => {
   const { id } = req.params;
   try {
+
+    const authorizationheader = req.headers.authorization;
+    const token = authorizationheader.replace('Bearer ', '');
+    const userId = findUserIdByAccessToken(token)
+
+    const userAdmin = await prisma.user.findUnique({
+      where: {
+        id: userId
+      }
+    })
+
     const userFromBody = req.body
     if (userFromBody.login_password)
       userFromBody.login_password = bcrypt.hashSync(userFromBody.login_password, 12)
@@ -153,11 +165,13 @@ router.put("/user/:id", async (req, res) => {
       res.status(404).json({ error: "User not found" });
       return;
     }
+
+    const message = `User with username ${userToUpdate.login_username} modified in the system`
     createNotification({
       title: `User Modified by Admin ${userAdmin.login_username} (${userAdmin.lname})`,
-      message: `User with username ${user.login_username} modified in the system`
+      message: message
     })
-    res.status(200)
+    res.status(200).json({ msg: message })
   } catch (error) {
     console.error(error);
     res
@@ -169,6 +183,16 @@ router.put("/user/:id", async (req, res) => {
 router.delete("/user/:id", async (req, res) => {
   const { id } = req.params;
   try {
+
+    const authorizationheader = req.headers.authorization;
+    const token = authorizationheader.replace('Bearer ', '');
+    const userId = findUserIdByAccessToken(token)
+
+    const userAdmin = await prisma.user.findUnique({
+      where: {
+        id: userId
+      }
+    })
     const userToDelete = await prisma.user.delete({
       where: {
         id: id,
@@ -178,11 +202,13 @@ router.delete("/user/:id", async (req, res) => {
       res.status(404).json({ error: "User not found" });
       return;
     }
+
+    const message = `User with username ${userToDelete.login_username} removed from the system`
     createNotification({
       title: `User Removed by Admin ${userAdmin.login_username} (${userAdmin.lname})`,
-      message: `User with username ${user.login_username} removed from the system`
+      message: message
     })
-    res.json(userToDelete);
+    res.json(message);
   } catch (error) {
     console.error(error);
     res

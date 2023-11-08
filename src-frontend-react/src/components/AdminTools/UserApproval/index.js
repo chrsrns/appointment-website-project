@@ -14,13 +14,13 @@ const UserApprovalComponent = () => {
       body: JSON.stringify({ approved: approvalType })
     })
       .then((response) => {
+        fetchAll()
         if (response.ok) {
-          fetchAll()
-          return
+          return response.json()
         };
         throw response;
-      })
-      .catch((error) => {
+      }).then(data => toast(data.msg)
+      ).catch((error) => {
         console.error(error);
         toast("Something went wrong when setting user approval.");
       });
