@@ -33,7 +33,7 @@ const DEFAULT_STAFF_TO_FILTER_VALUE = { value: { ...DEFAULT_USER_TO_FILTER_VALUE
 const CalendarWithDragAndDrop = withDragAndDrop(Calendar)
 
 export default function DragAndDropCalendar({ localizer }) {
-  let [searchParams, setSearchParams] = useSearchParams();
+  let [searchParams] = useSearchParams();
 
   const [showPrintModal, setShowPrintModal] = useState(false)
   const [date, setDate] = useState(new Date())
