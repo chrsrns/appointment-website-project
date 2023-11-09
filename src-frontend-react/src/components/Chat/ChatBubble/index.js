@@ -61,11 +61,15 @@ const Chat = ({ scheduleId, hideTextBox = false }) => {
   };
 
   const handleMessageSend = (event) => {
-
     event.preventDefault()
+
+    const formDataTransformed = {
+      ...formData,
+      scheduleId: scheduleId,
+    }
     customFetch(`${global.server_backend_url}/backend/appointments/message`, {
       method: "POST",
-      body: JSON.stringify(formData),
+      body: JSON.stringify(formDataTransformed),
     }).then((response) => {
       if (response.ok) {
         setIsFetchingAll(true)
@@ -79,11 +83,7 @@ const Chat = ({ scheduleId, hideTextBox = false }) => {
 
   useEffect(() => {
     setIsFetchingAll(true)
-    setFormData(formData => ({
-      ...formData,
-      scheduleId: scheduleId,
-    }));
-  }, [fetchAll, scheduleId])
+  }, [fetchAll])
   return (
     <LoadingOverlay spinner active={isLoading}>
       <Container className='px-3 mb-4'>

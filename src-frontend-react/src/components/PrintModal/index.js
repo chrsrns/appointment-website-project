@@ -114,7 +114,7 @@ export const PrintModal = ({ show, onClose, records }) => {
                         )
                         )}
                       </ListGroup>
-                      <p>Minutes: </p>
+                      <p className='mb-3'>Minutes: </p>
                       <Chat scheduleId={record.id} hideTextBox={true} />
                     </Card.Body>
                   </Card>
