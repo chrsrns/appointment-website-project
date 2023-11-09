@@ -360,16 +360,20 @@ router.put("/schedule/:id", async (req, res) => {
         id: id,
       },
       data: req.body,
-      include: { Users: true }
+      include: {
+        Users: true,
+        authoredBy: true
+      }
     });
     if (!schedule) {
       res.status(404).json({ error: "Schedule not found" });
       return;
     }
+    const notifTargets = [...schedule.Users, schedule.authoredBy];
     createNotification({
       title: `Schedule Modified: ${schedule.title}`,
       message: `Schedule updated by ${user.lname}, ${user.fname}.`,
-      users: schedule.Users
+      users: notifTargets
     })
 
     schedule.Users.forEach(element => {
@@ -409,7 +413,8 @@ router.delete("/schedule/:id", async (req, res) => {
         id: id,
       },
       include: {
-        Users: true
+        Users: true,
+        authoredBy: true
       }
     });
     if (!schedule) {
@@ -417,10 +422,11 @@ router.delete("/schedule/:id", async (req, res) => {
       return;
     }
 
+    const notifTargets = [...schedule.Users, schedule.authoredBy];
     createNotification({
       title: `Schedule Deleted: ${schedule.title}`,
       message: `Schedule deleted by ${user.lname}, ${user.fname}.`,
-      users: schedule.Users
+      users: notifTargets
     })
 
     schedule.Users.forEach(element => {
@@ -461,14 +467,16 @@ router.post("/schedule", async (req, res, next) => {
     const schedule = await prisma.schedule.create({
       data: scheduleData,
       include: {
-        Users: true
+        Users: true,
+        authoredBy: true
       }
     })
 
+    const notifTargets = [...schedule.Users, schedule.authoredBy];
     createNotification({
       title: `Schedule Made: ${schedule.title}`,
       message: `Schedule created by ${user.lname}, ${user.fname}.`,
-      users: schedule.Users
+      users: notifTargets
     })
 
     schedule.Users.forEach(element => {
@@ -546,10 +554,12 @@ router.post("/message", async (req, res, next) => {
         }
       }
     })
+
+    const notifTargets = [...message.Schedule.Users, message.Schedule.authoredBy];
     createNotification({
       title: `New Message to Schedule: ${message.Schedule.title}`,
       message: `Message from ${user.lname}, ${user.fname}.`,
-      users: { ...message.Schedule.Users, ...message.Schedule.authoredBy }
+      users: notifTargets
     })
 
     message.Schedule.Users.forEach(element => {
