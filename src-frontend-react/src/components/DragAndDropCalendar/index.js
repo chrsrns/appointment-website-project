@@ -376,10 +376,12 @@ export default function DragAndDropCalendar({ localizer }) {
   const handleSelectSlot = useCallback(
     ({ start, end }) => {
       // const title = window.prompt(`New Event name ${start} ${end}`)
-      setIsLoading(true)
-      setEventRange({ fromDate: start, toDate: end })
-      setModalId("")
-      setShowModal(true)
+      if (start > Date.now() && end > Date.now()) {
+        setIsLoading(true)
+        setEventRange({ fromDate: start, toDate: end })
+        setModalId("")
+        setShowModal(true)
+      }
       // console.log(`new modal id: ${modalId}`)
       // if (title) {
       //   setEventsFull((prev) => [...prev, { start, end, title }])
