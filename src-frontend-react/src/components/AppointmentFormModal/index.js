@@ -550,7 +550,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
 
               </Form>
             </Tab>
-            {id ?
+            {id && formData.scheduletype !== schedule_state.Available ?
               <Tab eventKey="messages" title="Minutes">
                 <Chat scheduleId={id} />
               </Tab> : ''
