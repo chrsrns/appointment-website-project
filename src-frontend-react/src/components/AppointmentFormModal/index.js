@@ -9,13 +9,15 @@ import { customFetch } from "../../utils";
 import Chat from "../Chat/ChatBubble";
 import { useCookies } from "react-cookie";
 
-const AppointmentFormUserList = ({ fname, mname, lname, onButtonClick }) => {
+const AppointmentFormUserList = ({ fname, mname, lname, isDeletable, onButtonClick }) => {
   return (
     <ListGroup.Item className="d-flex justify-content-between align-items-center">
       <>
         {`${fname} ${mname ? mname : ""} ${lname}`}
       </>
-      <Button variant="danger" size="sm" onClick={onButtonClick}>Remove</Button>
+      {isDeletable ?
+        <Button variant="danger" size="sm" onClick={onButtonClick}>Remove</Button> : ''
+      }
 
     </ListGroup.Item>
   )
@@ -95,7 +97,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
           throw response;
         })
         .then((data) => {
-          data = data.filter((user) => user.id !== authorUserId)
+          data = data.filter((user) => user.id !== authorUserId && user.id !== Cookies.get("userid"))
           if (data !== studentsList)
             setStudentsList(data);
         }),
@@ -108,7 +110,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
           throw response;
         })
         .then((data) => {
-          data = data.filter((user) => user.id !== authorUserId)
+          data = data.filter((user) => user.id !== authorUserId && user.id !== Cookies.get("userid"))
           if (data !== staffList)
             setStaffList(data);
         }),
@@ -331,9 +333,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
   const [disableForms, setDisableForms] = useState(false)
   useEffect(() => {
     setDisableForms(
-      (((formData.scheduletype !== schedule_state.Pending &&
-        formData.scheduletype !== schedule_state.Available) ||
-        Cookies.get("usertype") === "Student") && Cookies.get("userid") !== authorUserId) && id
+      ((Cookies.get("usertype") === "Student") || Cookies.get("userid") !== authorUserId) && id
     )
   }, [authorUserId, formData.scheduletype, id])
 
@@ -387,6 +387,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
                         fname={selectedStudent.fname}
                         mname={selectedStudent.mname}
                         lname={selectedStudent.lname}
+                        isDeletable={Cookies.get("userid") === authorUserId || !id}
                         onButtonClick={() => {
                           setSelectedStudentsList(
                             selectedStudentsList.filter((x) => {
@@ -428,6 +429,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
                         fname={selectedStaff.fname}
                         mname={selectedStaff.mname}
                         lname={selectedStaff.lname}
+                        isDeletable={Cookies.get("userid") === authorUserId || !id}
                         onButtonClick={() => {
                           setSelectedStaffList(
                             selectedStaffList.filter((x) => {
@@ -483,7 +485,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
                     name="content"
                     rows={5}
                     placeholder="Can either be appointment details, etc..."
-                    disabled={disableForms}
+                    disabled={disableForms && (Cookies.get("usertype") === "Student" || formData.scheduletype === schedule_state.Available)}
                     onChange={handleChange}
                     value={formData.content} />
                 </Form.Group>
@@ -541,7 +543,7 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
                       Submit
                     </Button>{' '}
                   </div>
-                  <Button variant="danger" className={`${id ? '' : 'invisible'}`} onClick={handleDelete}>
+                  <Button variant="danger" className={`${id && Cookies.get("userid") === authorUserId ? '' : 'invisible'}`} onClick={handleDelete}>
                     Delete
                   </Button>
                 </Stack>
