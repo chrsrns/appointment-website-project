@@ -146,6 +146,10 @@ export default function DragAndDropCalendar({ localizer }) {
       setIsLoading(true)
       setIsFetchingAll(true)
     });
+    socket.on("notify", () => {
+      setIsLoading(true)
+      setIsFetchingAll(true)
+    });
   }, [])
   useEffect(() => {
     const datetimeParams = searchParams.get('datetime');

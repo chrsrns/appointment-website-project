@@ -6,6 +6,7 @@ import LoadingOverlay from 'react-loading-overlay-ts';
 import { customFetch } from '../../../utils';
 import { toast } from 'react-toastify';
 import moment from 'moment';
+import { socket } from '../../../socket';
 
 const DEFAULT_SELECT_VALUE = { value: 0, label: "Please pick a user" }
 
@@ -41,6 +42,9 @@ export const SelectedMedicalRecords = () => {
 
   useEffect(() => {
     fetchAll()
+    socket.on("notify", () => {
+      fetchAll()
+    });
   }, [])
 
   useEffect(() => {

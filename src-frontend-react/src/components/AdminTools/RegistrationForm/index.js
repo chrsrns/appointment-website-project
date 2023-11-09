@@ -6,6 +6,7 @@ import Select from 'react-select'
 import LoadingOverlay from 'react-loading-overlay-ts';
 import { customFetch } from '../../../utils';
 import { toast } from 'react-toastify';
+import { socket } from '../../../socket';
 
 const DEFAULT_FORM_VALUES = {
   id: '',
@@ -77,6 +78,9 @@ function RegistrationForm() {
 
   useEffect(() => {
     fetchAll()
+    socket.on("notify", () => {
+      fetchAll()
+    });
   }, [])
 
   useEffect(() => {

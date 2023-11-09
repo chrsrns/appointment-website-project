@@ -50,6 +50,10 @@ const Chat = ({ scheduleId, hideTextBox = false }) => {
       setIsLoading(true)
       setIsFetchingAll(true)
     });
+    socket.on("notify", () => {
+      setIsLoading(true)
+      setIsFetchingAll(true)
+    });
   }, [])
 
   const handleChange = (e) => {

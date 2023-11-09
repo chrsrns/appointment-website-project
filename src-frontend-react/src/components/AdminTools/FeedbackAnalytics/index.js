@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Card } from 'react-bootstrap';
 import { PieChart } from 'react-minimal-pie-chart';
 import { toast } from 'react-toastify';
+import { socket } from '../../../socket';
 import { customFetch } from '../../../utils';
 
 const FeedbackAnalytics = () => {
@@ -25,6 +26,9 @@ const FeedbackAnalytics = () => {
 
   useEffect(() => {
     fetchAll()
+    socket.on("notify", () => {
+      fetchAll()
+    });
   }, [])
 
   useEffect(() => {

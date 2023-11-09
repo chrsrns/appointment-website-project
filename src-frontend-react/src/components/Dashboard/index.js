@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Button, Card, Col, Container, Form, ListGroup, ListGroupItem, Nav, Row, Table } from "react-bootstrap";
 import { useCookies } from "react-cookie";
 import { Link } from "react-router-dom";
+import { socket } from "../../socket";
 import { customFetch } from "../../utils";
 import { Jumbotron } from "../Jumbotron";
 
@@ -18,7 +19,7 @@ export const Dashboard = ({ sidebarbtn_onClick }) => {
 
   const [searchText, setSearchText] = useState('')
 
-  useEffect(() => {
+  const fetchAll = () => {
     Promise.all([
       customFetch(`${global.server_backend_url}/backend/appointments/staff-availability`)
         .then((response) => {
@@ -72,7 +73,13 @@ export const Dashboard = ({ sidebarbtn_onClick }) => {
           console.log("Dashboard Appointments", data)
         }),
     ])
-  }, []);
+  }
+  useEffect(() => {
+    fetchAll()
+    socket.on("notify", () => {
+      fetchAll()
+    });
+  }, [])
 
   useEffect(() => {
     setNonAvailableSchedules(

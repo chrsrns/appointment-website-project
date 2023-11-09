@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button, ListGroup, Container, Row, Col, Card } from 'react-bootstrap';
 import { toast } from 'react-toastify';
+import { socket } from '../../../socket';
 import { customFetch } from '../../../utils';
 
 const UserApprovalComponent = () => {
@@ -58,6 +59,9 @@ const UserApprovalComponent = () => {
 
   useEffect(() => {
     fetchAll()
+    socket.on("notify", () => {
+      fetchAll()
+    });
   }, [])
   const renderUserList = () => {
     return users.map((user) => (
