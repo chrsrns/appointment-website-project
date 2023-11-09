@@ -78,11 +78,12 @@ export const MedicalRecords = ({ sidebarbtn_onClick }) => {
           </Card>
         </Col>
       </Row>
-      <Row>
-        <Col>
-          <SelectedMedicalRecords />
-        </Col>
-      </Row>
+      {usertype === "Clinic" ?
+        <Row>
+          <Col>
+            <SelectedMedicalRecords />
+          </Col>
+        </Row> : null}
       {usertype === "Clinic" ?
         <Row>
           <Col>
