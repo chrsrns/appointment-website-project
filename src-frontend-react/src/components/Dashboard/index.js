@@ -78,7 +78,7 @@ export const Dashboard = ({ sidebarbtn_onClick }) => {
     setNonAvailableSchedules(
       appointments
         .filter((appointment) => appointment.state !== schedule_state.Available)
-        .filter((appointment) => searchText.trim()
+        .filter((appointment) => searchText.trim() === 0
           || Object
             .values(appointment)
             .some(value => value
