@@ -245,11 +245,14 @@ router.post("/announcement", async (req, res, next) => {
         id: userId
       }
     })
+
+    const titleMsg = `Announcement created by Admin ${user.login_username}: ${announcementcreate.title}`
+
     createNotification({
-      title: `Announcement created by Admin ${user.login_username}: ${announcementcreate.title}`,
+      title: titleMsg,
       message: `${announcementcreate.content}`
     })
-    res.status(200)
+    res.status(200).json({ msg: titleMsg })
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "An error occurred when adding the announcement" });
@@ -278,11 +281,12 @@ router.put("/announcement/:id", async (req, res) => {
         id: userId
       }
     })
+    const titleMsg = `Announcement updated by Admin ${user.login_username}: ${announcementToUpdate.title}`
     createNotification({
-      title: `Announcement updated by Admin ${user.login_username}: ${announcementcreate.title}`,
-      message: `${announcementcreate.content}`
+      title: titleMsg,
+      message: `${announcementToUpdate.content}`
     })
-    res.json(announcementToUpdate)
+    res.json({ msg: titleMsg })
   } catch (error) {
     console.error(error);
     res
@@ -311,11 +315,12 @@ router.delete("/announcement/:id", async (req, res) => {
         id: userId
       }
     })
+
+    const titleMsg = `Announcement removed by Admin ${user.login_username}: ${announcementToDelete.title}`
     createNotification({
-      title: `Announcement removed by Admin ${user.login_username}: ${announcementcreate.title}`,
-      message: `${announcementcreate.content}`
+      title: titleMsg,
     })
-    res.json(announcementToDelete);
+    res.json({ msg: titleMsg });
   } catch (error) {
     console.error(error);
     res

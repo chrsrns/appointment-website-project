@@ -4,6 +4,7 @@ import Select from 'react-select'
 
 import LoadingOverlay from 'react-loading-overlay-ts';
 import { customFetch } from '../../../utils';
+import { toast } from 'react-toastify';
 
 const DEFAULT_FORM_VALUES = {
   id: '',
@@ -108,9 +109,11 @@ export const AnnouncementsForm = () => {
           if (response.ok) {
             return response.json();
           } else throw response;
-        }).catch((err) => {
-          console.log(err)
-        })
+        }).then((data) => toast(data.msg))
+          .catch((err) => {
+            console.log(err)
+            toast("Something went wrong.")
+          })
 
       } else { /// Means user is created, not updated
 
@@ -125,9 +128,11 @@ export const AnnouncementsForm = () => {
           if (response.ok) {
             return response.json();
           } else throw response;
-        }).catch((err) => {
-          console.log(err)
-        })
+        }).then((data) => toast(data.msg))
+          .catch((err) => {
+            console.log(err)
+            toast("Something went wrong.")
+          })
 
       }
     }
@@ -146,9 +151,10 @@ export const AnnouncementsForm = () => {
           console.log(response)
           return response.json();
         } else throw response;
-      }).catch((err) => {
-        console.log(err)
-      })
+      }).then((data) => toast(data.msg))
+        .catch((err) => {
+          console.log(err)
+        })
     }
   }
 
