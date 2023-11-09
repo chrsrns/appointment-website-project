@@ -540,7 +540,8 @@ router.post("/message", async (req, res, next) => {
       include: {
         Schedule: {
           include: {
-            Users: true
+            Users: true,
+            authoredBy: true
           }
         }
       }
@@ -548,7 +549,7 @@ router.post("/message", async (req, res, next) => {
     createNotification({
       title: `New Message to Schedule: ${message.Schedule.title}`,
       message: `Message from ${user.lname}, ${user.fname}.`,
-      users: message.Schedule.Users
+      users: { ...message.Schedule.Users, ...message.Schedule.authoredBy }
     })
 
     message.Schedule.Users.forEach(element => {
