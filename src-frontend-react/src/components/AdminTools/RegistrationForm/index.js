@@ -278,6 +278,7 @@ function RegistrationForm() {
         toast(data.msg)
       }).catch((err) => {
         console.log(err)
+        console.error(err.errbody)
       })
     }
   }

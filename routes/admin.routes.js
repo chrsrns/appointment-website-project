@@ -223,7 +223,7 @@ router.delete("/user/:id", async (req, res) => {
     console.error(error);
     res
       .status(500)
-      .json({ error: "An error occurred while deleting the user" });
+      .json({ error: "An error occurred while deleting the user", errbody: error });
   }
 });
 
