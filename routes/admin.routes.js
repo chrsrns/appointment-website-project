@@ -31,6 +31,16 @@ router.get("/users", async (req, res, next) => {
   }
 });
 
+router.get("/feedbacks", async (req, res, next) => {
+  try {
+    const feedbacks = await prisma.feedback.findMany()
+    res.json(feedbacks);
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
+});
+
+
 router.get("/pendingusers", async (req, res, next) => {
   try {
     const user = await prisma.user.findMany({

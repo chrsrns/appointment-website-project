@@ -4,6 +4,8 @@ import { AnnouncementsForm } from "./AnnouncementsForm";
 import RegistrationForm from "./RegistrationForm";
 import UserApprovalComponent from "./UserApproval";
 import Cookies from "js-cookie";
+import { PieChart } from "react-minimal-pie-chart";
+import FeedbackAnalytics from "./FeedbackAnalytics";
 
 export const AdminTools = ({ sidebarbtn_onClick }) => {
   const usertype = Cookies.get("usertype")
@@ -20,6 +22,11 @@ export const AdminTools = ({ sidebarbtn_onClick }) => {
           <Jumbotron header="Admin Tools">
             Create and update database details
           </Jumbotron>
+          <Row>
+            <Col>
+              <FeedbackAnalytics />
+            </Col>
+          </Row>
           <Row>
             <Col>
               <Card>
