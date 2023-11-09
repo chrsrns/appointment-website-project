@@ -87,7 +87,9 @@ const Chat = ({ scheduleId, hideTextBox = false }) => {
   return (
     <LoadingOverlay spinner active={isLoading}>
       <Container className='px-3 mb-4'>
-        <div className="overflow-scroll p-3 mb-4 d-flex flex-column-reverse" style={{ maxHeight: "30rem", borderBottom: '1px solid #ccc' }}>
+        <div className="overflow-scroll p-3 mb-4 d-flex flex-column-reverse"
+          style={hideTextBox ? {} : { maxHeight: "30rem", borderBottom: '1px solid #ccc' }}
+        >
           {messages.map((message, index) => (
             <div
               key={index}
