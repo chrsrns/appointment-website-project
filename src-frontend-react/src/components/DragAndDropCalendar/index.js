@@ -30,6 +30,16 @@ const DEFAULT_USER_TO_FILTER_VALUES = {
 //      the forms modify this variable
 const DEFAULT_STAFF_TO_FILTER_VALUE = { value: { ...DEFAULT_USER_TO_FILTER_VALUES }, label: "Select staff to see only their availability" }
 
+const appointmentsTypesColors = {
+  Available: "#dee2e6",
+  Pending: "#fff3cd",
+  Approved: "#afdbc7",
+  Ongoing: "#fecba1",
+  Completed: "#d8fea1",
+  Declined: "#562C2C",
+  Rescheduled: "#84714F"
+}
+
 const CalendarWithDragAndDrop = withDragAndDrop(Calendar)
 
 export default function DragAndDropCalendar({ localizer }) {
@@ -257,51 +267,13 @@ export default function DragAndDropCalendar({ localizer }) {
     updateEvents()
   }, [date, updateEvents])
 
-  const appointmentsTypesColors = {
-    Available: "#dee2e6",
-    Pending: "#fff3cd",
-    Approved: "#afdbc7",
-    Ongoing: "#fecba1",
-    Completed: "#d8fea1"
-  }
   const eventPropGetter = useCallback(
-    (event, _start, _end) => ({
-      ...(event.state === "Available" && {
-        style: {
-          backgroundColor: appointmentsTypesColors.Available,
-        },
+    (event, _start, _end) => {
+      return ({
+        style: { backgroundColor: appointmentsTypesColors[event.state] },
         className: 'text-dark',
-      }),
-      ...(event.state === "Pending" && {
-        style: {
-          backgroundColor: appointmentsTypesColors.Pending,
-        },
-        className: 'text-dark',
-      }),
-      ...(event.state === "Approved" && {
-        style: {
-          backgroundColor: appointmentsTypesColors.Approved,
-        },
-        className: 'text-dark',
-      }),
-      ...(event.state === "Ongoing" && {
-        style: {
-          backgroundColor: appointmentsTypesColors.Ongoing,
-        },
-        className: 'text-dark',
-      }),
-      ...(event.state === "Completed" && {
-        style: {
-          backgroundColor: appointmentsTypesColors.Completed,
-        },
-        className: 'text-dark',
-      }),
-    }),
-    [appointmentsTypesColors.Approved,
-    appointmentsTypesColors.Ongoing,
-    appointmentsTypesColors.Pending,
-    appointmentsTypesColors.Available,
-    appointmentsTypesColors.Completed]
+      })
+    }, []
   )
 
   const moveEvent = useCallback(
