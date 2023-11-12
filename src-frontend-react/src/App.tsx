@@ -29,10 +29,15 @@ import Cookies from "js-cookie";
 import { useCookies } from "react-cookie";
 import SideNotifications from "./components/Notifications";
 
-import { FeedbackForm } from "./components/FeedbackForm";
 import { LandingPage } from "./components/LandingPage";
 import { TopBar } from "./components/TopBar";
 import { SideBar } from "./components/SideBar";
+import { Profile } from "./components/Profile";
+
+import {
+  enable as enableDarkMode,
+  disable as disableDarkMode,
+} from "darkreader";
 
 /// TODO Separate components to other files
 
@@ -53,8 +58,8 @@ const App: React.FC = () => {
   const mainRowClassName = `row-offcanvas row-offcanvas-left ${
     isActive ? "active" : ""
   }`;
-
   const [cookies] = useCookies(["accessToken", "darkmode"]);
+
   // useEffect(() => {
   //   document.documentElement.setAttribute(
   //     "data-bs-theme",
@@ -71,6 +76,17 @@ const App: React.FC = () => {
 
   const [onlineUsers, setOnlineUsers] = useState([]);
   const socketConnected = useRef(false);
+
+  useEffect(() => {
+    if (cookies.darkmode) {
+      enableDarkMode({
+        brightness: 100,
+        contrast: 100,
+      });
+    } else {
+      disableDarkMode();
+    }
+  }, [cookies.darkmode]);
 
   const getLoggedInStatus = () => {
     const data = { refreshToken: Cookies.get("refreshToken") };
@@ -241,9 +257,9 @@ const App: React.FC = () => {
                       }
                     />
                     <Route
-                      path="/feedback"
+                      path="/profile"
                       element={
-                        <FeedbackForm sidebarbtn_onClick={sidebarbtn_onClick} />
+                        <Profile sidebarbtn_onClick={sidebarbtn_onClick} />
                       }
                     />
                     <Route

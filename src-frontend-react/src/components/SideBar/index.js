@@ -2,10 +2,16 @@ import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { Button, ButtonGroup, Col } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
+import { user_type } from "@prisma/client";
 
 export const SideBar = () => {
   const [radios, setRadios] = useState([
-    { name: "Dashboard", iconClass: "bi-columns-gap", value: "1", link: "/" },
+    {
+      name: "Dashboard",
+      iconClass: "bi-columns-gap",
+      value: "1",
+      link: "/"
+    },
     {
       name: "Appointments",
       iconClass: "bi-clipboard",
@@ -13,23 +19,15 @@ export const SideBar = () => {
       link: "/appointments",
     },
     {
-      name: "Medical Records",
-      iconClass: "bi-bandaid",
-      value: "5",
-      link: "/medrecords",
-    },
-    {
-      name: "Feedback",
-      iconClass: "bi-graph-up",
+      name: "Profile",
+      iconClass: "bi-person-circle",
       value: "3",
-      link: "/feedback",
+      link: "/profile",
     },
   ]);
   useEffect(() => {
-    console.log("usertype: ", Cookies.get("usertype"));
-    console.log("isAdmin: ", Cookies.get("usertype") === "Admin");
     if (
-      Cookies.get("usertype") === "Admin" &&
+      Cookies.get("usertype") === user_type.Admin &&
       !radios.some((e) => e.name === "Admin Tools")
     )
       setRadios([
@@ -41,6 +39,20 @@ export const SideBar = () => {
           link: "/admin",
         },
       ]);
+    if (
+      Cookies.get("usertype") === user_type.Clinic &&
+      !radios.some((e) => e.name === "Admin Tools")
+    )
+      setRadios([
+        ...radios,
+        {
+          name: "Medical Records",
+          iconClass: "bi-bandaid",
+          value: "5",
+          link: "/medrecords",
+        },
+      ]);
+
   }, [radios]);
 
   return (

@@ -1,41 +1,9 @@
-import { useEffect, useRef, useState } from "react";
 import { useCookies } from "react-cookie";
 import Cookies from "js-cookie";
-import {
-  enable as enableDarkMode,
-  disable as disableDarkMode,
-} from "darkreader";
 import { Button, Container, Navbar, Stack } from "react-bootstrap";
 
 export const TopBar = () => {
-  const [darkMode, setDarkMode] = useState(false);
-  const [cookies, setCookies] = useCookies(["darkmode", "login_username"]);
-  const cookiesRef = useRef();
-
-  const handleDarkModeToggleClick = () => {
-    setDarkMode(!darkMode);
-  };
-  useEffect(() => {
-    cookiesRef.current = cookies.darkmode;
-  });
-
-  useEffect(() => {
-    setDarkMode(cookiesRef.current);
-  }, []);
-
-  useEffect(() => {
-    console.log("darkmode changed");
-    if (darkMode) {
-      enableDarkMode({
-        brightness: 100,
-        contrast: 100,
-      });
-      setCookies("darkmode", true);
-    } else {
-      disableDarkMode();
-      setCookies("darkmode", false);
-    }
-  }, [darkMode, setCookies]);
+  const [cookies] = useCookies(["login_username"]);
 
   return (
     <Navbar expand="lg" className="bg-body-tertiary shadow-sm">
@@ -61,18 +29,6 @@ export const TopBar = () => {
           ) : (
             ""
           )}
-
-          <Button onClick={handleDarkModeToggleClick}>
-            {darkMode ? (
-              <>
-                <i className="bi bi-moon-stars-fill" /> Dark
-              </>
-            ) : (
-              <>
-                <i className="bi bi-brightness-high" /> Light
-              </>
-            )}
-          </Button>
           {cookies.login_username ? (
             <Button
               onClick={() => {
