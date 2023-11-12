@@ -150,6 +150,8 @@ enum schedule_state {
   Approved
   Ongoing
   Completed
+  Declined
+  Rescheduled
 }
 
 enum repeat {
