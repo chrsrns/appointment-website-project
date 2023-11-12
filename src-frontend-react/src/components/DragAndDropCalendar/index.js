@@ -9,7 +9,7 @@ import LoadingOverlay from 'react-loading-overlay-ts';
 import { RRule, RRuleSet } from 'rrule';
 import Select from 'react-select';
 import { customFetch } from '../../utils';
-import { Button, Stack } from 'react-bootstrap';
+import { Button, Col, Container, Row } from 'react-bootstrap';
 import { PrintModal } from '../PrintModal';
 import { schedule_state, user_type } from '@prisma/client';
 import Cookies from 'js-cookie';
@@ -408,14 +408,18 @@ export default function DragAndDropCalendar({ localizer }) {
             setShowPrintModal(false)
           }} />
         <Select className='fs-5 mb-3' options={staffListOptions} value={selectedStaffToFilter} onChange={handleStaffToFilterSelectionChange} />
-        <Stack direction='horizontal' className='gap-4 justify-content-center mb-2'>
-          {Object.keys(appointmentsTypesColors).map((key) => (
-            <div key={key}>
-              <i className="bi bi-caret-down-fill" style={{ color: appointmentsTypesColors[key] }}></i>
-              {key}
-            </div>
-          ))}
-        </Stack>
+        <Container className='justify-content-center mb-2'>
+          <Row>
+            {Object.keys(appointmentsTypesColors).map((key) => (
+              <Col key={key}>
+                <i
+                  className="bi bi-caret-down-fill"
+                  style={{ color: appointmentsTypesColors[key], fontSize: '2rem' }}></i><br />
+                {key}
+              </Col>
+            ))}
+          </Row>
+        </Container>
         <CalendarWithDragAndDrop
           defaultView={Views.WEEK}
           backgroundEvents={eventsForBG}
