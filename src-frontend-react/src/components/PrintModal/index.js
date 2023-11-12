@@ -47,6 +47,7 @@ export const PrintModal = ({ show, onClose, records }) => {
           defaultActiveKey="configure"
           id="print-tabs"
           className='mb-3'
+          justify
         >
           <Tab eventKey="configure" title="Configure">
             <Form.Group controlId="descText" className="mb-3">

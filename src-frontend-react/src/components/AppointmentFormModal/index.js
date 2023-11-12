@@ -352,7 +352,10 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
           <div className="mb-2">
             {id && formData.authoredBy ? `Schedule Author: ${formData.authoredBy.lname}, ${formData.authoredBy.fname}` : ''}
           </div>
-          <Tabs defaultActiveKey="form" className="mb-3">
+          <Tabs
+            defaultActiveKey="form"
+            className="mb-3"
+            justify>
             <Tab eventKey="form" title="Edit">
               <Form onSubmit={onModalSubmit}>
                 <Form.Group className="mb-3">
