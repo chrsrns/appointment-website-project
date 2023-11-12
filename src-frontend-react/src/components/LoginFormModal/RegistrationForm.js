@@ -231,7 +231,7 @@ const RegistrationForm = () => {
   };
   return (
     <LoadingOverlay active={isLoading} spinner text='Waiting for update...'>
-      <Form onSubmit={handleSubmit}>
+      <Form className='mb-3' onSubmit={handleSubmit}>
         <Row className="mb-3">
           <Form.Group as={Col} md="4" controlId="firstName">
             <Form.Label>First Name</Form.Label>
@@ -371,7 +371,7 @@ const RegistrationForm = () => {
             <div className="text-danger">{formErrors.login_password}</div>
           </Form.Group>
         </Row>
-        <Button className="mt-2" variant="primary" type="submit">
+        <Button className="w-100 mt-2" variant="primary" type="submit">
           Register
         </Button>
       </Form>
