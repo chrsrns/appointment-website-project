@@ -38,9 +38,10 @@ model User {
   Schedules         Schedule[]
   Messages          Message[]
   MedicalRecords    MedicalRecord[]
-  authoredSchedules Schedule[]      @relation(name: "authoredByUser")
+  authoredSchedules Schedule[]       @relation(name: "authoredByUser")
   Notifications     Notifications[]
   Feedback          Feedback?
+  GuidanceRecord    GuidanceRecord[]
 
   @@unique([fname, mname, lname])
 }
@@ -104,6 +105,14 @@ model MedicalRecord {
   userId    String
 }
 
+model GuidanceRecord {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  content   String   @db.LongText
+  userId    String
+}
+
 model Feedback {
   id           String   @id @default(uuid())
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -142,6 +151,7 @@ enum user_approval_type {
   Pending
   Unapproved
   Approved
+  Archived
 }
 
 enum schedule_state {
