@@ -7,6 +7,7 @@ import LoadingOverlay from 'react-loading-overlay-ts';
 import { customFetch } from '../../../utils';
 import { toast } from 'react-toastify';
 import { socket } from '../../../socket';
+import { user_type } from '@prisma/client';
 
 const DEFAULT_FORM_VALUES = {
   id: '',
@@ -429,7 +430,7 @@ function RegistrationForm() {
             {`${formData.id ? 'Modify User' : 'Create User'}`}
           </Button>
           <Button variant="danger" className={`${formData.id ? '' : 'invisible'}`} onClick={handleDelete}>
-            Delete User
+            {`${selectedUser.value.type === user_type.Admin ? 'Archive User' : 'Delete User'}`}
           </Button>
         </Stack>
       </Form>

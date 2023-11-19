@@ -200,7 +200,8 @@ router.post('/login', async (req, res, next) => {
       refreshToken,
       type: existingUser.type,
       id: existingUser.id,
-      login_username: existingUser.login_username
+      login_username: existingUser.login_username,
+      approved: existingUser.approved
     });
   } catch (err) {
 
@@ -409,7 +410,8 @@ router.post('/googlelogin', async (req, res, next) => {
       refreshToken,
       type: existingUser.type,
       id: existingUser.id,
-      login_username: existingUser.login_username
+      login_username: existingUser.login_username,
+      approved: existingUser.approved
     });
   } catch (err) {
     console.error(err)

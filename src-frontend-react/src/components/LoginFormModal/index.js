@@ -8,6 +8,7 @@ import { customFetch } from '../../utils';
 import RegistrationForm from './RegistrationForm';
 import { useGoogleLogin } from '@react-oauth/google';
 import { toast } from 'react-toastify';
+import { user_approval_type } from '@prisma/client';
 
 export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
   const [cookies, setCookie] = useCookies(['accessToken', 'refreshToken', 'login_username', 'darkmode'])
@@ -41,12 +42,20 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
       if (response.ok)
         return response.json(); else throw response;
     }).then((data) => {
-      setCookie("login_username", data.login_username)
-      setCookie("accessToken", data.accessToken)
-      setCookie("refreshToken", data.refreshToken)
-      setCookie("usertype", data.type)
-      setCookie("userid", data.id)
-      setTabKey('Data Privacy Acknowledge and Consent')
+      console.log("Login Data", data)
+      if (data.approved === user_approval_type.Archived) {
+        setResponseHeader("Login Failed")
+        setResponseBody("User is archived. Contact your admin.")
+        setShowNotif(true)
+      } else {
+        setCookie("login_username", data.login_username)
+        setCookie("accessToken", data.accessToken)
+        setCookie("refreshToken", data.refreshToken)
+        setCookie("usertype", data.type)
+        setCookie("userid", data.id)
+        setTabKey('Data Privacy Acknowledge and Consent')
+      }
+
     }).catch(async (err) => {
       /// err.json() returns a Promise, so an async/await is necessary
       const errorBody = await err.json()
@@ -68,12 +77,18 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
       if (response.ok)
         return response.json(); else throw response;
     }).then((data) => {
-      setCookie("login_username", data.login_username)
-      setCookie("accessToken", data.accessToken)
-      setCookie("refreshToken", data.refreshToken)
-      setCookie("usertype", data.type)
-      setCookie("userid", data.id)
-      setTabKey('Data Privacy Acknowledge and Consent')
+      if (data.approved === user_approval_type.Archived) {
+        setResponseHeader("Login Failed")
+        setResponseBody("User is archived. Contact your admin.")
+        setShowNotif(true)
+      } else {
+        setCookie("login_username", data.login_username)
+        setCookie("accessToken", data.accessToken)
+        setCookie("refreshToken", data.refreshToken)
+        setCookie("usertype", data.type)
+        setCookie("userid", data.id)
+        setTabKey('Data Privacy Acknowledge and Consent')
+      }
     }).catch(async (err) => {
       /// err.json() returns a Promise, so an async/await is necessary
       const errorBody = await err.json()

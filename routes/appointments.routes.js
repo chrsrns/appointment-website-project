@@ -14,7 +14,8 @@ router.get("/students", async (req, res, next) => {
   try {
     const users = await prisma.user.findMany({
       where: {
-        type: user_type.Student
+        type: user_type.Student,
+        approved: { not: user_approval_type.Archived }
       },
       select: {
         id: true,
@@ -43,6 +44,9 @@ router.get("/staff", async (req, res, next) => {
             type: {
               not: user_type.Admin
             }
+          },
+          {
+            approved: { not: user_approval_type.Archived }
           }
         ]
 

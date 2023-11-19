@@ -35,6 +35,7 @@ router.get("/records-by/:id", isAuthenticated, async (req, res, next) => {
     const user = await prisma.user.findUnique({
       where: {
         id: userId,
+        approved: { not: user_approval_type.Archived }
       },
       select: {
         type: true
@@ -60,6 +61,9 @@ router.get("/records-by/:id", isAuthenticated, async (req, res, next) => {
 router.get("/users", async (req, res, next) => {
   try {
     const users = await prisma.user.findMany({
+      where: {
+        approved: { not: user_approval_type.Archived }
+      },
       select: {
         id: true,
         fname: true,

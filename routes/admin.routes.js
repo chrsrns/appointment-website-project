@@ -12,6 +12,9 @@ const { findUserIdByAccessToken } = require("./users.services");
 router.get("/users", async (req, res, next) => {
   try {
     const user = await prisma.user.findMany({
+      where: {
+        approved: { not: user_approval_type.Archived }
+      },
       select: {
         id: true,
         fname: true,
@@ -202,23 +205,57 @@ router.delete("/user/:id", async (req, res) => {
       where: {
         id: userId
       }
-    })
-    const userToDelete = await prisma.user.delete({
+    });
+
+
+    const user = await prisma.user.findUnique({
       where: {
-        id: id,
+        id: id
+      },
+      select: {
+        type: true
       },
     });
-    if (!userToDelete) {
-      res.status(404).json({ error: "User not found" });
-      return;
+
+    if (user.type == user_type.Admin) {
+      const userToArchive = await prisma.user.update({
+        where: {
+          id: id,
+        },
+        data: {
+          approved: user_approval_type.Archived
+        }
+      });
+      if (!userToArchive) {
+        res.status(404).json({ error: "User not found" });
+        return;
+      }
+
+      const message = `User with username ${userToArchive.login_username} archived on the system`
+      createNotification({
+        title: `User Archived by Admin ${userAdmin.login_username} (${userAdmin.lname})`,
+        message: message
+      })
+      res.json(message);
+    } else {
+      const userToDelete = await prisma.user.delete({
+        where: {
+          id: id,
+        },
+      });
+      if (!userToDelete) {
+        res.status(404).json({ error: "User not found" });
+        return;
+      }
+
+      const message = `User with username ${userToDelete.login_username} removed from the system`
+      createNotification({
+        title: `User Removed by Admin ${userAdmin.login_username} (${userAdmin.lname})`,
+        message: message
+      })
+      res.json(message);
     }
 
-    const message = `User with username ${userToDelete.login_username} removed from the system`
-    createNotification({
-      title: `User Removed by Admin ${userAdmin.login_username} (${userAdmin.lname})`,
-      message: message
-    })
-    res.json(message);
   } catch (error) {
     console.error(error);
     res
