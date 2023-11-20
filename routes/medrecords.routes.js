@@ -1,4 +1,4 @@
-const { PrismaClient, user_type } = require("@prisma/client");
+const { PrismaClient, user_type, user_approval_type } = require("@prisma/client");
 const prisma = new PrismaClient();
 const express = require('express');
 const { isAuthenticated } = require("../middlewares");
