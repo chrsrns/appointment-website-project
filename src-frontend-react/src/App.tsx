@@ -38,6 +38,7 @@ import {
   enable as enableDarkMode,
   disable as disableDarkMode,
 } from "darkreader";
+import { GuidanceRecords } from "./components/GuidanceRecords";
 
 /// TODO Separate components to other files
 
@@ -252,6 +253,14 @@ const App: React.FC = () => {
                       path="/medrecords"
                       element={
                         <MedicalRecords
+                          sidebarbtn_onClick={sidebarbtn_onClick}
+                        />
+                      }
+                    />
+                    <Route
+                      path="/guidancerecords"
+                      element={
+                        <GuidanceRecords
                           sidebarbtn_onClick={sidebarbtn_onClick}
                         />
                       }

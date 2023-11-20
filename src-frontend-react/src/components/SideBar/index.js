@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { Button, ButtonGroup, Col } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -25,26 +25,27 @@ export const SideBar = () => {
       link: "/profile",
     },
   ]);
-  useEffect(() => {
+
+  const updateRadios = useCallback(() => {
     if (
       Cookies.get("usertype") === user_type.Admin &&
       !radios.some((e) => e.name === "Admin Tools")
     )
-      setRadios([
-        ...radios,
+      setRadios((prevRadios) => [
+        ...prevRadios,
         {
           name: "Admin Tools",
           iconClass: "bi-terminal",
-          value: "4",
+          value: "6",
           link: "/admin",
         },
       ]);
     if (
       Cookies.get("usertype") === user_type.Clinic &&
-      !radios.some((e) => e.name === "Admin Tools")
+      !radios.some((e) => e.name === "Medical Records")
     )
-      setRadios([
-        ...radios,
+      setRadios((prevRadios) => [
+        ...prevRadios,
         {
           name: "Medical Records",
           iconClass: "bi-bandaid",
@@ -52,8 +53,25 @@ export const SideBar = () => {
           link: "/medrecords",
         },
       ]);
-
+    if (
+      Cookies.get("usertype") === user_type.Guidance &&
+      !radios.some((e) => e.name === "Guidance Records")
+    )
+      setRadios((prevRadios) => [
+        ...prevRadios,
+        {
+          name: "Guidance Records",
+          iconClass: "bi-exclamation-circle",
+          value: "4",
+          link: "/guidancerecords",
+        },
+      ]);
+    console.log("updating sidebar");
   }, [radios]);
+
+  useEffect(() => {
+    updateRadios();
+  }, [updateRadios]);
 
   return (
     <Col

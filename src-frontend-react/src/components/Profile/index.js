@@ -2,6 +2,7 @@ import { Button, Card, Col, Container, InputGroup, Row } from "react-bootstrap";
 import { Jumbotron } from "../Jumbotron";
 import { DarkModeToggleButton } from "./DarkModeToggleButton";
 import { FeedbackForm } from "./FeedbackForm";
+import { MyGuidanceRecords } from "./MyGuidanceRecords";
 import { MyMedicalRecords } from "./MyMedicalRecords";
 
 // TODO Use Portals to remote render the sidebar button from here to the sidebar.
@@ -33,6 +34,11 @@ export const Profile = ({ sidebarbtn_onClick }) => {
       <Row>
         <Col>
           <MyMedicalRecords />
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <MyGuidanceRecords />
         </Col>
       </Row>
       <Row>

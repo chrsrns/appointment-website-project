@@ -47,6 +47,9 @@ app.use("/backend/notifications", notifications)
 const medrecords = require('./routes/medrecords.routes')
 app.use("/backend/medrecords", medrecords)
 
+const guidancerecords = require('./routes/guidancerecords.routes')
+app.use("/backend/guidancerecords", guidancerecords)
+
 const feedback = require('./routes/feedback.routes')
 app.use("/backend/feedback", feedback)
 
