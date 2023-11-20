@@ -76,7 +76,7 @@ export const SelectedGuidanceRecords = () => {
       {
         isQuerySuccess ?
           <Card className='mb-3'>
-            <Card.Header as="h2">People's Records</Card.Header>
+            <Card.Header as="h2">Users' Records</Card.Header>
             <Card.Body style={{ maxHeight: "40rem" }}>
               <LoadingOverlay active={isLoading} spinner text="Waiting for update">
                 <Select className='fs-5 mb-2' options={usersListOptions} value={selectedUser} onChange={handleUserSelectionChange} />

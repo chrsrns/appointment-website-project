@@ -286,7 +286,7 @@ const App: React.FC = () => {
                   style={{ marginBottom: "3rem" }}
                 >
                   <Card className="shadow-sm mb-3">
-                    <Card.Header as={"h2"}>People Online</Card.Header>
+                    <Card.Header as={"h2"}>Users Online</Card.Header>
                     <Card.Body>
                       <ListGroup>
                         {onlineUsers.map((user) => {
