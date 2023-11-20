@@ -11,7 +11,7 @@ export const LandingPage = ({ onButtonClick }) => {
         <Col className="text-center">
           <img src={process.env.PUBLIC_URL + "/school_logo.png"} alt="Logo" />
           <h2 className="my-5">
-            WEB-BASED APPOINTMENT AND QUEUING SYSTEM WITH INFORMATION
+            WEB-BASED APPOINTMENT AND SCHEDULING SYSTEM WITH INFORMATION
             MANAGEMENT FOR KAPAYAPAAN INTEGRATED SCHOOL
           </h2>
           <p>
