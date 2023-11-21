@@ -1,7 +1,6 @@
 import moment from 'moment';
 import { useEffect, useState } from 'react';
-import { Accordion, Card } from 'react-bootstrap';
-import AccordionItem from 'react-bootstrap/esm/AccordionItem';
+import { Card, ListGroup, ListGroupItem } from 'react-bootstrap';
 import { PieChart } from 'react-minimal-pie-chart';
 import { toast } from 'react-toastify';
 import { socket } from '../../../socket';
@@ -85,21 +84,21 @@ const FeedbackAnalytics = () => {
           </div>
 
           <div className="overflow-scroll" style={{ maxHeight: "38rem" }}>
-            <Accordion>
-              {feedbacks.map((feedback) => {
+            <h4>{' '}User Comments</h4>
+            <ListGroup>
+              {feedbacks.filter((feedback) => feedback.feedbackText.trim().length !== 0).map((feedback) => {
                 const user = feedback.user
-
                 return (
-                  <AccordionItem eventKey={`${user.id}`} >
-                    <Accordion.Header>
-                      {`[${user.type}] ${user.lname}, ${user.fname} ${user.mname} (${moment(feedback.createdAt).format('MMM DD, YYYY hh:mm A')})`}</Accordion.Header>
-                    <Accordion.Body>
-                      {feedback.feedbackText}
-                    </Accordion.Body>
-                  </AccordionItem>
+                  <ListGroupItem eventKey={`${user.id}`} >
+                    <p className="fw-bold mb-2 border-bottom border-secondary pb-2">
+                      {`[${user.type}] ${user.lname}, ${user.fname} ${user.mname} (${moment(feedback.createdAt).format('MMM DD, YYYY hh:mm A')})`}
+                    </p>
+                    {feedback.feedbackText}
+                  </ListGroupItem>
                 )
               })}
-            </Accordion>
+              {feedbacks.filter((feedback) => feedback.feedbackText.trim().length !== 0).length === 0 ? "Nothing to show." : ''}
+            </ListGroup>
           </div>
         </Card.Body>
       </Card>
