@@ -1,4 +1,6 @@
+import { user_type } from "@prisma/client";
 import { Button, Card, Col, Container, InputGroup, Row } from "react-bootstrap";
+import Cookies from "js-cookie";
 import { Jumbotron } from "../Jumbotron";
 import { DarkModeToggleButton } from "./DarkModeToggleButton";
 import { FeedbackForm } from "./FeedbackForm";
@@ -38,7 +40,9 @@ export const Profile = ({ sidebarbtn_onClick }) => {
       </Row>
       <Row>
         <Col>
-          <MyGuidanceRecords />
+          {Cookies.get("usertype") === user_type.Student ?
+            <MyGuidanceRecords />
+            : ''}
         </Col>
       </Row>
       <Row>
