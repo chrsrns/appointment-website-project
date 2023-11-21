@@ -186,7 +186,7 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
                   </Tab.Pane>
                   <Tab.Pane eventKey="Data Privacy Acknowledge and Consent">
                     <p>
-                      By tapping Accept and Continue, I agree to the Terms and Conditions and Privacy Notice and I am giving "WEB-BASED APPOINTMENT AND QUEUING SYSTEM WITH INFORMATION MANAGEMENT FOR KAPAYAPAAN INTEGRATED SCHOOL" my consent to use my Personal Data to: facilitate my schedules; collect system feedback; and to process information for statistical, analytical, and research purposes. This consent is given freely without prejudice to my rights as data subject to access and correct my Personal Data, as well as object and be informed of any further use of the same.
+                      By tapping Accept and Continue, I agree to the Terms and Conditions and Privacy Notice and I am giving "WEB-BASED APPOINTMENT AND SCHEDULING SYSTEM WITH INFORMATION MANAGEMENT FOR KAPAYAPAAN INTEGRATED SCHOOL" my consent to use my Personal Data to: facilitate my schedules; collect system feedback; and to process information for statistical, analytical, and research purposes. This consent is given freely without prejudice to my rights as data subject to access and correct my Personal Data, as well as object and be informed of any further use of the same.
                     </p>
                     <Button className='w-100' onClick={() => {
                       onHide(false)
