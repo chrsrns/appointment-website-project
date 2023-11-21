@@ -32,7 +32,7 @@ export const GuidanceRecordsForm = () => {
 
   const fetchAll = () => {
     setIsLoading(true)
-    customFetch(`${global.server_backend_url}/backend/guidancerecords/users`)
+    customFetch(`${global.server_backend_url}/backend/guidancerecords/students`)
       .then((response) => {
         if (response.ok) return response.json();
         else throw response;

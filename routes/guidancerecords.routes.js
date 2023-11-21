@@ -58,10 +58,11 @@ router.get("/records-by/:id", isAuthenticated, async (req, res, next) => {
   }
 });
 
-router.get("/users", async (req, res, next) => {
+router.get("/students", async (req, res, next) => {
   try {
     const users = await prisma.user.findMany({
       where: {
+        type: user_type.Student,
         approved: { not: user_approval_type.Archived }
       },
       select: {
