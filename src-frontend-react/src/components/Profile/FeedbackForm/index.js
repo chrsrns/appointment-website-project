@@ -81,9 +81,9 @@ export const FeedbackForm = () => {
         <Card.Body>
           <LoadingOverlay active={isLoading} spinner text="Waiting for update">
             <Form onSubmit={handleSubmit}>
-              <Form.Group as={Col} md="8" >
+              <Form.Group as={Col} md="8" className="mb-3" >
                 <Form.Label>Rating</Form.Label>
-                <div key='inline-radio' className="mb-3">
+                <div key='inline-radio'>
                   {availableRating.map((ratingNum) => (
                     <Form.Check
                       inline
@@ -98,6 +98,9 @@ export const FeedbackForm = () => {
                   )
                   )}
                 </div>
+                <Form.Text id="ratingHelpBlock" muted>
+                  The scale starts from 1 as the lowest, to 5 as the highest.
+                </Form.Text>
                 <div className="text-danger">{formErrors.rating}</div>
               </Form.Group>
               <Form.Group controlId="feedbackText" className="mb-3">
