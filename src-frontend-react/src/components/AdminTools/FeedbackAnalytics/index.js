@@ -1,5 +1,7 @@
+import moment from 'moment';
 import { useEffect, useState } from 'react';
-import { Card } from 'react-bootstrap';
+import { Accordion, Card } from 'react-bootstrap';
+import AccordionItem from 'react-bootstrap/esm/AccordionItem';
 import { PieChart } from 'react-minimal-pie-chart';
 import { toast } from 'react-toastify';
 import { socket } from '../../../socket';
@@ -68,17 +70,37 @@ const FeedbackAnalytics = () => {
       <Card className="shadow-sm">
         <Card.Header as={"h2"}>Feedback Analytics</Card.Header>
         <Card.Body>
-          <PieChart
-            data={pieData}
-            label={({ dataEntry }) => `${dataEntry.title} : ${Math.round(dataEntry.percentage)}%`}
-            labelStyle={(index) => ({
-              fill: pieData[index].color,
-              fontSize: '0.2rem',
-              fontFamily: 'sans-serif',
-            })}
-            radius={23}
-            labelPosition={116}
-          />
+          <div>
+            <PieChart
+              data={pieData}
+              label={({ dataEntry }) => `${dataEntry.title} : ${Math.round(dataEntry.percentage)}%`}
+              labelStyle={(index) => ({
+                fill: pieData[index].color,
+                fontSize: '0.2rem',
+                fontFamily: 'sans-serif',
+              })}
+              radius={23}
+              labelPosition={116}
+            />
+          </div>
+
+          <div className="overflow-scroll" style={{ maxHeight: "38rem" }}>
+            <Accordion>
+              {feedbacks.map((feedback) => {
+                const user = feedback.user
+
+                return (
+                  <AccordionItem eventKey={`${user.id}`} >
+                    <Accordion.Header>
+                      {`[${user.type}] ${user.lname}, ${user.fname} ${user.mname} (${moment(feedback.createdAt).format('MMM DD, YYYY hh:mm A')})`}</Accordion.Header>
+                    <Accordion.Body>
+                      {feedback.feedbackText}
+                    </Accordion.Body>
+                  </AccordionItem>
+                )
+              })}
+            </Accordion>
+          </div>
         </Card.Body>
       </Card>
     </div>

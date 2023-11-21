@@ -36,7 +36,20 @@ router.get("/users", async (req, res, next) => {
 
 router.get("/feedbacks", async (req, res, next) => {
   try {
-    const feedbacks = await prisma.feedback.findMany()
+    const feedbacks = await prisma.feedback.findMany({
+      include: {
+        user: {
+          select: {
+            id: true,
+            fname: true,
+            mname: true,
+            lname: true,
+            type: true
+          }
+        }
+      }
+    })
+
     res.json(feedbacks);
   } catch (err) {
     res.status(500).json({ msg: err.message });
