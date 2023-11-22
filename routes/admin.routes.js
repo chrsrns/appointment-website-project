@@ -34,6 +34,31 @@ router.get("/users", async (req, res, next) => {
   }
 });
 
+router.get("/archivedusers", async (req, res, next) => {
+  try {
+    const user = await prisma.user.findMany({
+      where: {
+        approved: user_approval_type.Archived
+      },
+      select: {
+        id: true,
+        fname: true,
+        mname: true,
+        lname: true,
+        addr: true,
+        cnum: true,
+        emailaddr: true,
+        bdate: true,
+        type: true,
+        login_username: true
+      }
+    });
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
+});
+
 router.get("/feedbacks", async (req, res, next) => {
   try {
     const feedbacks = await prisma.feedback.findMany({

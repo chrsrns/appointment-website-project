@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { useEffect, useState } from 'react';
-import { Form, Button, Row, Col, Stack } from 'react-bootstrap';
+import { Form, Button, Row, Col, Stack, Accordion } from 'react-bootstrap';
 import Select from 'react-select'
 
 import LoadingOverlay from 'react-loading-overlay-ts';
@@ -29,10 +29,12 @@ const DEFAULT_FORM_VALUES = {
 /// TODO Add placeholders to the form controls
 const DEFAULT_SELECT_VALUE = { value: { ...DEFAULT_FORM_VALUES }, label: "Create new user" }
 
-function RegistrationForm() {
+export const UserManagementForm = () => {
 
   const [usersList, setUsersList] = useState([])
   const [userTypes, setUserTypes] = useState([])
+
+  const [archivedUsersList, setArchivedUsersList] = useState([])
 
   const [usersListOptions, setUsersListOptions] = useState([])
   const [selectedUser, setSelectedUser] = useState({ ...DEFAULT_SELECT_VALUE })
@@ -60,6 +62,15 @@ function RegistrationForm() {
         })
         .then((data) => {
           setUsersList(data)
+          return data;
+        }),
+      customFetch(`${global.server_backend_url}/backend/admin/archivedusers`)
+        .then((response) => {
+          if (response.ok) return response.json();
+          else throw response;
+        })
+        .then((data) => {
+          setArchivedUsersList(data)
           return data;
         }),
       customFetch(`${global.server_backend_url}/backend/admin/usertypes`)
@@ -290,7 +301,7 @@ function RegistrationForm() {
 
   return (
     <LoadingOverlay active={isLoading} spinner text='Waiting for update...'>
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit} className='mb-3'>
         {/* <Form.Group className='mb-3'> */}
         {/*   <Form.Select size="lg" onChange={(e) => { */}
         {/*     setSelectedUser(e.target.value) */}
@@ -434,8 +445,40 @@ function RegistrationForm() {
           </Button>
         </Stack>
       </Form>
+      <Accordion>
+        <Accordion.Item eventKey='0'>
+          <Accordion.Header>
+            Archived Users
+          </Accordion.Header>
+          <Accordion.Body>
+            <Accordion>
+              {archivedUsersList.map((user) => {
+                return (
+                  <Accordion.Item eventKey={`${user.id}`} >
+                    <Accordion.Header>
+                      {`[${user.type}] ${user.lname}, ${user.fname} ${user.mname}`}
+                    </Accordion.Header>
+                    <Accordion.Body>
+                      {/* <p className="fw-bold mb-2 border-bottom border-secondary pb-2"> */}
+                      {/* </p> */}
+
+                      <p>{`Username: ${user.login_username}`}</p>
+                      <p>{`Address: ${user.addr}`}</p>
+                      <p>{`Contact Number: ${user.cnum}`}</p>
+                      <p>{`Email Address: ${user.emailaddr}`}</p>
+                      <p>{`Birthdate: ${moment(user.bdate).format('MMM DD, YYYY')}`}</p>
+                    </Accordion.Body>
+                  </Accordion.Item>
+                )
+              })}
+            </Accordion>
+            {archivedUsersList.length === 0 ? "Nothing to show." : ''}
+          </Accordion.Body>
+
+        </Accordion.Item>
+      </Accordion>
     </LoadingOverlay>
   );
 }
 
-export default RegistrationForm;
+export default UserManagementForm;

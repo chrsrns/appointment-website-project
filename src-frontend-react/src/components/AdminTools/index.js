@@ -1,7 +1,7 @@
 import { Button, Card, Col, Row } from "react-bootstrap";
 import { Jumbotron } from "../Jumbotron";
 import { AnnouncementsForm } from "./AnnouncementsForm";
-import RegistrationForm from "./RegistrationForm";
+import UserManagementForm from "./UserManagementForm";
 import UserApprovalComponent from "./UserApproval";
 import Cookies from "js-cookie";
 import FeedbackAnalytics from "./FeedbackAnalytics";
@@ -31,7 +31,7 @@ export const AdminTools = ({ sidebarbtn_onClick }) => {
               <Card>
                 <Card.Header as="h2">Users Management</Card.Header>
                 <Card.Body>
-                  <RegistrationForm />
+                  <UserManagementForm />
                 </Card.Body>
               </Card>
             </Col>
