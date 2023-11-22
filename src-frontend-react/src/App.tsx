@@ -59,7 +59,7 @@ const App: React.FC = () => {
   const mainRowClassName = `row-offcanvas row-offcanvas-left ${
     isActive ? "active" : ""
   }`;
-  const [cookies] = useCookies(["accessToken", "darkmode"]);
+  const [cookies, setCookies] = useCookies(["accessToken", "darkmode"]);
 
   // useEffect(() => {
   //   document.documentElement.setAttribute(
@@ -79,6 +79,8 @@ const App: React.FC = () => {
   const socketConnected = useRef(false);
 
   useEffect(() => {
+    if (cookies.darkmode === undefined) setCookies("darkmode", false);
+
     if (cookies.darkmode) {
       enableDarkMode({
         brightness: 100,
@@ -87,7 +89,7 @@ const App: React.FC = () => {
     } else {
       disableDarkMode();
     }
-  }, [cookies.darkmode]);
+  }, [cookies.darkmode, setCookies]);
 
   const getLoggedInStatus = () => {
     const data = { refreshToken: Cookies.get("refreshToken") };
