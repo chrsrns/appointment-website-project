@@ -299,6 +299,24 @@ export const UserManagementForm = () => {
     }
   }
 
+  const handleUnArchive = (id) => {
+    customFetch(`${global.server_backend_url}/backend/admin/unarchive/${id}`, {
+      method: 'POST',
+    }).then((response) => {
+      console.log(response)
+      if (response.ok) {
+        fetchAll()
+        resetToDefault()
+        return response.json();
+      } else throw response;
+    }).then((data) => {
+      toast(data.msg)
+    }).catch((err) => {
+      console.log(err)
+      console.error(err.errbody)
+    })
+  }
+
   return (
     <LoadingOverlay active={isLoading} spinner text='Waiting for update...'>
       <Form onSubmit={handleSubmit} className='mb-3'>
@@ -455,9 +473,12 @@ export const UserManagementForm = () => {
               {archivedUsersList.map((user) => {
                 return (
                   <Accordion.Item eventKey={`${user.id}`} >
-                    <Accordion.Header>
-                      {`[${user.type}] ${user.lname}, ${user.fname} ${user.mname}`}
-                    </Accordion.Header>
+                    <Stack direction='horizontal' className='w-100 px-3 justify-content-between'>
+                      <Accordion.Header className='w-100 pe-3'>
+                        {`[${user.type}] ${user.lname}, ${user.fname} ${user.mname}`}
+                      </Accordion.Header>
+                      <Button onClick={() => handleUnArchive(user.id)}>Unarchive</Button>
+                    </Stack>
                     <Accordion.Body>
                       {/* <p className="fw-bold mb-2 border-bottom border-secondary pb-2"> */}
                       {/* </p> */}

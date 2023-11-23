@@ -189,6 +189,48 @@ router.post("/user", async (req, res, next) => {
   return next();
 })
 
+router.post("/unarchive/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+
+    const authorizationheader = req.headers.authorization;
+    const token = authorizationheader.replace('Bearer ', '');
+    const userId = findUserIdByAccessToken(token)
+
+    const userAdmin = await prisma.user.findUnique({
+      where: {
+        id: userId
+      }
+    });
+
+    const userToArchive = await prisma.user.update({
+      where: {
+        id: id,
+      },
+      data: {
+        approved: user_approval_type.Approved
+      }
+    });
+    if (!userToArchive) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    const message = `User with username ${userToArchive.login_username} unarchived.`
+    createNotification({
+      title: `User Un-archived by Admin ${userAdmin.login_username} (${userAdmin.lname})`,
+      message: message
+    })
+    res.json(message);
+
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while unarchiving the user", errbody: error });
+  }
+});
+
 router.put("/user/:id", async (req, res) => {
   const { id } = req.params;
   try {
