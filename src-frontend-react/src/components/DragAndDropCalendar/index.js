@@ -36,8 +36,8 @@ const appointmentsTypesColors = {
   Approved: "#afdbc7",
   Ongoing: "#fecba1",
   Completed: "#d8fea1",
-  Declined: "#562C2C",
-  Rescheduled: "#84714F"
+  Declined: "#c77f7f",
+  Rescheduled: "#c2994f"
 }
 
 const CalendarWithDragAndDrop = withDragAndDrop(Calendar)
