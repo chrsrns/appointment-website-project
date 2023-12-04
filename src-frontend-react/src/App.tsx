@@ -235,7 +235,7 @@ const App: React.FC = () => {
           <LandingPage onButtonClick={handleLandingPageClick} />
         ) : (
           <Stack className="pt-4 px-2 bg-body">
-            <Container fluid>
+            <Container fluid className="overflow-x-hidden">
               <Row className={mainRowClassName}>
                 <Col sm={12} lg={{ span: 6, order: 3 }} id="ui-body">
                   <Routes>
