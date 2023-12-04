@@ -10,14 +10,8 @@ export const TopBar = () => {
       <Container className="justify-contents-between">
         <div>
           <Navbar.Brand href="/">
-            <img
-              src={process.env.PUBLIC_URL + "/school_logo.png"}
-              alt="Logo"
-              width={40}
-              height={40}
-              className="me-2"
-            />
-            Kapayapaan Integrated School
+            <i className="bi bi-calendar2-week me-2"></i>
+            Scheduler Project
           </Navbar.Brand>
         </div>
         <Stack direction="horizontal" gap={3}>

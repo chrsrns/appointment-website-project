@@ -9,11 +9,14 @@ export const LandingPage = ({ onButtonClick }) => {
     >
       <Row className="justify-contents-center">
         <Col className="text-center">
-          <img src={process.env.PUBLIC_URL + "/school_logo.png"} alt="Logo" />
-          <h2 className="my-5">
+          <i className="bi bi-calendar2-week" style={{ fontSize: '12rem' }}></i>
+          <br />
+          <h2 className="mt-3 mb-5">
             WEB-BASED APPOINTMENT AND SCHEDULING SYSTEM WITH INFORMATION
-            MANAGEMENT FOR KAPAYAPAAN INTEGRATED SCHOOL
+            MANAGEMENT USING REACT-BOOTSTRAP PRISMA AND EXPRESS
           </h2>
+          <p>Powered by:</p>
+          <img className="w-25 mb-5" src={process.env.PUBLIC_URL + "/landing-page.svg"} alt="Logo" />
           <p>
             <Button variant="primary" onClick={onButtonClick}>Get Started</Button>
           </p>
