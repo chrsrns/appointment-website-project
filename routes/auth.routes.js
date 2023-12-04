@@ -38,6 +38,9 @@ let transporter = nodemailer.createTransport({
   },
 });
 
+// TODO Lang Constant. Move to separate file
+const emailheader = "Scheduler Project by Christian Aranas"
+
 transporter.verify((err, success) => {
   err
     ? console.log(err)
@@ -63,7 +66,7 @@ router.post("/sendotp", async (req, res) => {
     })
 
     let mailOptions = {
-      from: "Kapayapaan Integrated School Scheduler",
+      from: emailheader,
       to: email,
       subject: "Verify OTP",
       text: `Your OTP is ${otp.otp}. Ignore this if you did not request this.`,
@@ -329,7 +332,7 @@ router.get("/emailfromgoogle", async (req, res, next) => {
     })
 
     let mailOptions = {
-      from: "Kapayapaan Integrated School Scheduler",
+      from: emailheader,
       to: email,
       subject: "Verify OTP",
       text: `Your OTP is ${otp.otp}. Ignore this if you did not request this.`,
