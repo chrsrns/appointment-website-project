@@ -86,7 +86,7 @@ td {
   }
 
   .row-offcanvas-left .sidebar-offcanvas {
-    left: -60%; /* 6 columns */
+    left: -50%; /* 6 columns */
   }
 
   .row-offcanvas-right.active {
@@ -94,7 +94,7 @@ td {
   }
 
   .row-offcanvas-left.active {
-    left: 60%; /* 6 columns */
+    left: 50%; /* 6 columns */
   }
 
   .sidebar-offcanvas {

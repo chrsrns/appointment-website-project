@@ -81,7 +81,7 @@ export const SideBar = () => {
       id="sidebar"
     >
       <div>
-        <ButtonGroup className="d-grid gap-2">
+        <ButtonGroup vertical className="w-100">
           {radios.map((radio, idx) => (
             <SidebarColBtn
               idx={idx}
@@ -112,7 +112,6 @@ const SidebarColBtn = ({ idx, name, iconClass, value, link }) => {
         navigate(link);
       }}
       size="lg"
-      className="shadow-sm rounded-pill"
       style={{ fontSize: "1.5rem" }}
     >
       <i className={`bi ${iconClass} mx-2`}></i>
