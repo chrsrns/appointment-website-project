@@ -137,7 +137,7 @@ const App: React.FC = () => {
     socket.disconnect();
   };
   useEffect(() => {
-    document.title = "Kapayapaan Integrated School Scheduler System";
+    document.title = "Scheduler System using React-Bootstrap";
     getLoggedInStatus();
     socket.onAny((event, ...args) => {
       console.log("Socket onAny: ");
