@@ -8,7 +8,6 @@ import {
   Col,
   Container,
   Row,
-  Stack,
   ListGroup,
   ListGroupItem,
 } from "react-bootstrap";
@@ -234,87 +233,83 @@ const App: React.FC = () => {
         {isLandingPageActive || !isLoggedIn ? (
           <LandingPage onButtonClick={handleLandingPageClick} />
         ) : (
-          <Stack className="pt-4 px-2 bg-body">
-            <Container fluid className="overflow-x-hidden">
-              <Row className={mainRowClassName}>
-                <Col sm={12} lg={{ span: 6, order: 3 }} id="ui-body">
-                  <Routes>
-                    <Route
-                      path="/"
-                      element={
-                        <Dashboard sidebarbtn_onClick={sidebarbtn_onClick} />
-                      }
-                    />
-                    <Route
-                      path="/appointments"
-                      element={
-                        <Appointments sidebarbtn_onClick={sidebarbtn_onClick} />
-                      }
-                    />
-                    <Route
-                      path="/medrecords"
-                      element={
-                        <MedicalRecords
-                          sidebarbtn_onClick={sidebarbtn_onClick}
-                        />
-                      }
-                    />
-                    <Route
-                      path="/guidancerecords"
-                      element={
-                        <GuidanceRecords
-                          sidebarbtn_onClick={sidebarbtn_onClick}
-                        />
-                      }
-                    />
-                    <Route
-                      path="/profile"
-                      element={
-                        <Profile sidebarbtn_onClick={sidebarbtn_onClick} />
-                      }
-                    />
-                    <Route
-                      path="/admin"
-                      element={
-                        <AdminTools sidebarbtn_onClick={sidebarbtn_onClick} />
-                      }
-                    />
-                  </Routes>
-                </Col>
-                <SideBar />
-                <Col
-                  sm={12}
-                  lg={{ span: 3, order: "last" }}
-                  style={{ marginBottom: "3rem" }}
-                >
-                  <Card className="shadow-sm mb-3">
-                    <Card.Header as={"h2"}>Users Online</Card.Header>
-                    <Card.Body>
-                      <ListGroup>
-                        {onlineUsers.map((user) => {
-                          return (
-                            <ListGroupItem
-                              key={
-                                user.fname + user.mname + user.lname + user.type
-                              }
-                            >{`[${user.type}] ${user.lname}, ${user.fname} ${
-                              user.mname ? user.mname[0] + "." : ""
-                            }`}</ListGroupItem>
-                          );
-                        })}
-                      </ListGroup>
-                    </Card.Body>
-                  </Card>
-                  <Card className="shadow-sm mb-3">
-                    <Card.Header as={"h2"}>Notifications</Card.Header>
-                    <Card.Body>
-                      <SideNotifications />
-                    </Card.Body>
-                  </Card>
-                </Col>
-              </Row>
-            </Container>
-          </Stack>
+          <Container fluid className="overflow-x-hidden pt-4 px-4 bg-body">
+            <Row className={mainRowClassName}>
+              <Col sm={12} lg={{ span: 6, order: 3 }} id="ui-body">
+                <Routes>
+                  <Route
+                    path="/"
+                    element={
+                      <Dashboard sidebarbtn_onClick={sidebarbtn_onClick} />
+                    }
+                  />
+                  <Route
+                    path="/appointments"
+                    element={
+                      <Appointments sidebarbtn_onClick={sidebarbtn_onClick} />
+                    }
+                  />
+                  <Route
+                    path="/medrecords"
+                    element={
+                      <MedicalRecords sidebarbtn_onClick={sidebarbtn_onClick} />
+                    }
+                  />
+                  <Route
+                    path="/guidancerecords"
+                    element={
+                      <GuidanceRecords
+                        sidebarbtn_onClick={sidebarbtn_onClick}
+                      />
+                    }
+                  />
+                  <Route
+                    path="/profile"
+                    element={
+                      <Profile sidebarbtn_onClick={sidebarbtn_onClick} />
+                    }
+                  />
+                  <Route
+                    path="/admin"
+                    element={
+                      <AdminTools sidebarbtn_onClick={sidebarbtn_onClick} />
+                    }
+                  />
+                </Routes>
+              </Col>
+              <SideBar />
+              <Col
+                sm={12}
+                lg={{ span: 3, order: "last" }}
+                style={{ marginBottom: "3rem" }}
+              >
+                <Card className="shadow-sm mb-3">
+                  <Card.Header as={"h2"}>Users Online</Card.Header>
+                  <Card.Body>
+                    <ListGroup>
+                      {onlineUsers.map((user) => {
+                        return (
+                          <ListGroupItem
+                            key={
+                              user.fname + user.mname + user.lname + user.type
+                            }
+                          >{`[${user.type}] ${user.lname}, ${user.fname} ${
+                            user.mname ? user.mname[0] + "." : ""
+                          }`}</ListGroupItem>
+                        );
+                      })}
+                    </ListGroup>
+                  </Card.Body>
+                </Card>
+                <Card className="shadow-sm mb-3">
+                  <Card.Header as={"h2"}>Notifications</Card.Header>
+                  <Card.Body>
+                    <SideNotifications />
+                  </Card.Body>
+                </Card>
+              </Col>
+            </Row>
+          </Container>
         )}
       </LoadingOverlay>
       <ToastContainer />
