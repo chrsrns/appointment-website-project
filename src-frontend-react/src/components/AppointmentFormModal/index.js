@@ -337,6 +337,204 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
     )
   }, [authorUserId, formData.scheduletype, id])
 
+  const formHTML = (
+    <Form onSubmit={onModalSubmit}>
+      <Form.Group className="mb-3">
+        <Form.Label>Students Involved</Form.Label>
+        <Stack direction="horizontal" gap={3}>
+          <Form.Select
+            size="lg"
+            disabled={disableForms}
+            onChange={(e) => {
+              setSelectedStudent(e.target.value)
+            }}>
+            <option key='blankChoice' hidden value>Select students...</option>
+            {studentsList.map((student) => {
+              return <option key={student.id} value={student.id}>{`${student.fname} ${student.mname ? student.mname + " " : ""}${student.lname}`}</option>
+            })}
+          </Form.Select>
+          <Button variant="primary" size="lg" onClick={addStudentToSelection}>Select</Button>
+        </Stack>
+        <Form.Text className="text-muted">
+          These people will be notified when added.
+        </Form.Text>
+        <ListGroup>
+          {selectedStudentsList.map((selectedStudent) => {
+            // return <ListGroup.Item className="d-flex justify-content-between"> <>
+            //   {`${selectedStudent.fname} ${selectedStudent.mname} ${selectedStudent.lname}`}
+            // </>
+            //   <Button variant="danger" size="sm">Remove</Button>
+
+            // </ListGroup.Item>
+            return <AppointmentFormUserList
+              key={selectedStudent.id}
+              fname={selectedStudent.fname}
+              mname={selectedStudent.mname}
+              lname={selectedStudent.lname}
+              isDeletable={Cookies.get("userid") === authorUserId || !id}
+              onButtonClick={() => {
+                setSelectedStudentsList(
+                  selectedStudentsList.filter((x) => {
+                    return x.id !== selectedStudent.id
+                  })
+                )
+              }} />
+          })}
+          {selectedStudentsList.length === 0 ?
+            <ListGroup.Item disabled>Selected students appear here...</ListGroup.Item> : <></>
+          }
+        </ListGroup>
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Staff Involved</Form.Label>
+        <Stack direction="horizontal" gap={3}>
+          <Form.Select
+            size="lg"
+            disabled={disableForms}
+            onChange={(e) => {
+              setSelectedStaff(e.target.value)
+              console.log("test")
+            }}>
+            <option key='blankChoice' hidden value>Select staff...</option>
+            {staffList.map((staff) => {
+              return <option key={staff.id} value={staff.id}>{`${staff.fname} ${staff.mname ? staff.mname + " " : ""}${staff.lname}`}</option>
+            })}
+          </Form.Select>
+          <Button variant="primary" size="lg" onClick={addStaffToSelection}>Select</Button>
+        </Stack>
+        <Form.Text className="text-muted">
+          These people will be notified when added.
+        </Form.Text>
+        <ListGroup>
+          {selectedStaffList.map((selectedStaff) => {
+            return <AppointmentFormUserList
+              key={`${selectedStaff.fname}.${selectedStaff.mname}.${selectedStaff.lname}`}
+              fname={selectedStaff.fname}
+              mname={selectedStaff.mname}
+              lname={selectedStaff.lname}
+              isDeletable={Cookies.get("userid") === authorUserId || !id}
+              onButtonClick={() => {
+                setSelectedStaffList(
+                  selectedStaffList.filter((x) => {
+                    return x.id !== selectedStaff.id
+                  })
+                )
+              }} />
+          })}
+          {selectedStaffList.length === 0 ?
+            <ListGroup.Item disabled>Selected staff appear here...</ListGroup.Item> : <></>
+          }
+        </ListGroup>
+      </Form.Group>
+
+      <Form.Group>
+
+        <Form.Label>Schedule Status</Form.Label>
+        <div key='inline-radio' className="mb-3 mx-3">
+          {filteredScheduleTypes.map((scheduleType) => (
+            <Form.Check
+              key={scheduleType}
+              inline
+              name="scheduletype"
+              type="radio"
+              id={`inline-radio-${scheduleType}`}
+              label={scheduleType}
+              value={scheduleType}
+              disabled={
+                Cookies.get("usertype") === "Student"}
+              onChange={handleChange}
+              checked={formData.scheduletype === scheduleType} />
+
+          ))}
+        </div>
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Appointment Title</Form.Label>
+        <Form.Control
+          name="title"
+          placeholder="Required"
+          disabled={disableForms}
+          onChange={handleChange}
+          value={formData.title}
+          required
+        />
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Appointment Content</Form.Label>
+        <Form.Control
+          as={'textarea'}
+          name="content"
+          rows={5}
+          placeholder="Can either be appointment details, etc..."
+          disabled={disableForms && (Cookies.get("usertype") === "Student" || formData.scheduletype === schedule_state.Available)}
+          onChange={handleChange}
+          value={formData.content} />
+      </Form.Group>
+
+      <Form.Group className="hstack gap-3 mb-3" >
+        <>
+          <Form.Label>Start Date</Form.Label>
+          <Form.Control
+            type="datetime-local"
+            name="start"
+            value={formData.start}
+            disabled={disableForms}
+            onChange={handleChange}
+            required
+          />
+        </>
+        <>
+          <Form.Label>End Date</Form.Label>
+          <Form.Control
+            type="datetime-local"
+            name="end"
+            value={formData.end}
+            disabled={disableForms}
+            onChange={handleChange}
+            required
+          />
+        </>
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+
+        <Form.Label className="me-4">Repeat</Form.Label>
+        {scheduleRepeatTypes.map((scheduleRepeatType) => {
+          return <Form.Check
+            key={scheduleRepeatType}
+            inline
+            name="repeat"
+            type="radio"
+            id={`inline-radio-${scheduleRepeatType}`}
+            label={scheduleRepeatType}
+            value={scheduleRepeatType}
+            disabled={disableForms}
+            onChange={handleChange}
+            checked={formData.repeat === scheduleRepeatType} />
+
+        })}
+      </Form.Group>
+
+      <Stack direction="horizontal" className="gap-3 justify-content-between">
+        <div>
+          <Button variant="secondary" onClick={onModalClose}>
+            Close
+          </Button>{' '}
+          <Button variant="primary" type="submit">
+            Submit
+          </Button>{' '}
+        </div>
+        <Button variant="danger" className={`${id && Cookies.get("userid") === authorUserId ? '' : 'invisible'}`} onClick={handleDelete}>
+          Delete
+        </Button>
+      </Stack>
+
+    </Form>
+  )
+
   return (
     <Modal
       show={show}
@@ -352,213 +550,23 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
           <div className="mb-2">
             {id && formData.authoredBy ? `Schedule Author: ${formData.authoredBy.lname}, ${formData.authoredBy.fname}` : ''}
           </div>
-          <Tabs
-            defaultActiveKey="form"
-            className="mb-3"
-            justify>
-            <Tab eventKey="form" title="Edit">
-              <Form onSubmit={onModalSubmit}>
-                <Form.Group className="mb-3">
-                  <Form.Label>Students Involved</Form.Label>
-                  <Stack direction="horizontal" gap={3}>
-                    <Form.Select
-                      size="lg"
-                      disabled={disableForms}
-                      onChange={(e) => {
-                        setSelectedStudent(e.target.value)
-                      }}>
-                      <option key='blankChoice' hidden value>Select students...</option>
-                      {studentsList.map((student) => {
-                        return <option key={student.id} value={student.id}>{`${student.fname} ${student.mname ? student.mname + " " : ""}${student.lname}`}</option>
-                      })}
-                    </Form.Select>
-                    <Button variant="primary" size="lg" onClick={addStudentToSelection}>Select</Button>
-                  </Stack>
-                  <Form.Text className="text-muted">
-                    These people will be notified when added.
-                  </Form.Text>
-                  <ListGroup>
-                    {selectedStudentsList.map((selectedStudent) => {
-                      // return <ListGroup.Item className="d-flex justify-content-between"> <>
-                      //   {`${selectedStudent.fname} ${selectedStudent.mname} ${selectedStudent.lname}`}
-                      // </>
-                      //   <Button variant="danger" size="sm">Remove</Button>
 
-                      // </ListGroup.Item>
-                      return <AppointmentFormUserList
-                        key={selectedStudent.id}
-                        fname={selectedStudent.fname}
-                        mname={selectedStudent.mname}
-                        lname={selectedStudent.lname}
-                        isDeletable={Cookies.get("userid") === authorUserId || !id}
-                        onButtonClick={() => {
-                          setSelectedStudentsList(
-                            selectedStudentsList.filter((x) => {
-                              return x.id !== selectedStudent.id
-                            })
-                          )
-                        }} />
-                    })}
-                    {selectedStudentsList.length === 0 ?
-                      <ListGroup.Item disabled>Selected students appear here...</ListGroup.Item> : <></>
-                    }
-                  </ListGroup>
-                </Form.Group>
-
-                <Form.Group className="mb-3">
-                  <Form.Label>Staff Involved</Form.Label>
-                  <Stack direction="horizontal" gap={3}>
-                    <Form.Select
-                      size="lg"
-                      disabled={disableForms}
-                      onChange={(e) => {
-                        setSelectedStaff(e.target.value)
-                        console.log("test")
-                      }}>
-                      <option key='blankChoice' hidden value>Select staff...</option>
-                      {staffList.map((staff) => {
-                        return <option key={staff.id} value={staff.id}>{`${staff.fname} ${staff.mname ? staff.mname + " " : ""}${staff.lname}`}</option>
-                      })}
-                    </Form.Select>
-                    <Button variant="primary" size="lg" onClick={addStaffToSelection}>Select</Button>
-                  </Stack>
-                  <Form.Text className="text-muted">
-                    These people will be notified when added.
-                  </Form.Text>
-                  <ListGroup>
-                    {selectedStaffList.map((selectedStaff) => {
-                      return <AppointmentFormUserList
-                        key={`${selectedStaff.fname}.${selectedStaff.mname}.${selectedStaff.lname}`}
-                        fname={selectedStaff.fname}
-                        mname={selectedStaff.mname}
-                        lname={selectedStaff.lname}
-                        isDeletable={Cookies.get("userid") === authorUserId || !id}
-                        onButtonClick={() => {
-                          setSelectedStaffList(
-                            selectedStaffList.filter((x) => {
-                              return x.id !== selectedStaff.id
-                            })
-                          )
-                        }} />
-                    })}
-                    {selectedStaffList.length === 0 ?
-                      <ListGroup.Item disabled>Selected staff appear here...</ListGroup.Item> : <></>
-                    }
-                  </ListGroup>
-                </Form.Group>
-
-                <Form.Group>
-
-                  <Form.Label>Schedule Status</Form.Label>
-                  <div key='inline-radio' className="mb-3 mx-3">
-                    {filteredScheduleTypes.map((scheduleType) => (
-                      <Form.Check
-                        key={scheduleType}
-                        inline
-                        name="scheduletype"
-                        type="radio"
-                        id={`inline-radio-${scheduleType}`}
-                        label={scheduleType}
-                        value={scheduleType}
-                        disabled={
-                          Cookies.get("usertype") === "Student"}
-                        onChange={handleChange}
-                        checked={formData.scheduletype === scheduleType} />
-
-                    ))}
-                  </div>
-                </Form.Group>
-
-                <Form.Group className="mb-3">
-                  <Form.Label>Appointment Title</Form.Label>
-                  <Form.Control
-                    name="title"
-                    placeholder="Required"
-                    disabled={disableForms}
-                    onChange={handleChange}
-                    value={formData.title}
-                    required
-                  />
-                </Form.Group>
-
-                <Form.Group className="mb-3">
-                  <Form.Label>Appointment Content</Form.Label>
-                  <Form.Control
-                    as={'textarea'}
-                    name="content"
-                    rows={5}
-                    placeholder="Can either be appointment details, etc..."
-                    disabled={disableForms && (Cookies.get("usertype") === "Student" || formData.scheduletype === schedule_state.Available)}
-                    onChange={handleChange}
-                    value={formData.content} />
-                </Form.Group>
-
-                <Form.Group className="hstack gap-3 mb-3" >
-                  <>
-                    <Form.Label>Start Date</Form.Label>
-                    <Form.Control
-                      type="datetime-local"
-                      name="start"
-                      value={formData.start}
-                      disabled={disableForms}
-                      onChange={handleChange}
-                      required
-                    />
-                  </>
-                  <>
-                    <Form.Label>End Date</Form.Label>
-                    <Form.Control
-                      type="datetime-local"
-                      name="end"
-                      value={formData.end}
-                      disabled={disableForms}
-                      onChange={handleChange}
-                      required
-                    />
-                  </>
-                </Form.Group>
-
-                <Form.Group className="mb-3">
-
-                  <Form.Label className="me-4">Repeat</Form.Label>
-                  {scheduleRepeatTypes.map((scheduleRepeatType) => {
-                    return <Form.Check
-                      key={scheduleRepeatType}
-                      inline
-                      name="repeat"
-                      type="radio"
-                      id={`inline-radio-${scheduleRepeatType}`}
-                      label={scheduleRepeatType}
-                      value={scheduleRepeatType}
-                      disabled={disableForms}
-                      onChange={handleChange}
-                      checked={formData.repeat === scheduleRepeatType} />
-
-                  })}
-                </Form.Group>
-
-                <Stack direction="horizontal" className="gap-3 justify-content-between">
-                  <div>
-                    <Button variant="secondary" onClick={onModalClose}>
-                      Close
-                    </Button>{' '}
-                    <Button variant="primary" type="submit">
-                      Submit
-                    </Button>{' '}
-                  </div>
-                  <Button variant="danger" className={`${id && Cookies.get("userid") === authorUserId ? '' : 'invisible'}`} onClick={handleDelete}>
-                    Delete
-                  </Button>
-                </Stack>
-
-              </Form>
-            </Tab>
-            {id && formData.scheduletype !== schedule_state.Available ?
-              <Tab eventKey="messages" title="Minutes">
-                <Chat scheduleId={id} />
-              </Tab> : ''
-            }
-          </Tabs>
+          {id ?
+            <Tabs
+              defaultActiveKey="form"
+              className="mb-3"
+              justify>
+              <Tab active eventKey="form" title="Edit">
+                {formHTML}
+              </Tab>
+              {id && formData.scheduletype !== schedule_state.Available ?
+                <Tab eventKey="messages" title="Minutes">
+                  <Chat scheduleId={id} />
+                </Tab> : ''
+              }
+            </Tabs> :
+            formHTML
+          }
         </Modal.Body>
       </LoadingOverlay>
     </Modal >
