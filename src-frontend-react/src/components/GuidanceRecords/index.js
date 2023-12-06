@@ -10,12 +10,7 @@ export const GuidanceRecords = ({ sidebarbtn_onClick }) => {
 
   return (
     <>
-      <p className="float-start d-lg-none d-md-block">
-        <Button variant="primary" size="sm" onClick={sidebarbtn_onClick}>
-          <i className="bi bi-chevron-right"></i>
-        </Button>
-      </p>
-      <Jumbotron header="Guidance Records">
+      <Jumbotron header="Guidance Records" onSideBarToggleClick={sidebarbtn_onClick}>
         Browse a summary of your guidance records.
       </Jumbotron>
       <Row>

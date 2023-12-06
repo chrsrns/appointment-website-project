@@ -116,12 +116,7 @@ export const Dashboard = ({ sidebarbtn_onClick }) => {
   }, [searchText, appointments, cookies.usertype, staffAvailability])
   return (
     <>
-      <p className="float-start d-lg-none d-md-block">
-        <Button variant="primary" size="sm" onClick={sidebarbtn_onClick}>
-          <i className="bi bi-chevron-right"></i>
-        </Button>
-      </p>
-      <Jumbotron header="Dashboard">
+      <Jumbotron header="Dashboard" onSideBarToggleClick={sidebarbtn_onClick}>
         Browse a summary of announcements and appointments relevant to you.
       </Jumbotron>
       <Row>

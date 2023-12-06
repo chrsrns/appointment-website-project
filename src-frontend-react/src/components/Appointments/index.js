@@ -9,12 +9,7 @@ const localizer = momentLocalizer(moment);
 export const Appointments = ({ sidebarbtn_onClick }) => {
   return (
     <>
-      <p className="float-start d-lg-none d-md-block">
-        <Button variant="primary" size="sm" onClick={sidebarbtn_onClick}>
-          <i className="bi bi-chevron-right"></i>
-        </Button>
-      </p>
-      <Jumbotron header="Appointments">
+      <Jumbotron header="Appointments" onSideBarToggleClick={sidebarbtn_onClick}>
         Let people know when you are available
       </Jumbotron>
       <Row>

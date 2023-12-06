@@ -12,12 +12,7 @@ export const Profile = ({ sidebarbtn_onClick }) => {
 
   return (
     <>
-      <p className="float-start d-lg-none d-md-block">
-        <Button variant="primary" size="sm" onClick={sidebarbtn_onClick}>
-          <i className="bi bi-chevron-right"></i>
-        </Button>
-      </p>
-      <Jumbotron header="Profile">
+      <Jumbotron header="Profile" onSideBarToggleClick={sidebarbtn_onClick}>
         Browse things related to only you.
       </Jumbotron>
       <Row>

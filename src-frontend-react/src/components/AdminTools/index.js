@@ -13,12 +13,7 @@ export const AdminTools = ({ sidebarbtn_onClick }) => {
     <>
       {usertype === "Admin" ?
         <>
-          <p className="float-start d-lg-none d-md-block">
-            <Button variant="primary" size="sm" onClick={sidebarbtn_onClick}>
-              <i className="bi bi-chevron-right"></i>
-            </Button>
-          </p>
-          <Jumbotron header="Admin Tools">
+          <Jumbotron header="Admin Tools" onSideBarToggleClick={sidebarbtn_onClick}>
             Create and update database details
           </Jumbotron>
           <Row>
