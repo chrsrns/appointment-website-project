@@ -1,5 +1,5 @@
 import { user_type } from "@prisma/client";
-import { Button, Card, Col, Container, InputGroup, Row } from "react-bootstrap";
+import { Button, Card, Col, InputGroup, Row } from "react-bootstrap";
 import Cookies from "js-cookie";
 import { Jumbotron } from "../Jumbotron";
 import { DarkModeToggleButton } from "./DarkModeToggleButton";
@@ -11,7 +11,7 @@ import { MyMedicalRecords } from "./MyMedicalRecords";
 export const Profile = ({ sidebarbtn_onClick }) => {
 
   return (
-    <Container>
+    <>
       <p className="float-start d-lg-none d-md-block">
         <Button variant="primary" size="sm" onClick={sidebarbtn_onClick}>
           <i className="bi bi-chevron-right"></i>
@@ -38,18 +38,18 @@ export const Profile = ({ sidebarbtn_onClick }) => {
           <MyMedicalRecords />
         </Col>
       </Row>
-      <Row>
-        <Col>
-          {Cookies.get("usertype") === user_type.Student ?
+      {Cookies.get("usertype") === user_type.Student ?
+        <Row>
+          <Col>
             <MyGuidanceRecords />
-            : ''}
-        </Col>
-      </Row>
+          </Col>
+        </Row>
+        : ''}
       <Row>
         <Col>
           <FeedbackForm />
         </Col>
       </Row>
-    </Container>
+    </>
   );
 };
