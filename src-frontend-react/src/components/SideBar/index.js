@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import { Button, ButtonGroup, Col } from "react-bootstrap";
+import { Card, Col, Nav } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import { user_type } from "@prisma/client";
+import './index.css'
 
 export const SideBar = () => {
   const [radios, setRadios] = useState([
@@ -73,49 +74,51 @@ export const SideBar = () => {
     updateRadios();
   }, [updateRadios]);
 
-  return (
-    <Col
-      xs={6}
-      lg={{ span: 3, order: "1" }}
-      className="sidebar-offcanvas"
-      id="sidebar"
-    >
-      <div>
-        <ButtonGroup vertical className="w-100">
-          {radios.map((radio, idx) => (
-            <SidebarColBtn
-              idx={idx}
-              key={idx}
-              name={radio.name}
-              iconClass={radio.iconClass}
-              value={radio.value}
-              link={radio.link}
-            />
-          ))}
-        </ButtonGroup>
-      </div>
-    </Col>
-  );
-};
-
-const SidebarColBtn = ({ idx, name, iconClass, value, link }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
   return (
-    <Button
+    <Col
+      xs={6}
+      xl={{ span: 3, order: "1" }}
+      className="sidebar-offcanvas"
+      id="sidebar"
+    >
+      <Card className="p-2">
+        <Card.Body>
+          <Nav
+            defaultActiveKey={location.pathname}
+            variant="pills"
+            className="flex-column"
+            onSelect={(link) => {
+              navigate(link);
+            }}
+          >
+            {radios.map((radio, idx) => (
+              <SidebarColBtn
+                idx={idx}
+                key={idx}
+                name={radio.name}
+                iconClass={radio.iconClass}
+                link={radio.link}
+              />
+            ))}
+          </Nav>
+        </Card.Body>
+      </Card>
+    </Col>
+  );
+};
+
+const SidebarColBtn = ({ idx, name, iconClass, link }) => {
+  return (
+    <Nav.Link
       key={idx}
-      variant={link === location.pathname ? "primary" : "secondary"}
-      name="radio"
-      value={value}
-      onClick={() => {
-        navigate(link);
-      }}
-      size="lg"
-      style={{ fontSize: "1.5rem" }}
+      eventKey={link}
+      style={{ fontSize: "1.3rem" }}
     >
       <i className={`bi ${iconClass} mx-2`}></i>
       {name}
-    </Button>
+    </Nav.Link>
   );
 };

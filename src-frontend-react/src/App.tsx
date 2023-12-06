@@ -235,7 +235,7 @@ const App: React.FC = () => {
         ) : (
           <Container fluid className="overflow-x-hidden pt-4 px-4 bg-body">
             <Row className={mainRowClassName}>
-              <Col sm={12} lg={{ span: 6, order: 3 }} id="ui-body">
+              <Col sm={12} xl={{ span: 6, order: 3 }} id="ui-body">
                 <Routes>
                   <Route
                     path="/"
@@ -280,7 +280,7 @@ const App: React.FC = () => {
               <SideBar />
               <Col
                 sm={12}
-                lg={{ span: 3, order: "last" }}
+                xl={{ span: 3, order: "last" }}
                 style={{ marginBottom: "3rem" }}
               >
                 <Card className="shadow-sm mb-3">
