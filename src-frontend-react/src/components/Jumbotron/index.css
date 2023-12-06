@@ -1,0 +1,47 @@
+.jumbotron {
+  padding: 4rem 2rem;
+  margin-bottom: 1rem;
+  border-radius: 0.3rem;
+}
+
+/* Jumbotron Animation */
+.jumbotron-anim {
+  background-size: 400% 400% !important;
+  -webkit-animation: JumbotronAnim 6s ease infinite;
+  -moz-animation: JumbotronAnim 6s ease infinite;
+  animation: JumbotronAnim 6s ease infinite;
+}
+
+@-webkit-keyframes JumbotronAnim {
+  0% {
+    background-position: 0% 91%;
+  }
+  50% {
+    background-position: 60% 0%;
+  }
+  100% {
+    background-position: 0% 91%;
+  }
+}
+@-moz-keyframes JumbotronAnim {
+  0% {
+    background-position: 0% 91%;
+  }
+  50% {
+    background-position: 60% 0%;
+  }
+  100% {
+    background-position: 0% 91%;
+  }
+}
+@keyframes JumbotronAnim {
+  0% {
+    background-position: 0% 91%;
+  }
+  50% {
+    background-position: 60% 0%;
+  }
+  100% {
+    background-position: 0% 91%;
+  }
+}

@@ -1,4 +1,5 @@
 import { useCookies } from "react-cookie";
+import "./index.css";
 
 type JumbotronProps = {
   header: string;
