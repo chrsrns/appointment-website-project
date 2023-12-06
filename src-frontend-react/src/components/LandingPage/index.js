@@ -16,7 +16,15 @@ export const LandingPage = ({ onButtonClick }) => {
             MANAGEMENT USING REACT-BOOTSTRAP PRISMA AND EXPRESS
           </h2>
           <p>Powered by:</p>
-          <img className="w-25 mb-5" src={process.env.PUBLIC_URL + "/landing-page.svg"} alt="Logo" />
+          <div
+            className="rounded-pill mb-5 p-3 d-inline-block"
+            ref={(node) => {
+              if (node) {
+                node.style.setProperty("background-color", "#f8f9fa", "important");
+              }
+            }}>
+            <img className="mx-4" style={{ height: '2rem' }} src={process.env.PUBLIC_URL + "/landing-page.svg"} alt="Logo" />
+          </div>
           <p>
             <Button variant="primary" onClick={onButtonClick}>Get Started</Button>
           </p>
