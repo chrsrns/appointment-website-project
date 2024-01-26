@@ -1,6 +1,7 @@
 import { useCookies } from "react-cookie";
 import Cookies from "js-cookie";
 import { Button, Container, Navbar, Stack } from "react-bootstrap";
+import { DarkModeToggleButton } from "./DarkModeToggleButton";
 
 export const TopBar = () => {
   const [cookies] = useCookies(["login_username"]);
@@ -38,6 +39,7 @@ export const TopBar = () => {
           ) : (
             ""
           )}
+          <DarkModeToggleButton />
         </Stack>
       </Container>
     </Navbar>

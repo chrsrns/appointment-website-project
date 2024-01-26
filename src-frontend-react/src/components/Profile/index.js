@@ -1,28 +1,25 @@
 import { user_type } from "@prisma/client";
-import { Button, Card, Col, InputGroup, Row } from "react-bootstrap";
+import { Card, Col, InputGroup, Row } from "react-bootstrap";
 import Cookies from "js-cookie";
 import { Jumbotron } from "../Jumbotron";
-import { DarkModeToggleButton } from "./DarkModeToggleButton";
 import { FeedbackForm } from "./FeedbackForm";
 import { MyGuidanceRecords } from "./MyGuidanceRecords";
 import { MyMedicalRecords } from "./MyMedicalRecords";
 
 // TODO Use Portals to remote render the sidebar button from here to the sidebar.
 export const Profile = () => {
-
   return (
     <>
-      <Jumbotron header="Profile" >
-        Browse things related to only you.
-      </Jumbotron>
+      <Jumbotron header="Profile">Browse things related to only you.</Jumbotron>
       <Row>
         <Col>
           <Card className="mb-3">
             <Card.Header as={"h2"}>Settings</Card.Header>
             <Card.Body>
               <InputGroup>
-                <InputGroup.Text id="btnGroupDarkMode">Toggle dark mode for the system</InputGroup.Text>
-                <DarkModeToggleButton />
+                <InputGroup.Text id="btnGroupDarkMode">
+                  Toggle dark mode for the system
+                </InputGroup.Text>
               </InputGroup>
             </Card.Body>
           </Card>
@@ -33,13 +30,15 @@ export const Profile = () => {
           <MyMedicalRecords />
         </Col>
       </Row>
-      {Cookies.get("usertype") === user_type.Student ?
+      {Cookies.get("usertype") === user_type.Student ? (
         <Row>
           <Col>
             <MyGuidanceRecords />
           </Col>
         </Row>
-        : ''}
+      ) : (
+        ""
+      )}
       <Row>
         <Col>
           <FeedbackForm />
