@@ -21,7 +21,7 @@ import { useGoogleLogin } from "@react-oauth/google";
 import { toast } from "react-toastify";
 import { user_approval_type } from "@prisma/client";
 
-export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
+export const LoginFormModal = ({ show, onHide }) => {
   const [cookies, setCookie] = useCookies([
     "accessToken",
     "refreshToken",
@@ -32,6 +32,7 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
   const [showNotif, setShowNotif] = useState(false);
   const [responseHeader, setResponseHeader] = useState("");
   const [responseBody, setResponseBody] = useState("");
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const [tabKey, setTabKey] = useState("login");
   const [username, setUsername] = useState("");
@@ -44,8 +45,8 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
 
   const handleLogin = (event) => {
     event.preventDefault();
-    console.log("test submit");
     setShowNotif(false);
+    setIsLoggingIn(true);
     const data = {
       login_username: username,
       login_password: password,
@@ -82,13 +83,18 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
         setResponseBody(errorBody.msg);
         setShowNotif(true);
       })
-      .finally(() => setPassword(""));
+      .finally(() => {
+        setPassword("");
+        setIsLoggingIn(false);
+      });
     // Perform your login logic here
     // For example, you can make an API call to authenticate the user
     // and handle success/failure accordingly
   };
 
   const handleGoogleLogin = (response) => {
+    setShowNotif(false);
+    setIsLoggingIn(true);
     customFetch(`${global.server_backend_url}/backend/auth/googlelogin`, {
       method: "POST",
       headers: { Authorization: `Bearer ${response.access_token}` },
@@ -119,7 +125,10 @@ export const LoginFormModal = ({ show, onHide, isLoggingIn }) => {
         setResponseBody(errorBody.msg);
         setShowNotif(true);
       })
-      .finally(() => setPassword(""));
+      .finally(() => {
+        setPassword("");
+        setIsLoggingIn(false);
+      });
   };
 
   return (
