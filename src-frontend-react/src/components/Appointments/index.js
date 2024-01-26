@@ -6,10 +6,10 @@ import moment from "moment";
 import DragAndDropCalendar from "../DragAndDropCalendar";
 
 const localizer = momentLocalizer(moment);
-export const Appointments = ({ sidebarbtn_onClick }) => {
+export const Appointments = () => {
   return (
     <>
-      <Jumbotron header="Appointments" onSideBarToggleClick={sidebarbtn_onClick}>
+      <Jumbotron header="Appointments">
         Let people know when you are available
       </Jumbotron>
       <Row>

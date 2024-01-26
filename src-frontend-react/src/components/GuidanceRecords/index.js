@@ -5,12 +5,12 @@ import Cookies from 'js-cookie';
 import { SelectedGuidanceRecords } from './SelectedGuidanceRecords';
 import { user_type } from '@prisma/client';
 
-export const GuidanceRecords = ({ sidebarbtn_onClick }) => {
+export const GuidanceRecords = () => {
   const usertype = Cookies.get("usertype")
 
   return (
     <>
-      <Jumbotron header="Guidance Records" onSideBarToggleClick={sidebarbtn_onClick}>
+      <Jumbotron header="Guidance Records" >
         Browse a summary of your guidance records.
       </Jumbotron>
       <Row>

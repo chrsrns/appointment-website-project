@@ -4,12 +4,12 @@ import { MedicalRecordsForm } from './MedicalRecordsForm';
 import Cookies from 'js-cookie';
 import { SelectedMedicalRecords } from './SelectedMedicalRecords';
 
-export const MedicalRecords = ({ sidebarbtn_onClick }) => {
+export const MedicalRecords = () => {
   const usertype = Cookies.get("usertype")
 
   return (
     <>
-      <Jumbotron header="Medical Records" onSideBarToggleClick={sidebarbtn_onClick}>
+      <Jumbotron header="Medical Records" >
         Browse a summary of your health records.
       </Jumbotron>
       <Row>

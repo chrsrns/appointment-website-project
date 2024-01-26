@@ -55,9 +55,7 @@ const App: React.FC = () => {
   const [isModalShow, setIsModalShow] = useState(false);
 
   const sidebarbtn_onClick = () => setIsActive(!isActive);
-  const mainRowClassName = `row-offcanvas row-offcanvas-left ${
-    isActive ? "active" : ""
-  }`;
+
   const [cookies, setCookies] = useCookies(["accessToken", "darkmode"]);
 
   // useEffect(() => {
@@ -234,47 +232,18 @@ const App: React.FC = () => {
           <LandingPage onButtonClick={handleLandingPageClick} />
         ) : (
           <Container fluid className="overflow-x-hidden pt-4 px-4 bg-body">
-            <Row className={mainRowClassName}>
+            <Row id="sidebar-container">
               <Col sm={12} xl={{ span: 6, order: 3 }} id="ui-body">
                 <Routes>
-                  <Route
-                    path="/"
-                    element={
-                      <Dashboard sidebarbtn_onClick={sidebarbtn_onClick} />
-                    }
-                  />
-                  <Route
-                    path="/appointments"
-                    element={
-                      <Appointments sidebarbtn_onClick={sidebarbtn_onClick} />
-                    }
-                  />
-                  <Route
-                    path="/medrecords"
-                    element={
-                      <MedicalRecords sidebarbtn_onClick={sidebarbtn_onClick} />
-                    }
-                  />
+                  <Route path="/" element={<Dashboard />} />
+                  <Route path="/appointments" element={<Appointments />} />
+                  <Route path="/medrecords" element={<MedicalRecords />} />
                   <Route
                     path="/guidancerecords"
-                    element={
-                      <GuidanceRecords
-                        sidebarbtn_onClick={sidebarbtn_onClick}
-                      />
-                    }
+                    element={<GuidanceRecords />}
                   />
-                  <Route
-                    path="/profile"
-                    element={
-                      <Profile sidebarbtn_onClick={sidebarbtn_onClick} />
-                    }
-                  />
-                  <Route
-                    path="/admin"
-                    element={
-                      <AdminTools sidebarbtn_onClick={sidebarbtn_onClick} />
-                    }
-                  />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/admin" element={<AdminTools />} />
                 </Routes>
               </Col>
               <SideBar />

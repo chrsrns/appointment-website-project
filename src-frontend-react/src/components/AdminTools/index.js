@@ -6,14 +6,14 @@ import UserApprovalComponent from "./UserApproval";
 import Cookies from "js-cookie";
 import FeedbackAnalytics from "./FeedbackAnalytics";
 
-export const AdminTools = ({ sidebarbtn_onClick }) => {
+export const AdminTools = () => {
   const usertype = Cookies.get("usertype")
 
   return (
     <>
       {usertype === "Admin" ?
         <>
-          <Jumbotron header="Admin Tools" onSideBarToggleClick={sidebarbtn_onClick}>
+          <Jumbotron header="Admin Tools" >
             Create and update database details
           </Jumbotron>
           <Row>

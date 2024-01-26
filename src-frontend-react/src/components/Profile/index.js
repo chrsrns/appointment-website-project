@@ -8,11 +8,11 @@ import { MyGuidanceRecords } from "./MyGuidanceRecords";
 import { MyMedicalRecords } from "./MyMedicalRecords";
 
 // TODO Use Portals to remote render the sidebar button from here to the sidebar.
-export const Profile = ({ sidebarbtn_onClick }) => {
+export const Profile = () => {
 
   return (
     <>
-      <Jumbotron header="Profile" onSideBarToggleClick={sidebarbtn_onClick}>
+      <Jumbotron header="Profile" >
         Browse things related to only you.
       </Jumbotron>
       <Row>

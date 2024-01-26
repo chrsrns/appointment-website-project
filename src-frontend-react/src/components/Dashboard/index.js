@@ -8,7 +8,7 @@ import { socket } from "../../socket";
 import { customFetch } from "../../utils";
 import { Jumbotron } from "../Jumbotron";
 
-export const Dashboard = ({ sidebarbtn_onClick }) => {
+export const Dashboard = () => {
   const [cookies] = useCookies(["usertype"]);
   const [announcements, setAnnouncements] = useState([]);
   const [appointments, setAppointments] = useState([])
@@ -116,7 +116,7 @@ export const Dashboard = ({ sidebarbtn_onClick }) => {
   }, [searchText, appointments, cookies.usertype, staffAvailability])
   return (
     <>
-      <Jumbotron header="Dashboard" onSideBarToggleClick={sidebarbtn_onClick}>
+      <Jumbotron header="Dashboard" >
         Browse a summary of announcements and appointments relevant to you.
       </Jumbotron>
       <Row>
