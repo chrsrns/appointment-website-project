@@ -13,7 +13,7 @@ const container = document.getElementById("root");
 const root = createRoot(container!); // createRoot(container!) if you use TypeScript
 
 root.render(
-  <GoogleOAuthProvider clientId="703649575342-u1ol3db09ssh3puafl6c8mqd8ht12snm.apps.googleusercontent.com">
+  <GoogleOAuthProvider clientId={global.GOOGLE_CLIENT_ID}>
     <CookiesProvider>
       <App />
     </CookiesProvider>
