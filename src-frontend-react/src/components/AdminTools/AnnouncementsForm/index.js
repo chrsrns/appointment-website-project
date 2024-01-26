@@ -1,83 +1,87 @@
-import { useEffect, useState } from 'react';
-import { Form, Button, Stack } from 'react-bootstrap';
-import Select from 'react-select'
+import { useEffect, useState } from "react";
+import { Form, Button, Stack } from "react-bootstrap";
+import Select from "react-select";
 
-import LoadingOverlay from 'react-loading-overlay-ts';
-import { customFetch } from '../../../utils';
-import { toast } from 'react-toastify';
-import { socket } from '../../../socket';
+import LoadingOverlay from "react-loading-overlay-ts";
+import { customFetch } from "../../../utils";
+import { toast } from "react-toastify";
+import { socket } from "../../../socket";
 
 const DEFAULT_FORM_VALUES = {
-  id: '',
-  title: '',
-  content: '',
-}
+  id: "",
+  title: "",
+  content: "",
+};
 
 /// NOTE The `{ ...DEFAULT_FORM_VALUES }` is used because simply
-//      placing `DEFAULT_FORM_VALUES` seems to make it so that 
+//      placing `DEFAULT_FORM_VALUES` seems to make it so that
 //      the forms modify this variable
-const DEFAULT_SELECT_VALUE = { value: { ...DEFAULT_FORM_VALUES }, label: "Create new announcement" }
+const DEFAULT_SELECT_VALUE = {
+  value: { ...DEFAULT_FORM_VALUES },
+  label: "Create new announcement",
+};
 
 export const AnnouncementsForm = () => {
-  const [announcementsList, setAnnouncementsList] = useState([])
+  const [announcementsList, setAnnouncementsList] = useState([]);
 
-  const [announcementsListOptions, setAnnouncementsListOptions] = useState([])
-  const [selectedAnnouncement, setSelectedAnnouncement] = useState({ ...DEFAULT_SELECT_VALUE })
+  const [announcementsListOptions, setAnnouncementsListOptions] = useState([]);
+  const [selectedAnnouncement, setSelectedAnnouncement] = useState({
+    ...DEFAULT_SELECT_VALUE,
+  });
 
   const [formData, setFormData] = useState({ ...DEFAULT_FORM_VALUES });
   const [formErrors, setFormErrors] = useState({ ...DEFAULT_FORM_VALUES });
 
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(true);
 
   const resetToDefault = () => {
-    setFormData({ ...DEFAULT_FORM_VALUES })
-    setFormErrors({ ...DEFAULT_FORM_VALUES })
-    setSelectedAnnouncement({ ...DEFAULT_SELECT_VALUE })
-  }
+    setFormData({ ...DEFAULT_FORM_VALUES });
+    setFormErrors({ ...DEFAULT_FORM_VALUES });
+    setSelectedAnnouncement({ ...DEFAULT_SELECT_VALUE });
+  };
 
   const fetchAll = () => {
-    setIsLoading(true)
+    setIsLoading(true);
     customFetch(`${global.server_backend_url}/backend/admin/announcements`)
       .then((response) => {
         if (response.ok) return response.json();
         else throw response;
       })
       .then((data) => {
-        setAnnouncementsList(data)
-        setIsLoading(false)
+        setAnnouncementsList(data);
+        setIsLoading(false);
         return data;
-      })
-  }
+      });
+  };
 
   const validateForm = () => {
     let isValid = true;
     const newFormErrors = { ...formErrors };
 
-    if (formData.title.trim() === '') {
-      newFormErrors.title = 'Title is required';
+    if (formData.title.trim() === "") {
+      newFormErrors.title = "Title is required";
       isValid = false;
     } else {
-      newFormErrors.title = '';
+      newFormErrors.title = "";
     }
 
-    if (formData.content.trim() === '') {
-      newFormErrors.content = 'Content is required';
+    if (formData.content.trim() === "") {
+      newFormErrors.content = "Content is required";
       isValid = false;
     } else {
-      newFormErrors.content = '';
+      newFormErrors.content = "";
     }
 
     setFormErrors(newFormErrors);
     return isValid;
-
-  }
+  };
 
   const handleAnnouncementSelectionChange = (e) => {
-    setSelectedAnnouncement({ value: e.value, label: e.label })
-    const announcement = e.value
+    setSelectedAnnouncement({ value: e.value, label: e.label });
+    const announcement = e.value;
 
-    setFormData(announcement)
-  }
+    setFormData(announcement);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -91,92 +95,111 @@ export const AnnouncementsForm = () => {
     e.preventDefault();
 
     if (validateForm()) {
-
       const formatted = {
         title: formData.title,
-        content: formData.content
-      }
+        content: formData.content,
+      };
 
-      if (formData.id) { /// Means user is updated only.
+      if (formData.id) {
+        /// Means user is updated only.
 
-        customFetch(`${global.server_backend_url}/backend/admin/announcement/${formData.id}`, {
-          method: 'PUT',
-          body: JSON.stringify(formatted)
-        }).then((response) => {
-          console.log(response)
-          fetchAll()
-          resetToDefault()
+        customFetch(
+          `${global.server_backend_url}/backend/admin/announcement/${formData.id}`,
+          {
+            method: "PUT",
+            body: JSON.stringify(formatted),
+          },
+        )
+          .then((response) => {
+            console.log(response);
+            fetchAll();
+            resetToDefault();
 
-          if (response.ok) {
-            return response.json();
-          } else throw response;
-        }).then((data) => toast(data.msg))
-          .catch((err) => {
-            console.log(err)
-            toast("Something went wrong.")
+            if (response.ok) {
+              return response.json();
+            } else throw response;
           })
-
-      } else { /// Means user is created, not updated
+          .then((data) => toast(data.msg))
+          .catch((err) => {
+            console.log(err);
+            toast("Something went wrong.");
+          });
+      } else {
+        /// Means user is created, not updated
 
         customFetch(`${global.server_backend_url}/backend/admin/announcement`, {
-          method: 'POST',
-          body: JSON.stringify(formatted)
-        }).then((response) => {
-          console.log(response)
-          fetchAll()
-          resetToDefault()
+          method: "POST",
+          body: JSON.stringify(formatted),
+        })
+          .then((response) => {
+            console.log(response);
+            fetchAll();
+            resetToDefault();
 
-          if (response.ok) {
-            return response.json();
-          } else throw response;
-        }).then((data) => toast(data.msg))
-          .catch((err) => {
-            console.log(err)
-            toast("Something went wrong.")
+            if (response.ok) {
+              return response.json();
+            } else throw response;
           })
-
+          .then((data) => toast(data.msg))
+          .catch((err) => {
+            console.log(err);
+            toast("Something went wrong.");
+          });
       }
     }
-  }
+  };
 
   /// TODO Implement error handling when the response is not an object
   const handleDelete = () => {
     if (formData.id) {
-      customFetch(`${global.server_backend_url}/backend/admin/announcement/${formData.id}`, {
-        method: 'DELETE',
-      }).then((response) => {
-        console.log(response)
-        if (response.ok) {
-          fetchAll()
-          resetToDefault()
-          console.log(response)
-          return response.json();
-        } else throw response;
-      }).then((data) => toast(data.msg))
-        .catch((err) => {
-          console.log(err)
+      customFetch(
+        `${global.server_backend_url}/backend/admin/announcement/${formData.id}`,
+        {
+          method: "DELETE",
+        },
+      )
+        .then((response) => {
+          console.log(response);
+          if (response.ok) {
+            fetchAll();
+            resetToDefault();
+            console.log(response);
+            return response.json();
+          } else throw response;
         })
+        .then((data) => toast(data.msg))
+        .catch((err) => {
+          console.log(err);
+        });
     }
-  }
+  };
 
   useEffect(() => {
-    fetchAll()
+    fetchAll();
     socket.on("notify", () => {
-      fetchAll()
+      fetchAll();
     });
-  }, [])
+  }, []);
 
   useEffect(() => {
-    setAnnouncementsListOptions([{ ...DEFAULT_SELECT_VALUE }, ...announcementsList.map((announcement) => {
-      return { value: announcement, label: `${announcement.title}` }
-    })])
-    console.log(announcementsList)
-  }, [announcementsList])
+    setAnnouncementsListOptions([
+      { ...DEFAULT_SELECT_VALUE },
+      ...announcementsList.map((announcement) => {
+        return { value: announcement, label: `${announcement.title}` };
+      }),
+    ]);
+    console.log(announcementsList);
+  }, [announcementsList]);
 
   return (
     <LoadingOverlay active={isLoading} spinner text="Waiting for update">
       <Form onSubmit={handleSubmit}>
-        <Select className='fs-5 mb-3' options={announcementsListOptions} value={selectedAnnouncement} onChange={handleAnnouncementSelectionChange} />
+        <Select
+          className="fs-5 mb-3"
+          options={announcementsListOptions}
+          value={selectedAnnouncement}
+          onChange={handleAnnouncementSelectionChange}
+        />
         <Form.Group controlId="title" className="mb-3">
           <Form.Label>Announcement Title</Form.Label>
           <Form.Control
@@ -191,7 +214,7 @@ export const AnnouncementsForm = () => {
           <Form.Label>Announcement Content</Form.Label>
           <Form.Control
             type="text"
-            as={'textarea'}
+            as={"textarea"}
             rows={5}
             name="content"
             value={formData.content}
@@ -201,13 +224,17 @@ export const AnnouncementsForm = () => {
         </Form.Group>
         <Stack direction="horizontal" className="gap-3 justify-content-between">
           <Button className="mt-2" variant="primary" type="submit">
-            {`${formData.id ? 'Modify Announcement' : 'Create Announcement'}`}
+            {`${formData.id ? "Modify Announcement" : "Create Announcement"}`}
           </Button>
-          <Button variant="danger" className={`${formData.id ? '' : 'invisible'}`} onClick={handleDelete}>
+          <Button
+            variant="danger"
+            className={`${formData.id ? "" : "invisible"}`}
+            onClick={handleDelete}
+          >
             Delete
           </Button>
         </Stack>
       </Form>
     </LoadingOverlay>
-  )
-} 
+  );
+};

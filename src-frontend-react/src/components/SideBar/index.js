@@ -3,7 +3,7 @@ import Cookies from "js-cookie";
 import { Card, Col, Nav } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import { user_type } from "@prisma/client";
-import './index.css'
+import "./index.css";
 
 export const SideBar = () => {
   const [radios, setRadios] = useState([
@@ -11,7 +11,7 @@ export const SideBar = () => {
       name: "Dashboard",
       iconClass: "bi-columns-gap",
       value: "1",
-      link: "/"
+      link: "/",
     },
     {
       name: "Appointments",
@@ -112,11 +112,7 @@ export const SideBar = () => {
 
 const SidebarColBtn = ({ idx, name, iconClass, link }) => {
   return (
-    <Nav.Link
-      key={idx}
-      eventKey={link}
-      style={{ fontSize: "1.3rem" }}
-    >
+    <Nav.Link key={idx} eventKey={link} style={{ fontSize: "1.3rem" }}>
       <i className={`bi ${iconClass} mx-2`}></i>
       {name}
     </Nav.Link>

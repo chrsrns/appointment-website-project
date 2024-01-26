@@ -1,50 +1,69 @@
 import { repeat, schedule_state } from "@prisma/client";
 import moment from "moment";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Button, Form, ListGroup, Modal, Stack, Tab, Tabs } from "react-bootstrap";
+import {
+  Button,
+  Form,
+  ListGroup,
+  Modal,
+  Stack,
+  Tab,
+  Tabs,
+} from "react-bootstrap";
 import Cookies from "js-cookie";
 
-import LoadingOverlay from 'react-loading-overlay-ts';
+import LoadingOverlay from "react-loading-overlay-ts";
 import { customFetch } from "../../utils";
 import Chat from "../Chat/ChatBubble";
 import { useCookies } from "react-cookie";
 
-const AppointmentFormUserList = ({ fname, mname, lname, isDeletable, onButtonClick }) => {
+const AppointmentFormUserList = ({
+  fname,
+  mname,
+  lname,
+  isDeletable,
+  onButtonClick,
+}) => {
   return (
     <ListGroup.Item className="d-flex justify-content-between align-items-center">
-      <>
-        {`${fname} ${mname ? mname : ""} ${lname}`}
-      </>
-      {isDeletable ?
-        <Button variant="danger" size="sm" onClick={onButtonClick}>Remove</Button> : ''
-      }
-
+      <>{`${fname} ${mname ? mname : ""} ${lname}`}</>
+      {isDeletable ? (
+        <Button variant="danger" size="sm" onClick={onButtonClick}>
+          Remove
+        </Button>
+      ) : (
+        ""
+      )}
     </ListGroup.Item>
-  )
-}
+  );
+};
 
 /// TODO Refactor this component to imitate use of default values in RegistrationForm
-export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handleCloseCallback }) => {
+export const AppointmentFormModal = ({
+  id,
+  show,
+  eventRange,
+  handleClose: handleCloseCallback,
+}) => {
+  const [cookies] = useCookies(["darkmode"]);
 
-  const [cookies,] = useCookies(["darkmode"]);
-
-  const [staffList, setStaffList] = useState([])
+  const [staffList, setStaffList] = useState([]);
   const [selectedStaffList, setSelectedStaffList] = useState([]);
   const [selectedStaff, setSelectedStaff] = useState("");
 
-  const [studentsList, setStudentsList] = useState([])
+  const [studentsList, setStudentsList] = useState([]);
   const [selectedStudentsList, setSelectedStudentsList] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState("");
   // const [isStudentSelectionEmpty, setIsStudentSelectionEmpty] = useState([]);
 
-  const [scheduleTypes, setScheduleTypes] = useState([])
-  const [filteredScheduleTypes, setFilteredScheduleTypes] = useState([])
-  const [scheduleRepeatTypes, setScheduleRepeatTypes] = useState([])
+  const [scheduleTypes, setScheduleTypes] = useState([]);
+  const [filteredScheduleTypes, setFilteredScheduleTypes] = useState([]);
+  const [scheduleRepeatTypes, setScheduleRepeatTypes] = useState([]);
 
   const [isLoading, setIsLoading] = useState(true);
 
-  const defaultLoadingText = "Getting appointment details... "
-  const [loadingText, setLoadingText] = useState(defaultLoadingText)
+  const defaultLoadingText = "Getting appointment details... ";
+  const [loadingText, setLoadingText] = useState(defaultLoadingText);
 
   const [formData, setFormData] = useState({
     start: "",
@@ -52,9 +71,9 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
     title: "",
     content: "",
     scheduletype: schedule_state.Pending,
-    repeat: repeat.None
+    repeat: repeat.None,
   });
-  const [authorUserId, setAuthorUserId] = useState("")
+  const [authorUserId, setAuthorUserId] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -64,28 +83,30 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
     });
   };
 
-  const [isFetchingAll, setIsFetchingAll] = useState(true)
+  const [isFetchingAll, setIsFetchingAll] = useState(true);
   const fetchAll = useCallback(async () => {
     return Promise.all([
-      customFetch(`${global.server_backend_url}/backend/appointments/scheduletypes`)
+      customFetch(
+        `${global.server_backend_url}/backend/appointments/scheduletypes`,
+      )
         .then((response) => {
           if (response.ok) return response.json();
           else throw response;
         })
         .then((data) => {
-          if (data !== scheduleTypes)
-            setScheduleTypes(data);
+          if (data !== scheduleTypes) setScheduleTypes(data);
           return data;
         }),
 
-      customFetch(`${global.server_backend_url}/backend/appointments/schedulerepeattypes`)
+      customFetch(
+        `${global.server_backend_url}/backend/appointments/schedulerepeattypes`,
+      )
         .then((response) => {
           if (response.ok) return response.json();
           else throw response;
         })
         .then((data) => {
-          if (data !== scheduleRepeatTypes)
-            setScheduleRepeatTypes(data);
+          if (data !== scheduleRepeatTypes) setScheduleRepeatTypes(data);
           return data;
         }),
 
@@ -97,9 +118,11 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
           throw response;
         })
         .then((data) => {
-          data = data.filter((user) => user.id !== authorUserId && user.id !== Cookies.get("userid"))
-          if (data !== studentsList)
-            setStudentsList(data);
+          data = data.filter(
+            (user) =>
+              user.id !== authorUserId && user.id !== Cookies.get("userid"),
+          );
+          if (data !== studentsList) setStudentsList(data);
         }),
 
       customFetch(`${global.server_backend_url}/backend/appointments/staff`)
@@ -110,126 +133,151 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
           throw response;
         })
         .then((data) => {
-          data = data.filter((user) => user.id !== authorUserId && user.id !== Cookies.get("userid"))
-          if (data !== staffList)
-            setStaffList(data);
+          data = data.filter(
+            (user) =>
+              user.id !== authorUserId && user.id !== Cookies.get("userid"),
+          );
+          if (data !== staffList) setStaffList(data);
         }),
-    ])
-  }, [scheduleRepeatTypes, scheduleTypes, staffList, studentsList, authorUserId])
+    ]);
+  }, [
+    scheduleRepeatTypes,
+    scheduleTypes,
+    staffList,
+    studentsList,
+    authorUserId,
+  ]);
   useEffect(() => {
     if (isFetchingAll) {
       fetchAll().then(() => {
-        console.log("fetching done")
-        setIsLoading(false)
-        setIsFetchingAll(false)
-      })
+        console.log("fetching done");
+        setIsLoading(false);
+        setIsFetchingAll(false);
+      });
     }
-  }, [fetchAll, isFetchingAll])
+  }, [fetchAll, isFetchingAll]);
   useEffect(() => {
-    setIsLoading(true)
-    setIsFetchingAll(true)
+    setIsLoading(true);
+    setIsFetchingAll(true);
     // const intervalId = setInterval(() => {  //assign interval to a variable to clear it.
     //   fetchAll();
     // }, 5000)
     // return () => clearInterval(intervalId); //This is important
-  }, [])
-  const scheduleTypeRef = useRef("")
-  const idRef = useRef("")
+  }, []);
+  const scheduleTypeRef = useRef("");
+  const idRef = useRef("");
   useEffect(() => {
-    scheduleTypeRef.current = formData.scheduletype
-    idRef.current = id
-  })
+    scheduleTypeRef.current = formData.scheduletype;
+    idRef.current = id;
+  });
   useEffect(() => {
-    setFilteredScheduleTypes(scheduleTypes.filter((x) => {
-      if (idRef.current) {
-        if (scheduleTypeRef.current === schedule_state.Available)
-          return x === schedule_state.Available
+    setFilteredScheduleTypes(
+      scheduleTypes.filter((x) => {
+        if (idRef.current) {
+          if (scheduleTypeRef.current === schedule_state.Available)
+            return x === schedule_state.Available;
 
-        if (scheduleTypeRef.current === schedule_state.Pending)
-          return x !== schedule_state.Available
+          if (scheduleTypeRef.current === schedule_state.Pending)
+            return x !== schedule_state.Available;
 
-        return !(x === schedule_state.Available || x === schedule_state.Pending
-        )
-      }
-      return true;
-    }))
-  }, [scheduleTypes])
+          return !(
+            x === schedule_state.Available || x === schedule_state.Pending
+          );
+        }
+        return true;
+      }),
+    );
+  }, [scheduleTypes]);
 
   useEffect(() => {
-    console.log(`id: ${id}`)
+    console.log(`id: ${id}`);
 
     if (show) {
       if (id) {
-        customFetch(`${global.server_backend_url}/backend/appointments/schedule/${id}`)
+        customFetch(
+          `${global.server_backend_url}/backend/appointments/schedule/${id}`,
+        )
           .then((response) => {
-            if (response.ok)
-              return response.json(); else throw response;
-          }).then((data) => {
-            const students = data.Users
-              .filter((user) => user.type === "Student")
-            const staff = data.Users
-              .filter((user) => user.type !== "Student" && user.type !== "Admin")
+            if (response.ok) return response.json();
+            else throw response;
+          })
+          .then((data) => {
+            const students = data.Users.filter(
+              (user) => user.type === "Student",
+            );
+            const staff = data.Users.filter(
+              (user) => user.type !== "Student" && user.type !== "Admin",
+            );
 
             setSelectedStudentsList(students);
             setSelectedStaffList(staff);
 
-            setFormData(formData => ({
+            setFormData((formData) => ({
               ...formData,
               title: data.title,
               content: data.desc,
               scheduletype: data.state,
-              start: moment(data.fromDate).format('YYYY-MM-DDTHH:mm'),
-              end: moment(data.toDate).format('YYYY-MM-DDTHH:mm'),
+              start: moment(data.fromDate).format("YYYY-MM-DDTHH:mm"),
+              end: moment(data.toDate).format("YYYY-MM-DDTHH:mm"),
               repeat: data.repeat,
               authoredBy: data.authoredBy,
             }));
-            setAuthorUserId(data.authorUserId)
-
-          }).catch((err) => {
-            console.log(err)
+            setAuthorUserId(data.authorUserId);
           })
-        console.log(`test ${id}`)
+          .catch((err) => {
+            console.log(err);
+          });
+        console.log(`test ${id}`);
       } else {
-        setFormData(formData => ({
+        setFormData((formData) => ({
           ...formData,
           title: "",
           content: "",
           scheduletype: schedule_state.Pending,
-          start: moment(eventRange.fromDate).format('YYYY-MM-DDTHH:mm'),
-          end: moment(eventRange.toDate).format('YYYY-MM-DDTHH:mm'),
+          start: moment(eventRange.fromDate).format("YYYY-MM-DDTHH:mm"),
+          end: moment(eventRange.toDate).format("YYYY-MM-DDTHH:mm"),
           repeat: repeat.None,
         }));
-        setAuthorUserId("")
+        setAuthorUserId("");
       }
     }
+  }, [id, show, eventRange.fromDate, eventRange.toDate]);
 
-
-  }, [id, show, eventRange.fromDate, eventRange.toDate])
-
-  ///https://stackoverflow.com/questions/62111525/how-i-add-an-object-to-an-existing-array-react 
+  ///https://stackoverflow.com/questions/62111525/how-i-add-an-object-to-an-existing-array-react
   //https://stackoverflow.com/questions/45277306/check-if-item-exists-in-array-react
   const addStudentToSelection = () => {
-    setSelectedStudentsList(prev => [...prev,
-    ...studentsList.filter((student) => {
-      return student.id === selectedStudent && selectedStudentsList.every(x => x.id !== selectedStudent)
-    })
-    ])
-  }
+    setSelectedStudentsList((prev) => [
+      ...prev,
+      ...studentsList.filter((student) => {
+        return (
+          student.id === selectedStudent &&
+          selectedStudentsList.every((x) => x.id !== selectedStudent)
+        );
+      }),
+    ]);
+  };
 
   const addStaffToSelection = () => {
-    setSelectedStaffList(prev => [...prev,
-    ...staffList.filter((staff) => {
-      return staff.id === selectedStaff && selectedStaffList.every(x => x.id !== selectedStaff)
-    })
-    ])
-  }
+    setSelectedStaffList((prev) => [
+      ...prev,
+      ...staffList.filter((staff) => {
+        return (
+          staff.id === selectedStaff &&
+          selectedStaffList.every((x) => x.id !== selectedStaff)
+        );
+      }),
+    ]);
+  };
 
   const addScheduleToDB = () => {
-    const users = [...selectedStaffList.map((selectedStaff) => {
-      return { id: selectedStaff.id }
-    }), ...selectedStudentsList.map((selectedStudent) => {
-      return { id: selectedStudent.id }
-    })]
+    const users = [
+      ...selectedStaffList.map((selectedStaff) => {
+        return { id: selectedStaff.id };
+      }),
+      ...selectedStudentsList.map((selectedStudent) => {
+        return { id: selectedStudent.id };
+      }),
+    ];
     const data = {
       title: formData.title,
       desc: formData.content,
@@ -238,31 +286,35 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
       toDate: eventRange.toDate,
       repeat: formData.repeat,
       Users: {
-        connect: users
-      }
-    }
+        connect: users,
+      },
+    };
 
     customFetch(`${global.server_backend_url}/backend/appointments/schedule`, {
-      method: 'POST',
-      body: JSON.stringify(data)
-    }).then((response) => {
-      console.log(response)
-      if (response.ok) {
-        onModalClose();
-        return response.json();
-      } else throw response;
-
-    }).catch((err) => {
-      console.log(err)
+      method: "POST",
+      body: JSON.stringify(data),
     })
-  }
+      .then((response) => {
+        console.log(response);
+        if (response.ok) {
+          onModalClose();
+          return response.json();
+        } else throw response;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const modifyScheduleToDB = () => {
-    const users = [...selectedStaffList.map((selectedStaff) => {
-      return { id: selectedStaff.id }
-    }), ...selectedStudentsList.map((selectedStudent) => {
-      return { id: selectedStudent.id }
-    })]
+    const users = [
+      ...selectedStaffList.map((selectedStaff) => {
+        return { id: selectedStaff.id };
+      }),
+      ...selectedStudentsList.map((selectedStudent) => {
+        return { id: selectedStudent.id };
+      }),
+    ];
     const data = {
       title: formData.title,
       desc: formData.content,
@@ -271,71 +323,80 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
       toDate: moment(formData.end).toISOString(),
       repeat: formData.repeat,
       Users: {
-        set: users
-      }
-    }
+        set: users,
+      },
+    };
 
-    customFetch(`${global.server_backend_url}/backend/appointments/schedule/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(data)
-    }).then((response) => {
-      console.log(response)
-      if (response.ok) {
-        onModalClose();
-        return response.json();
-      } else throw response;
-
-    }).catch((err) => {
-      console.log(err)
-    })
-  }
-
-  const onModalSubmit = (event) => {
-    event.preventDefault()
-    if (id) {
-      modifyScheduleToDB();
-    } else addScheduleToDB();
-  }
-
-  const onModalClose = () => {
-    handleCloseCallback();
-    setSelectedStaffList([])
-    setSelectedStaff("")
-    setSelectedStudentsList([])
-    setIsLoading(true)
-    setLoadingText(defaultLoadingText)
-
-  }
-
-  const onModalOpen = () => {
-    console.log("modal opened")
-    setIsLoading(true)
-    setIsFetchingAll(true)
-  }
-
-  const handleDelete = () => {
-    if (id) {
-      customFetch(`${global.server_backend_url}/backend/appointments/schedule/${id}`, {
-        method: 'DELETE',
-      }).then((response) => {
-        console.log(response)
+    customFetch(
+      `${global.server_backend_url}/backend/appointments/schedule/${id}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(data),
+      },
+    )
+      .then((response) => {
+        console.log(response);
         if (response.ok) {
           onModalClose();
           return response.json();
         } else throw response;
-
-      }).catch((err) => {
-        console.log(err)
       })
-    }
-  }
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
-  const [disableForms, setDisableForms] = useState(false)
+  const onModalSubmit = (event) => {
+    event.preventDefault();
+    if (id) {
+      modifyScheduleToDB();
+    } else addScheduleToDB();
+  };
+
+  const onModalClose = () => {
+    handleCloseCallback();
+    setSelectedStaffList([]);
+    setSelectedStaff("");
+    setSelectedStudentsList([]);
+    setIsLoading(true);
+    setLoadingText(defaultLoadingText);
+  };
+
+  const onModalOpen = () => {
+    console.log("modal opened");
+    setIsLoading(true);
+    setIsFetchingAll(true);
+  };
+
+  const handleDelete = () => {
+    if (id) {
+      customFetch(
+        `${global.server_backend_url}/backend/appointments/schedule/${id}`,
+        {
+          method: "DELETE",
+        },
+      )
+        .then((response) => {
+          console.log(response);
+          if (response.ok) {
+            onModalClose();
+            return response.json();
+          } else throw response;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  };
+
+  const [disableForms, setDisableForms] = useState(false);
   useEffect(() => {
     setDisableForms(
-      ((Cookies.get("usertype") === "Student") || Cookies.get("userid") !== authorUserId) && id
-    )
-  }, [authorUserId, formData.scheduletype, id])
+      (Cookies.get("usertype") === "Student" ||
+        Cookies.get("userid") !== authorUserId) &&
+        id,
+    );
+  }, [authorUserId, formData.scheduletype, id]);
 
   const formHTML = (
     <Form onSubmit={onModalSubmit}>
@@ -346,14 +407,25 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
             size="lg"
             disabled={disableForms}
             onChange={(e) => {
-              setSelectedStudent(e.target.value)
-            }}>
-            <option key='blankChoice' hidden value>Select students...</option>
+              setSelectedStudent(e.target.value);
+            }}
+          >
+            <option key="blankChoice" hidden value>
+              Select students...
+            </option>
             {studentsList.map((student) => {
-              return <option key={student.id} value={student.id}>{`${student.fname} ${student.mname ? student.mname + " " : ""}${student.lname}`}</option>
+              return (
+                <option key={student.id} value={student.id}>{`${
+                  student.fname
+                } ${student.mname ? student.mname + " " : ""}${
+                  student.lname
+                }`}</option>
+              );
             })}
           </Form.Select>
-          <Button variant="primary" size="lg" onClick={addStudentToSelection}>Select</Button>
+          <Button variant="primary" size="lg" onClick={addStudentToSelection}>
+            Select
+          </Button>
         </Stack>
         <Form.Text className="text-muted">
           These people will be notified when added.
@@ -366,23 +438,30 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
             //   <Button variant="danger" size="sm">Remove</Button>
 
             // </ListGroup.Item>
-            return <AppointmentFormUserList
-              key={selectedStudent.id}
-              fname={selectedStudent.fname}
-              mname={selectedStudent.mname}
-              lname={selectedStudent.lname}
-              isDeletable={Cookies.get("userid") === authorUserId || !id}
-              onButtonClick={() => {
-                setSelectedStudentsList(
-                  selectedStudentsList.filter((x) => {
-                    return x.id !== selectedStudent.id
-                  })
-                )
-              }} />
+            return (
+              <AppointmentFormUserList
+                key={selectedStudent.id}
+                fname={selectedStudent.fname}
+                mname={selectedStudent.mname}
+                lname={selectedStudent.lname}
+                isDeletable={Cookies.get("userid") === authorUserId || !id}
+                onButtonClick={() => {
+                  setSelectedStudentsList(
+                    selectedStudentsList.filter((x) => {
+                      return x.id !== selectedStudent.id;
+                    }),
+                  );
+                }}
+              />
+            );
           })}
-          {selectedStudentsList.length === 0 ?
-            <ListGroup.Item disabled>Selected students appear here...</ListGroup.Item> : <></>
-          }
+          {selectedStudentsList.length === 0 ? (
+            <ListGroup.Item disabled>
+              Selected students appear here...
+            </ListGroup.Item>
+          ) : (
+            <></>
+          )}
         </ListGroup>
       </Form.Group>
 
@@ -393,45 +472,60 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
             size="lg"
             disabled={disableForms}
             onChange={(e) => {
-              setSelectedStaff(e.target.value)
-              console.log("test")
-            }}>
-            <option key='blankChoice' hidden value>Select staff...</option>
+              setSelectedStaff(e.target.value);
+              console.log("test");
+            }}
+          >
+            <option key="blankChoice" hidden value>
+              Select staff...
+            </option>
             {staffList.map((staff) => {
-              return <option key={staff.id} value={staff.id}>{`${staff.fname} ${staff.mname ? staff.mname + " " : ""}${staff.lname}`}</option>
+              return (
+                <option key={staff.id} value={staff.id}>{`${staff.fname} ${
+                  staff.mname ? staff.mname + " " : ""
+                }${staff.lname}`}</option>
+              );
             })}
           </Form.Select>
-          <Button variant="primary" size="lg" onClick={addStaffToSelection}>Select</Button>
+          <Button variant="primary" size="lg" onClick={addStaffToSelection}>
+            Select
+          </Button>
         </Stack>
         <Form.Text className="text-muted">
           These people will be notified when added.
         </Form.Text>
         <ListGroup>
           {selectedStaffList.map((selectedStaff) => {
-            return <AppointmentFormUserList
-              key={`${selectedStaff.fname}.${selectedStaff.mname}.${selectedStaff.lname}`}
-              fname={selectedStaff.fname}
-              mname={selectedStaff.mname}
-              lname={selectedStaff.lname}
-              isDeletable={Cookies.get("userid") === authorUserId || !id}
-              onButtonClick={() => {
-                setSelectedStaffList(
-                  selectedStaffList.filter((x) => {
-                    return x.id !== selectedStaff.id
-                  })
-                )
-              }} />
+            return (
+              <AppointmentFormUserList
+                key={`${selectedStaff.fname}.${selectedStaff.mname}.${selectedStaff.lname}`}
+                fname={selectedStaff.fname}
+                mname={selectedStaff.mname}
+                lname={selectedStaff.lname}
+                isDeletable={Cookies.get("userid") === authorUserId || !id}
+                onButtonClick={() => {
+                  setSelectedStaffList(
+                    selectedStaffList.filter((x) => {
+                      return x.id !== selectedStaff.id;
+                    }),
+                  );
+                }}
+              />
+            );
           })}
-          {selectedStaffList.length === 0 ?
-            <ListGroup.Item disabled>Selected staff appear here...</ListGroup.Item> : <></>
-          }
+          {selectedStaffList.length === 0 ? (
+            <ListGroup.Item disabled>
+              Selected staff appear here...
+            </ListGroup.Item>
+          ) : (
+            <></>
+          )}
         </ListGroup>
       </Form.Group>
 
       <Form.Group>
-
         <Form.Label>Schedule Status</Form.Label>
-        <div key='inline-radio' className="mb-3 mx-3">
+        <div key="inline-radio" className="mb-3 mx-3">
           {filteredScheduleTypes.map((scheduleType) => (
             <Form.Check
               key={scheduleType}
@@ -441,11 +535,10 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
               id={`inline-radio-${scheduleType}`}
               label={scheduleType}
               value={scheduleType}
-              disabled={
-                Cookies.get("usertype") === "Student"}
+              disabled={Cookies.get("usertype") === "Student"}
               onChange={handleChange}
-              checked={formData.scheduletype === scheduleType} />
-
+              checked={formData.scheduletype === scheduleType}
+            />
           ))}
         </div>
       </Form.Group>
@@ -465,16 +558,21 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
       <Form.Group className="mb-3">
         <Form.Label>Appointment Content</Form.Label>
         <Form.Control
-          as={'textarea'}
+          as={"textarea"}
           name="content"
           rows={5}
           placeholder="Can either be appointment details, etc..."
-          disabled={disableForms && (Cookies.get("usertype") === "Student" || formData.scheduletype === schedule_state.Available)}
+          disabled={
+            disableForms &&
+            (Cookies.get("usertype") === "Student" ||
+              formData.scheduletype === schedule_state.Available)
+          }
           onChange={handleChange}
-          value={formData.content} />
+          value={formData.content}
+        />
       </Form.Group>
 
-      <Form.Group className="hstack gap-3 mb-3" >
+      <Form.Group className="hstack gap-3 mb-3">
         <>
           <Form.Label>Start Date</Form.Label>
           <Form.Control
@@ -500,21 +598,22 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
       </Form.Group>
 
       <Form.Group className="mb-3">
-
         <Form.Label className="me-4">Repeat</Form.Label>
         {scheduleRepeatTypes.map((scheduleRepeatType) => {
-          return <Form.Check
-            key={scheduleRepeatType}
-            inline
-            name="repeat"
-            type="radio"
-            id={`inline-radio-${scheduleRepeatType}`}
-            label={scheduleRepeatType}
-            value={scheduleRepeatType}
-            disabled={disableForms}
-            onChange={handleChange}
-            checked={formData.repeat === scheduleRepeatType} />
-
+          return (
+            <Form.Check
+              key={scheduleRepeatType}
+              inline
+              name="repeat"
+              type="radio"
+              id={`inline-radio-${scheduleRepeatType}`}
+              label={scheduleRepeatType}
+              value={scheduleRepeatType}
+              disabled={disableForms}
+              onChange={handleChange}
+              checked={formData.repeat === scheduleRepeatType}
+            />
+          );
         })}
       </Form.Group>
 
@@ -522,53 +621,60 @@ export const AppointmentFormModal = ({ id, show, eventRange, handleClose: handle
         <div>
           <Button variant="secondary" onClick={onModalClose}>
             Close
-          </Button>{' '}
+          </Button>{" "}
           <Button variant="primary" type="submit">
             Submit
-          </Button>{' '}
+          </Button>{" "}
         </div>
-        <Button variant="danger" className={`${id && Cookies.get("userid") === authorUserId ? '' : 'invisible'}`} onClick={handleDelete}>
+        <Button
+          variant="danger"
+          className={`${
+            id && Cookies.get("userid") === authorUserId ? "" : "invisible"
+          }`}
+          onClick={handleDelete}
+        >
           Delete
         </Button>
       </Stack>
-
     </Form>
-  )
+  );
 
   return (
-    <Modal
-      show={show}
-      onHide={onModalClose}
-      onShow={onModalOpen}
-      size="lg"
-    >
-      <Modal.Header closeButton data-bs-theme={cookies.darkmode ? "dark" : "light"}>
-        <Modal.Title>{id ? "Modifying Existing Appointment" : "Create New Appointment"}</Modal.Title>
+    <Modal show={show} onHide={onModalClose} onShow={onModalOpen} size="lg">
+      <Modal.Header
+        closeButton
+        data-bs-theme={cookies.darkmode ? "dark" : "light"}
+      >
+        <Modal.Title>
+          {id ? "Modifying Existing Appointment" : "Create New Appointment"}
+        </Modal.Title>
       </Modal.Header>
       <LoadingOverlay active={isLoading || !show} spinner text={loadingText}>
         <Modal.Body>
           <div className="mb-2">
-            {id && formData.authoredBy ? `Schedule Author: ${formData.authoredBy.lname}, ${formData.authoredBy.fname}` : ''}
+            {id && formData.authoredBy
+              ? `Schedule Author: ${formData.authoredBy.lname}, ${formData.authoredBy.fname}`
+              : ""}
           </div>
 
-          {id ?
-            <Tabs
-              defaultActiveKey="form"
-              className="mb-3"
-              justify>
+          {id ? (
+            <Tabs defaultActiveKey="form" className="mb-3" justify>
               <Tab active eventKey="form" title="Edit">
                 {formHTML}
               </Tab>
-              {id && formData.scheduletype !== schedule_state.Available ?
+              {id && formData.scheduletype !== schedule_state.Available ? (
                 <Tab eventKey="messages" title="Minutes">
                   <Chat scheduleId={id} />
-                </Tab> : ''
-              }
-            </Tabs> :
+                </Tab>
+              ) : (
+                ""
+              )}
+            </Tabs>
+          ) : (
             formHTML
-          }
+          )}
         </Modal.Body>
       </LoadingOverlay>
-    </Modal >
+    </Modal>
   );
-}
+};

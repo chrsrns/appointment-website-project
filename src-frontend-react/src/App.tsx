@@ -50,11 +50,8 @@ type sort_obj = {
   username: string;
 };
 const App: React.FC = () => {
-  const [isActive, setIsActive] = useState(false);
   const [isLandingPageActive, setIsLandingPageActive] = useState(true);
   const [isModalShow, setIsModalShow] = useState(false);
-
-  const sidebarbtn_onClick = () => setIsActive(!isActive);
 
   const [cookies, setCookies] = useCookies(["accessToken", "darkmode"]);
 
