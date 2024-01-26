@@ -221,7 +221,11 @@ const App: React.FC = () => {
 
   return (
     <BrowserRouter>
-      <LoadingOverlay spinner active={!isLogInDone}>
+      <LoadingOverlay
+        className="d-flex flex-column min-vh-100"
+        spinner
+        active={!isLogInDone}
+      >
         <TopBar />
         <LoginFormModal
           show={isModalShow}
@@ -229,7 +233,9 @@ const App: React.FC = () => {
           isLoggingIn={!isLogInDone}
         />
         {isLandingPageActive || !isLoggedIn ? (
-          <LandingPage onButtonClick={handleLandingPageClick} />
+          <div className="flex-grow-1">
+            <LandingPage onButtonClick={handleLandingPageClick} />
+          </div>
         ) : (
           <Container fluid className="overflow-x-hidden pt-4 px-4 bg-body">
             <Row id="sidebar-container">

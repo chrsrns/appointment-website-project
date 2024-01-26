@@ -2,10 +2,7 @@ import { Button, Col, Container, Row } from "react-bootstrap";
 
 export const LandingPage = ({ onButtonClick }) => {
   return (
-    <Container
-      className="d-flex flex-column align-items-center justify-content-center"
-      style={{ height: "80vh" }}
-    >
+    <Container className="d-flex flex-column align-items-center justify-content-center">
       <Row className="justify-contents-center">
         <Col className="text-center">
           <i className="bi bi-calendar2-week" style={{ fontSize: "12rem" }}></i>
