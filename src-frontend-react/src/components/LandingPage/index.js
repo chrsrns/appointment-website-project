@@ -5,7 +5,7 @@ export const LandingPage = ({ onButtonClick }) => {
     <Container className="d-flex flex-column align-items-center justify-content-center">
       <Row className="justify-contents-center">
         <Col className="text-center">
-          <i className="bi bi-calendar2-week" style={{ fontSize: "12rem" }}></i>
+          <i className="bi bi-calendar2-week" style={{ fontSize: "10rem" }}></i>
           <br />
           <h3 className="mt-3 mb-5">
             WEB-BASED APPOINTMENT AND SCHEDULING SYSTEM WITH INFORMATION
