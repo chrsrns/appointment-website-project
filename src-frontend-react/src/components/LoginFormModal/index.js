@@ -15,7 +15,12 @@ export const LoginFormModal = ({ show, onHide }) => {
   const [tabKey, setTabKey] = useState("login");
 
   return (
-    <Modal show={show} backdrop="static" onHide={() => onHide(true)}>
+    <Modal
+      show={show}
+      backdrop="static"
+      onHide={() => onHide(true)}
+      size={tabKey === "register" ? "lg" : ""}
+    >
       <Modal.Header
         closeButton
         data-bs-theme={cookies.darkmode ? "dark" : "light"}
