@@ -1,6 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const express = require('express');
+const express = require("express");
 const { findUserIdByAccessToken } = require("../routes/users.services");
 
 const router = express.Router();
@@ -9,19 +9,18 @@ router.get("/notifications", async (req, res, next) => {
   try {
     const authorizationHeader = req.headers.authorization;
 
-    const token = authorizationHeader.replace('Bearer ', '');
-    const userId = findUserIdByAccessToken(token)
+    const token = authorizationHeader.replace("Bearer ", "");
+    const userId = findUserIdByAccessToken(token);
     const notificationsToGet = await prisma.notifications.findMany({
       where: {
         usersToNotify: {
           some: {
-            id: userId
-          }
-        }
-      }
-
-    })
-    res.json(notificationsToGet)
+            id: userId,
+          },
+        },
+      },
+    });
+    res.json(notificationsToGet);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "An error occurred!" });
@@ -32,8 +31,8 @@ router.put("/removeFromUsersToNotify/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
     const authorizationHeader = req.headers.authorization;
-    const token = authorizationHeader.replace('Bearer ', '');
-    const userId = findUserIdByAccessToken(token)
+    const token = authorizationHeader.replace("Bearer ", "");
+    const userId = findUserIdByAccessToken(token);
 
     const notification = await prisma.notifications.update({
       where: {
@@ -41,9 +40,9 @@ router.put("/removeFromUsersToNotify/:id", async (req, res, next) => {
       },
       data: {
         usersToNotify: {
-          disconnect: { id: userId }
-        }
-      }
+          disconnect: { id: userId },
+        },
+      },
     });
     if (!notification) {
       res.status(404).json({ error: "Notification not found" });
@@ -55,8 +54,7 @@ router.put("/removeFromUsersToNotify/:id", async (req, res, next) => {
     res
       .status(500)
       .json({ error: "An error occurred while removing from notification" });
-
   }
-})
+});
 
-module.exports = router
+module.exports = router;

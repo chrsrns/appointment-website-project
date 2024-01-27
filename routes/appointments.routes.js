@@ -1,29 +1,36 @@
 const { isAuthenticated } = require("../middlewares");
-const { findUserIdByAccessToken } = require("../routes/users.services")
+const { findUserIdByAccessToken } = require("../routes/users.services");
 
-const { PrismaClient, Prisma, schedule_state, user_type, repeat, user_approval_type } = require("@prisma/client");
+const {
+  PrismaClient,
+  Prisma,
+  schedule_state,
+  user_type,
+  repeat,
+  user_approval_type,
+} = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const express = require("express");
 const router = express.Router();
 
 const { getSocketInstance } = require("../socket");
-const { createNotification } = require('../routes/notifications.services');
+const { createNotification } = require("../routes/notifications.services");
 
 router.get("/students", async (req, res, next) => {
   try {
     const users = await prisma.user.findMany({
       where: {
         type: user_type.Student,
-        approved: { not: user_approval_type.Archived }
+        approved: { not: user_approval_type.Archived },
       },
       select: {
         id: true,
         fname: true,
         mname: true,
         lname: true,
-      }
-    })
+      },
+    });
     res.json(users);
   } catch (err) {
     res.status(500).json({ msg: err.message });
@@ -37,28 +44,27 @@ router.get("/staff", async (req, res, next) => {
         AND: [
           {
             type: {
-              not: user_type.Student
+              not: user_type.Student,
             },
           },
           {
             type: {
-              not: user_type.Admin
-            }
+              not: user_type.Admin,
+            },
           },
           {
-            approved: { not: user_approval_type.Archived }
-          }
-        ]
-
+            approved: { not: user_approval_type.Archived },
+          },
+        ],
       },
       select: {
         id: true,
         fname: true,
         mname: true,
         lname: true,
-        type: true
-      }
-    })
+        type: true,
+      },
+    });
     res.json(users);
   } catch (err) {
     res.status(500).json({ msg: err.message });
@@ -67,11 +73,9 @@ router.get("/staff", async (req, res, next) => {
 
 router.get("/scheduletypes", async (req, res, next) => {
   try {
-    const result = (Object.keys(schedule_state)).map(
-      (key, index) => {
-        return schedule_state[key];
-      },
-    );
+    const result = Object.keys(schedule_state).map((key, index) => {
+      return schedule_state[key];
+    });
 
     res.json(result);
   } catch (err) {
@@ -83,23 +87,20 @@ router.get("/schedulerepeattypes", async (req, res, next) => {
   try {
     const authorizationheader = req.headers.authorization;
 
-    const token = authorizationheader.replace('Bearer ', '');
-    const userId = findUserIdByAccessToken(token)
+    const token = authorizationheader.replace("Bearer ", "");
+    const userId = findUserIdByAccessToken(token);
 
     const user = await prisma.user.findUnique({
       where: {
-        id: userId
-      }
-    })
-
-    const result = (Object.keys(repeat)).map(
-      (key, index) => {
-        return repeat[key];
+        id: userId,
       },
-    );
+    });
 
-    if (user.type === "Student")
-      result.filter(e => e === "Pending")
+    const result = Object.keys(repeat).map((key, index) => {
+      return repeat[key];
+    });
+
+    if (user.type === "Student") result.filter((e) => e === "Pending");
 
     res.json(result);
   } catch (err) {
@@ -112,13 +113,13 @@ router.get("/schedules", async (req, res, next) => {
   try {
     const authorizationheader = req.headers.authorization;
 
-    const token = authorizationheader.replace('Bearer ', '');
-    const userId = findUserIdByAccessToken(token)
+    const token = authorizationheader.replace("Bearer ", "");
+    const userId = findUserIdByAccessToken(token);
     if (!userId) {
-      res.status(400)
-      throw new Error("No user with ID found")
+      res.status(400);
+      throw new Error("No user with ID found");
     }
-    console.log(userId)
+    console.log(userId);
     const schedules = await prisma.schedule.findMany({
       where: {
         AND: [
@@ -126,17 +127,17 @@ router.get("/schedules", async (req, res, next) => {
             OR: [
               { Users: { some: { id: userId } } },
               { authorUserId: userId },
-              { state: schedule_state.Available }
-            ]
+              { state: schedule_state.Available },
+            ],
           },
           {
             OR: [
               { fromDate: { gte: new Date(Date.now()) } },
               { toDate: { gte: new Date(Date.now()) } },
-              { repeat: { not: repeat.None } }
-            ]
-          }
-        ]
+              { repeat: { not: repeat.None } },
+            ],
+          },
+        ],
       },
       select: {
         id: true,
@@ -153,44 +154,41 @@ router.get("/schedules", async (req, res, next) => {
             fname: true,
             mname: true,
             lname: true,
-            type: true
-          }
-        }
+            type: true,
+          },
+        },
       },
-    })
-    console.log(schedules)
-    res.json(schedules)
+    });
+    console.log(schedules);
+    res.json(schedules);
   } catch (err) {
-    console.error(err)
+    console.error(err);
     res.status(500).json({ msg: err.message });
   }
-})
+});
 
 router.get("/schedules-summary", async (req, res, next) => {
   try {
     const authorizationheader = req.headers.authorization;
 
-    const token = authorizationheader.replace('Bearer ', '');
-    const userId = findUserIdByAccessToken(token)
+    const token = authorizationheader.replace("Bearer ", "");
+    const userId = findUserIdByAccessToken(token);
 
     const schedules = await prisma.schedule.findMany({
       where: {
         AND: [
           {
-            OR: [
-              { Users: { some: { id: userId } } },
-              { authorUserId: userId }
-            ]
+            OR: [{ Users: { some: { id: userId } } }, { authorUserId: userId }],
           },
           { state: { not: schedule_state.Completed } },
           {
             OR: [
               { fromDate: { gte: new Date(Date.now()) } },
               { toDate: { gte: new Date(Date.now()) } },
-              { repeat: { not: repeat.None } }
-            ]
-          }
-        ]
+              { repeat: { not: repeat.None } },
+            ],
+          },
+        ],
       },
       select: {
         id: true,
@@ -198,14 +196,14 @@ router.get("/schedules-summary", async (req, res, next) => {
         fromDate: true,
         toDate: true,
         title: true,
-        repeat: true
-      }
-    })
-    res.json(schedules)
+        repeat: true,
+      },
+    });
+    res.json(schedules);
   } catch (err) {
     res.status(500).json({ msg: err.message });
   }
-})
+});
 
 router.get("/staff-availability", async (req, res, next) => {
   try {
@@ -216,18 +214,16 @@ router.get("/staff-availability", async (req, res, next) => {
             state: schedule_state.Available,
           },
           {
-            NOT: [
-              { authoredBy: { type: user_type.Student } }
-            ]
+            NOT: [{ authoredBy: { type: user_type.Student } }],
           },
           {
             OR: [
               { fromDate: { gte: new Date(Date.now()) } },
               { toDate: { gte: new Date(Date.now()) } },
-              { repeat: { not: repeat.None } }
-            ]
-          }
-        ]
+              { repeat: { not: repeat.None } },
+            ],
+          },
+        ],
       },
       select: {
         id: true,
@@ -241,16 +237,16 @@ router.get("/staff-availability", async (req, res, next) => {
             id: true,
             fname: true,
             mname: true,
-            lname: true
-          }
-        }
-      }
-    })
-    res.json(schedules)
+            lname: true,
+          },
+        },
+      },
+    });
+    res.json(schedules);
   } catch (err) {
     res.status(500).json({ msg: err.message });
   }
-})
+});
 
 router.get("/schedules/by-user/:id", async (req, res, next) => {
   const { id } = req.params;
@@ -258,33 +254,30 @@ router.get("/schedules/by-user/:id", async (req, res, next) => {
   try {
     const authorizationheader = req.headers.authorization;
 
-    const token = authorizationheader.replace('Bearer ', '');
-    const userId = findUserIdByAccessToken(token)
+    const token = authorizationheader.replace("Bearer ", "");
+    const userId = findUserIdByAccessToken(token);
 
     const schedules = await prisma.schedule.findMany({
       where: {
         AND: [
           {
-            OR: [
-              { Users: { some: { id: id } }, },
-              { authorUserId: id },
-            ]
+            OR: [{ Users: { some: { id: id } } }, { authorUserId: id }],
           },
           {
             OR: [
               { fromDate: { gte: new Date(Date.now()) } },
               { toDate: { gte: new Date(Date.now()) } },
-              { repeat: { not: repeat.None } }
-            ]
+              { repeat: { not: repeat.None } },
+            ],
           },
           {
             OR: [
               { Users: { some: { id: userId } } },
-              { state: schedule_state.Available }
-            ]
+              { state: schedule_state.Available },
+            ],
           },
           { state: { not: schedule_state.Completed } },
-        ]
+        ],
       },
       select: {
         id: true,
@@ -301,18 +294,18 @@ router.get("/schedules/by-user/:id", async (req, res, next) => {
             fname: true,
             mname: true,
             lname: true,
-            type: true
-          }
-        }
+            type: true,
+          },
+        },
       },
-    })
-    console.log(schedules)
-    res.json(schedules)
+    });
+    console.log(schedules);
+    res.json(schedules);
   } catch (err) {
-    console.log(err)
+    console.log(err);
     res.status(500).json({ msg: err.message });
   }
-})
+});
 
 router.get("/schedule/:id", async (req, res) => {
   const { id } = req.params;
@@ -328,11 +321,11 @@ router.get("/schedule/:id", async (req, res) => {
             fname: true,
             mname: true,
             lname: true,
-            type: true
-          }
+            type: true,
+          },
         },
-        authoredBy: true
-      }
+        authoredBy: true,
+      },
     });
     if (!schedule) {
       res.status(404).json({ error: "Schedule not found" });
@@ -351,14 +344,14 @@ router.put("/schedule/:id", async (req, res) => {
   const { id } = req.params;
   try {
     const authorizationheader = req.headers.authorization;
-    const token = authorizationheader.replace('Bearer ', '');
-    const userId = findUserIdByAccessToken(token)
+    const token = authorizationheader.replace("Bearer ", "");
+    const userId = findUserIdByAccessToken(token);
 
     const user = await prisma.user.findUnique({
       where: {
-        id: userId
-      }
-    })
+        id: userId,
+      },
+    });
     const schedule = await prisma.schedule.update({
       where: {
         id: id,
@@ -366,8 +359,8 @@ router.put("/schedule/:id", async (req, res) => {
       data: req.body,
       include: {
         Users: true,
-        authoredBy: true
-      }
+        authoredBy: true,
+      },
     });
     if (!schedule) {
       res.status(404).json({ error: "Schedule not found" });
@@ -377,21 +370,25 @@ router.put("/schedule/:id", async (req, res) => {
     createNotification({
       title: `Schedule Modified: ${schedule.title}`,
       message: `Schedule updated by ${user.lname}, ${user.fname}.`,
-      users: notifTargets
-    })
-
-    schedule.Users.forEach(element => {
-      getSocketInstance().to(element.id).emit("notify", {
-        title: `Schedule Modified: ${schedule.title}`,
-        message: `Schedule updated by ${user.lname}, ${user.fname}.`,
-      })
+      users: notifTargets,
     });
 
-    getSocketInstance().to(schedule.authorUserId).emit("notify", {
-      title: `Schedule Modified: ${schedule.title}`,
-      message: `Schedule updated by ${user.lname}, ${user.fname}.`,
-    })
-    getSocketInstance().emit("update appointments")
+    schedule.Users.forEach((element) => {
+      getSocketInstance()
+        .to(element.id)
+        .emit("notify", {
+          title: `Schedule Modified: ${schedule.title}`,
+          message: `Schedule updated by ${user.lname}, ${user.fname}.`,
+        });
+    });
+
+    getSocketInstance()
+      .to(schedule.authorUserId)
+      .emit("notify", {
+        title: `Schedule Modified: ${schedule.title}`,
+        message: `Schedule updated by ${user.lname}, ${user.fname}.`,
+      });
+    getSocketInstance().emit("update appointments");
     res.json(schedule);
   } catch (error) {
     console.error(error);
@@ -405,21 +402,21 @@ router.delete("/schedule/:id", async (req, res) => {
   const { id } = req.params;
   try {
     const authorizationheader = req.headers.authorization;
-    const token = authorizationheader.replace('Bearer ', '');
-    const userId = findUserIdByAccessToken(token)
+    const token = authorizationheader.replace("Bearer ", "");
+    const userId = findUserIdByAccessToken(token);
     const user = await prisma.user.findUnique({
       where: {
-        id: userId
-      }
-    })
+        id: userId,
+      },
+    });
     const schedule = await prisma.schedule.delete({
       where: {
         id: id,
       },
       include: {
         Users: true,
-        authoredBy: true
-      }
+        authoredBy: true,
+      },
     });
     if (!schedule) {
       res.status(404).json({ error: "Schedule not found" });
@@ -430,22 +427,26 @@ router.delete("/schedule/:id", async (req, res) => {
     createNotification({
       title: `Schedule Deleted: ${schedule.title}`,
       message: `Schedule deleted by ${user.lname}, ${user.fname}.`,
-      users: notifTargets
-    })
+      users: notifTargets,
+    });
 
-    schedule.Users.forEach(element => {
-      getSocketInstance().to(element.id).emit("notify", {
+    schedule.Users.forEach((element) => {
+      getSocketInstance()
+        .to(element.id)
+        .emit("notify", {
+          title: `Schedule Deleted: ${schedule.title}`,
+          message: `Schedule deleted by ${user.lname}, ${user.fname}.`,
+        });
+    });
+    getSocketInstance()
+      .to(schedule.authorUserId)
+      .emit("notify", {
         title: `Schedule Deleted: ${schedule.title}`,
         message: `Schedule deleted by ${user.lname}, ${user.fname}.`,
-      })
-    });
-    getSocketInstance().to(schedule.authorUserId).emit("notify", {
-      title: `Schedule Deleted: ${schedule.title}`,
-      message: `Schedule deleted by ${user.lname}, ${user.fname}.`,
-    })
-    getSocketInstance().emit("update appointments")
+      });
+    getSocketInstance().emit("update appointments");
     res.json(schedule);
-    console.log(req.body)
+    console.log(req.body);
   } catch (error) {
     console.error(error);
     res
@@ -457,60 +458,64 @@ router.delete("/schedule/:id", async (req, res) => {
 router.post("/schedule", async (req, res, next) => {
   try {
     const authorizationHeader = req.headers.authorization;
-    const scheduleData = req.body
+    const scheduleData = req.body;
 
-    const token = authorizationHeader.replace('Bearer ', '');
-    const userId = findUserIdByAccessToken(token)
+    const token = authorizationHeader.replace("Bearer ", "");
+    const userId = findUserIdByAccessToken(token);
     const user = await prisma.user.findUnique({
       where: {
-        id: userId
-      }
-    })
+        id: userId,
+      },
+    });
 
-    scheduleData.authoredBy = { connect: { id: userId } }
+    scheduleData.authoredBy = { connect: { id: userId } };
     const schedule = await prisma.schedule.create({
       data: scheduleData,
       include: {
         Users: true,
-        authoredBy: true
-      }
-    })
+        authoredBy: true,
+      },
+    });
 
     const notifTargets = [...schedule.Users, schedule.authoredBy];
     createNotification({
       title: `Schedule Made: ${schedule.title}`,
       message: `Schedule created by ${user.lname}, ${user.fname}.`,
-      users: notifTargets
-    })
+      users: notifTargets,
+    });
 
-    schedule.Users.forEach(element => {
-      getSocketInstance().to(element.id).emit("notify", {
+    schedule.Users.forEach((element) => {
+      getSocketInstance()
+        .to(element.id)
+        .emit("notify", {
+          title: `Schedule Made: ${schedule.title}`,
+          message: `Schedule created by ${user.lname}, ${user.fname}.`,
+        });
+    });
+    getSocketInstance()
+      .to(schedule.authorUserId)
+      .emit("notify", {
         title: `Schedule Made: ${schedule.title}`,
         message: `Schedule created by ${user.lname}, ${user.fname}.`,
-      })
-    });
-    getSocketInstance().to(schedule.authorUserId).emit("notify", {
-      title: `Schedule Made: ${schedule.title}`,
-      message: `Schedule created by ${user.lname}, ${user.fname}.`,
-    })
-    getSocketInstance().emit("update appointments")
-    res.json()
+      });
+    getSocketInstance().emit("update appointments");
+    res.json();
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "An error occurred!" });
   }
-})
+});
 
 router.get("/messages/by-schedule/:id", async (req, res, next) => {
-  const { id } = req.params
+  const { id } = req.params;
   try {
     const schedules = await prisma.message.findMany({
       where: {
         Schedule: {
           is: {
-            id: id
-          }
-        }
+            id: id,
+          },
+        },
       },
       select: {
         id: true,
@@ -522,30 +527,29 @@ router.get("/messages/by-schedule/:id", async (req, res, next) => {
             fname: true,
             mname: true,
             lname: true,
-          }
-        }
-
-      }
-    })
-    res.json(schedules)
+          },
+        },
+      },
+    });
+    res.json(schedules);
   } catch (err) {
     res.status(500).json({ msg: err.message });
   }
-})
+});
 
 router.post("/message", async (req, res, next) => {
   try {
     const authorizationHeader = req.headers.authorization;
-    const messageData = req.body
+    const messageData = req.body;
 
-    const token = authorizationHeader.replace('Bearer ', '');
-    messageData.userId = findUserIdByAccessToken(token)
+    const token = authorizationHeader.replace("Bearer ", "");
+    messageData.userId = findUserIdByAccessToken(token);
 
     const user = await prisma.user.findUnique({
       where: {
-        id: messageData.userId
-      }
-    })
+        id: messageData.userId,
+      },
+    });
 
     const message = await prisma.message.create({
       data: messageData,
@@ -553,38 +557,43 @@ router.post("/message", async (req, res, next) => {
         Schedule: {
           include: {
             Users: true,
-            authoredBy: true
-          }
-        }
-      }
-    })
+            authoredBy: true,
+          },
+        },
+      },
+    });
 
-    const notifTargets = [...message.Schedule.Users, message.Schedule.authoredBy];
+    const notifTargets = [
+      ...message.Schedule.Users,
+      message.Schedule.authoredBy,
+    ];
     createNotification({
       title: `New Message to Schedule: ${message.Schedule.title}`,
       message: `Message from ${user.lname}, ${user.fname}.`,
-      users: notifTargets
-    })
+      users: notifTargets,
+    });
 
-    message.Schedule.Users.forEach(element => {
-      getSocketInstance().to(element.id).emit("notify", {
+    message.Schedule.Users.forEach((element) => {
+      getSocketInstance()
+        .to(element.id)
+        .emit("notify", {
+          title: `New Message to Schedule: ${message.Schedule.title}`,
+          message: `Message from ${user.lname}, ${user.fname}.`,
+        });
+    });
+    getSocketInstance()
+      .to(message.Schedule.authorUserId)
+      .emit("notify", {
         title: `New Message to Schedule: ${message.Schedule.title}`,
         message: `Message from ${user.lname}, ${user.fname}.`,
-      })
-    });
-    getSocketInstance().to(message.Schedule.authorUserId).emit("notify", {
-      title: `New Message to Schedule: ${message.Schedule.title}`,
-      message: `Message from ${user.lname}, ${user.fname}.`,
-    })
-    getSocketInstance().emit("update appointments")
-    getSocketInstance().emit("update chats")
-    res.status(200).json({ msg: "Message sent" })
+      });
+    getSocketInstance().emit("update appointments");
+    getSocketInstance().emit("update chats");
+    res.status(200).json({ msg: "Message sent" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "An error occurred!" });
   }
-})
-
+});
 
 module.exports = router;
-

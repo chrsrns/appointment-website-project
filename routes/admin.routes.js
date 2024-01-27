@@ -1,19 +1,23 @@
 const { isAuthenticated } = require("../middlewares");
 const bcrypt = require("bcrypt");
 
-const { PrismaClient, user_type, user_approval_type } = require("@prisma/client");
+const {
+  PrismaClient,
+  user_type,
+  user_approval_type,
+} = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const express = require("express");
 const router = express.Router();
-const { createNotification } = require('../routes/notifications.services');
+const { createNotification } = require("../routes/notifications.services");
 const { findUserIdByAccessToken } = require("./users.services");
 
 router.get("/users", async (req, res, next) => {
   try {
     const user = await prisma.user.findMany({
       where: {
-        approved: { not: user_approval_type.Archived }
+        approved: { not: user_approval_type.Archived },
       },
       select: {
         id: true,
@@ -25,8 +29,8 @@ router.get("/users", async (req, res, next) => {
         emailaddr: true,
         bdate: true,
         type: true,
-        login_username: true
-      }
+        login_username: true,
+      },
     });
     res.json(user);
   } catch (err) {
@@ -38,7 +42,7 @@ router.get("/archivedusers", async (req, res, next) => {
   try {
     const user = await prisma.user.findMany({
       where: {
-        approved: user_approval_type.Archived
+        approved: user_approval_type.Archived,
       },
       select: {
         id: true,
@@ -50,8 +54,8 @@ router.get("/archivedusers", async (req, res, next) => {
         emailaddr: true,
         bdate: true,
         type: true,
-        login_username: true
-      }
+        login_username: true,
+      },
     });
     res.json(user);
   } catch (err) {
@@ -69,11 +73,11 @@ router.get("/feedbacks", async (req, res, next) => {
             fname: true,
             mname: true,
             lname: true,
-            type: true
-          }
-        }
-      }
-    })
+            type: true,
+          },
+        },
+      },
+    });
 
     res.json(feedbacks);
   } catch (err) {
@@ -81,12 +85,11 @@ router.get("/feedbacks", async (req, res, next) => {
   }
 });
 
-
 router.get("/pendingusers", async (req, res, next) => {
   try {
     const user = await prisma.user.findMany({
       where: {
-        approved: user_approval_type.Pending
+        approved: user_approval_type.Pending,
       },
       select: {
         id: true,
@@ -98,8 +101,8 @@ router.get("/pendingusers", async (req, res, next) => {
         emailaddr: true,
         bdate: true,
         type: true,
-        login_username: true
-      }
+        login_username: true,
+      },
     });
     res.json(user);
   } catch (err) {
@@ -115,8 +118,8 @@ router.put("/pendinguser/:id", async (req, res) => {
         id: id,
       },
       data: {
-        approved: req.body.approved
-      }
+        approved: req.body.approved,
+      },
     });
     if (!userToUpdate) {
       res.status(404).json({ error: "User not found" });
@@ -124,10 +127,10 @@ router.put("/pendinguser/:id", async (req, res) => {
     }
     createNotification({
       title: `User Registration ${req.body.approved}`,
-      message: `User with username ${userToUpdate.login_username} registration was ${req.body.approved}`
-    })
+      message: `User with username ${userToUpdate.login_username} registration was ${req.body.approved}`,
+    });
 
-    res.status(200)
+    res.status(200);
   } catch (error) {
     console.error(error);
     res
@@ -138,11 +141,9 @@ router.put("/pendinguser/:id", async (req, res) => {
 
 router.get("/usertypes", async (req, res, next) => {
   try {
-    const userTypesToReturn = (Object.keys(user_type)).map(
-      (key, index) => {
-        return user_type[key];
-      },
-    );
+    const userTypesToReturn = Object.keys(user_type).map((key, index) => {
+      return user_type[key];
+    });
 
     res.json(userTypesToReturn);
   } catch (err) {
@@ -152,55 +153,54 @@ router.get("/usertypes", async (req, res, next) => {
 
 router.post("/user", async (req, res, next) => {
   try {
-    const user = req.body
+    const user = req.body;
     if (!user.login_password) {
-      res.status(400) /// TODO maybe not effective as catch is changing status
+      res.status(400); /// TODO maybe not effective as catch is changing status
       throw new Error(`🚫 Un-Authorized 🚫, \\nAuth Token: ${authorization}`);
     }
 
-    user.login_password = bcrypt.hashSync(user.login_password, 12)
-    user.approved = user_approval_type.Approved
+    user.login_password = bcrypt.hashSync(user.login_password, 12);
+    user.approved = user_approval_type.Approved;
 
     const usercreate = await prisma.user.create({
-      data: user
-    })
+      data: user,
+    });
 
     const authorizationheader = req.headers.authorization;
-    const token = authorizationheader.replace('Bearer ', '');
-    const userId = findUserIdByAccessToken(token)
+    const token = authorizationheader.replace("Bearer ", "");
+    const userId = findUserIdByAccessToken(token);
 
     const userAdmin = await prisma.user.findUnique({
       where: {
-        id: userId
-      }
-    })
+        id: userId,
+      },
+    });
 
-    const message = `User with username ${usercreate.login_username} added in the system`
+    const message = `User with username ${usercreate.login_username} added in the system`;
     createNotification({
       title: `New User Added by Admin ${userAdmin.login_username} (${userAdmin.lname})`,
-      message: message
-    })
-    res.status(200).json({ msg: message })
+      message: message,
+    });
+    res.status(200).json({ msg: message });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "An error occurred when adding the user" });
   }
 
   return next();
-})
+});
 
 router.post("/unarchive/:id", async (req, res) => {
   const { id } = req.params;
   try {
-
     const authorizationheader = req.headers.authorization;
-    const token = authorizationheader.replace('Bearer ', '');
-    const userId = findUserIdByAccessToken(token)
+    const token = authorizationheader.replace("Bearer ", "");
+    const userId = findUserIdByAccessToken(token);
 
     const userAdmin = await prisma.user.findUnique({
       where: {
-        id: userId
-      }
+        id: userId,
+      },
     });
 
     const userToArchive = await prisma.user.update({
@@ -208,63 +208,67 @@ router.post("/unarchive/:id", async (req, res) => {
         id: id,
       },
       data: {
-        approved: user_approval_type.Approved
-      }
+        approved: user_approval_type.Approved,
+      },
     });
     if (!userToArchive) {
       res.status(404).json({ error: "User not found" });
       return;
     }
 
-    const message = `User with username ${userToArchive.login_username} unarchived.`
+    const message = `User with username ${userToArchive.login_username} unarchived.`;
     createNotification({
       title: `User Un-archived by Admin ${userAdmin.login_username} (${userAdmin.lname})`,
-      message: message
-    })
+      message: message,
+    });
     res.json(message);
-
   } catch (error) {
     console.error(error);
     res
       .status(500)
-      .json({ error: "An error occurred while unarchiving the user", errbody: error });
+      .json({
+        error: "An error occurred while unarchiving the user",
+        errbody: error,
+      });
   }
 });
 
 router.put("/user/:id", async (req, res) => {
   const { id } = req.params;
   try {
-
     const authorizationheader = req.headers.authorization;
-    const token = authorizationheader.replace('Bearer ', '');
-    const userId = findUserIdByAccessToken(token)
+    const token = authorizationheader.replace("Bearer ", "");
+    const userId = findUserIdByAccessToken(token);
 
     const userAdmin = await prisma.user.findUnique({
       where: {
-        id: userId
-      }
-    })
+        id: userId,
+      },
+    });
 
-    const userFromBody = req.body
+    const userFromBody = req.body;
     if (userFromBody.login_password)
-      userFromBody.login_password = bcrypt.hashSync(userFromBody.login_password, 12)
+      userFromBody.login_password = bcrypt.hashSync(
+        userFromBody.login_password,
+        12,
+      );
     const userToUpdate = await prisma.user.update({
       where: {
         id: id,
       },
-      data: userFromBody
+      data: userFromBody,
     });
     if (!userFromBody) {
       res.status(404).json({ error: "User not found" });
       return;
     }
 
-    const message = `User with username ${userToUpdate.login_username} modified in the system`
+    const message = `User with username ${userToUpdate.login_username} modified in the system`;
     createNotification({
       title: `User Modified by Admin ${userAdmin.login_username} (${userAdmin.lname})`,
-      message: message
-    })
-    res.status(200).json({ msg: message })
+      message: message,
+    });
+    res.status(200).json({ msg: message });
   } catch (error) {
     console.error(error);
     res
@@ -276,24 +280,22 @@ router.put("/user/:id", async (req, res) => {
 router.delete("/user/:id", async (req, res) => {
   const { id } = req.params;
   try {
-
     const authorizationheader = req.headers.authorization;
-    const token = authorizationheader.replace('Bearer ', '');
-    const userId = findUserIdByAccessToken(token)
+    const token = authorizationheader.replace("Bearer ", "");
+    const userId = findUserIdByAccessToken(token);
 
     const userAdmin = await prisma.user.findUnique({
       where: {
-        id: userId
-      }
+        id: userId,
+      },
     });
-
 
     const user = await prisma.user.findUnique({
       where: {
-        id: id
+        id: id,
       },
       select: {
-        type: true
+        type: true,
       },
     });
 
@@ -303,19 +305,19 @@ router.delete("/user/:id", async (req, res) => {
           id: id,
         },
         data: {
-          approved: user_approval_type.Archived
-        }
+          approved: user_approval_type.Archived,
+        },
       });
       if (!userToArchive) {
         res.status(404).json({ error: "User not found" });
         return;
       }
 
-      const message = `User with username ${userToArchive.login_username} archived on the system`
+      const message = `User with username ${userToArchive.login_username} archived on the system`;
       createNotification({
         title: `User Archived by Admin ${userAdmin.login_username} (${userAdmin.lname})`,
-        message: message
-      })
+        message: message,
+      });
       res.json(message);
     } else {
       const userToDelete = await prisma.user.delete({
@@ -328,19 +330,21 @@ router.delete("/user/:id", async (req, res) => {
         return;
       }
 
-      const message = `User with username ${userToDelete.login_username} removed from the system`
+      const message = `User with username ${userToDelete.login_username} removed from the system`;
       createNotification({
         title: `User Removed by Admin ${userAdmin.login_username} (${userAdmin.lname})`,
-        message: message
-      })
+        message: message,
+      });
       res.json(message);
     }
-
   } catch (error) {
     console.error(error);
     res
       .status(500)
-      .json({ error: "An error occurred while deleting the user", errbody: error });
+      .json({
+        error: "An error occurred while deleting the user",
+        errbody: error,
+      });
   }
 });
 
@@ -350,8 +354,8 @@ router.get("/announcements", async (req, res, next) => {
       select: {
         id: true,
         title: true,
-        content: true
-      }
+        content: true,
+      },
     });
     res.json(announcements);
   } catch (err) {
@@ -362,58 +366,60 @@ router.get("/announcements", async (req, res, next) => {
 router.post("/announcement", async (req, res, next) => {
   try {
     const announcementcreate = await prisma.announcement.create({
-      data: req.body
-    })
+      data: req.body,
+    });
     const authorizationheader = req.headers.authorization;
-    const token = authorizationheader.replace('Bearer ', '');
-    const userId = findUserIdByAccessToken(token)
+    const token = authorizationheader.replace("Bearer ", "");
+    const userId = findUserIdByAccessToken(token);
     const user = await prisma.user.findUnique({
       where: {
-        id: userId
-      }
-    })
+        id: userId,
+      },
+    });
 
-    const titleMsg = `Announcement created by Admin ${user.login_username}: ${announcementcreate.title}`
+    const titleMsg = `Announcement created by Admin ${user.login_username}: ${announcementcreate.title}`;
 
     createNotification({
       title: titleMsg,
-      message: `${announcementcreate.content}`
-    })
-    res.status(200).json({ msg: titleMsg })
+      message: `${announcementcreate.content}`,
+    });
+    res.status(200).json({ msg: titleMsg });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "An error occurred when adding the announcement" });
+    res
+      .status(500)
+      .json({ error: "An error occurred when adding the announcement" });
   }
-})
+});
 
 router.put("/announcement/:id", async (req, res) => {
   const { id } = req.params;
   try {
-    const announcementFromBody = req.body
+    const announcementFromBody = req.body;
     const announcementToUpdate = await prisma.announcement.update({
       where: {
         id: id,
       },
-      data: announcementFromBody
+      data: announcementFromBody,
     });
     if (!announcementFromBody) {
       res.status(404).json({ error: "Appointment not found" });
       return;
     }
     const authorizationheader = req.headers.authorization;
-    const token = authorizationheader.replace('Bearer ', '');
-    const userId = findUserIdByAccessToken(token)
+    const token = authorizationheader.replace("Bearer ", "");
+    const userId = findUserIdByAccessToken(token);
     const user = await prisma.user.findUnique({
       where: {
-        id: userId
-      }
-    })
-    const titleMsg = `Announcement updated by Admin ${user.login_username}: ${announcementToUpdate.title}`
+        id: userId,
+      },
+    });
+    const titleMsg = `Announcement updated by Admin ${user.login_username}: ${announcementToUpdate.title}`;
     createNotification({
       title: titleMsg,
-      message: `${announcementToUpdate.content}`
-    })
-    res.json({ msg: titleMsg })
+      message: `${announcementToUpdate.content}`,
+    });
+    res.json({ msg: titleMsg });
   } catch (error) {
     console.error(error);
     res
@@ -435,18 +441,18 @@ router.delete("/announcement/:id", async (req, res) => {
       return;
     }
     const authorizationheader = req.headers.authorization;
-    const token = authorizationheader.replace('Bearer ', '');
-    const userId = findUserIdByAccessToken(token)
+    const token = authorizationheader.replace("Bearer ", "");
+    const userId = findUserIdByAccessToken(token);
     const user = await prisma.user.findUnique({
       where: {
-        id: userId
-      }
-    })
+        id: userId,
+      },
+    });
 
-    const titleMsg = `Announcement removed by Admin ${user.login_username}: ${announcementToDelete.title}`
+    const titleMsg = `Announcement removed by Admin ${user.login_username}: ${announcementToDelete.title}`;
     createNotification({
       title: titleMsg,
-    })
+    });
     res.json({ msg: titleMsg });
   } catch (error) {
     console.error(error);
