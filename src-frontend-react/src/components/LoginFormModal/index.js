@@ -143,7 +143,23 @@ export const LoginFormModal = ({ show, onHide }) => {
           })}
         </Modal.Title>
       </Modal.Header>
-      <LoadingOverlay active={isLoggingIn} spinner>
+      <LoadingOverlay
+        spinner
+        active={isLoggingIn}
+        text={"Trying to log in..."}
+        styles={{
+          overlay: (base) => ({
+            ...base,
+            background: "rgba(255, 255, 255, 1)",
+          }),
+          spinner: (base) => ({
+            ...base,
+            "& svg circle": {
+              stroke: "#000000",
+            },
+          }),
+        }}
+      >
         <Modal.Body>
           <Tab.Container
             id="login-tabs"
