@@ -69,16 +69,7 @@ export const LoginFormModal = ({ show, onHide }) => {
                     />
                   </Tab.Pane>
                   <Tab.Pane eventKey="register">
-                    <RegistrationForm />
-                    <div className="d-flex w-100 justify-content-center">
-                      <Button
-                        className="mx-auto"
-                        variant="link"
-                        onClick={() => setTabKey("login")}
-                      >
-                        Login
-                      </Button>
-                    </div>
+                    <RegistrationForm setTabKey={setTabKey} />
                   </Tab.Pane>
                   <Tab.Pane eventKey="Data Privacy Acknowledge and Consent">
                     <p>

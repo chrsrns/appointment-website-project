@@ -30,7 +30,7 @@ const DEFAULT_FORM_VALUES = {
   otp: "",
 };
 
-const RegistrationForm = () => {
+const RegistrationForm = ({ setTabKey }) => {
   const [userTypes, setUserTypes] = useState([]);
 
   const [formData, setFormData] = useState({ ...DEFAULT_FORM_VALUES });
@@ -401,6 +401,16 @@ const RegistrationForm = () => {
           Register
         </Button>
       </Form>
+      <div className="d-flex w-100 justify-content-center">
+        <Button
+          className="mx-auto fw-semibold"
+          variant="link"
+          onClick={() => setTabKey("login")}
+          style={{ "text-decoration": "none" }}
+        >
+          Login
+        </Button>
+      </div>
       <ToastContainer className="p-3" position="top-end" style={{ zIndex: 1 }}>
         <Toast
           show={showNotif}
