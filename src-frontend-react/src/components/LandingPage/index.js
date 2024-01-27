@@ -7,10 +7,10 @@ export const LandingPage = ({ onButtonClick }) => {
         <Col className="text-center">
           <i className="bi bi-calendar2-week" style={{ fontSize: "12rem" }}></i>
           <br />
-          <h2 className="mt-3 mb-5">
+          <h3 className="mt-3 mb-5">
             WEB-BASED APPOINTMENT AND SCHEDULING SYSTEM WITH INFORMATION
             MANAGEMENT USING REACT-BOOTSTRAP PRISMA AND EXPRESS
-          </h2>
+          </h3>
           <p>Powered by:</p>
           <div
             className="rounded-pill mb-5 p-3 d-inline-block"
