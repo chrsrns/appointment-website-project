@@ -6,7 +6,7 @@ import { customFetch } from "../../utils";
 import { user_approval_type } from "@prisma/client";
 import { useCookies } from "react-cookie";
 
-export const LoginForm = ({ setIsLoggingIn, setTabKey }) => {
+export const LoginForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
   const [, setCookie] = useCookies([
     "accessToken",
     "refreshToken",
@@ -29,7 +29,8 @@ export const LoginForm = ({ setIsLoggingIn, setTabKey }) => {
   const handleLogin = (event) => {
     event.preventDefault();
     setShowNotif(false);
-    setIsLoggingIn(true);
+    setLoadingText("Trying to log in...");
+    setIsLoading(true);
     const data = {
       login_username: username,
       login_password: password,
@@ -68,7 +69,7 @@ export const LoginForm = ({ setIsLoggingIn, setTabKey }) => {
       })
       .finally(() => {
         setPassword("");
-        setIsLoggingIn(false);
+        setIsLoading(false);
       });
     // Perform your login logic here
     // For example, you can make an API call to authenticate the user
@@ -77,7 +78,8 @@ export const LoginForm = ({ setIsLoggingIn, setTabKey }) => {
 
   const handleGoogleLogin = (response) => {
     setShowNotif(false);
-    setIsLoggingIn(true);
+    setLoadingText("Connecting with Google...");
+    setIsLoading(true);
     customFetch(`${global.server_backend_url}/backend/auth/googlelogin`, {
       method: "POST",
       headers: { Authorization: `Bearer ${response.access_token}` },
@@ -110,7 +112,7 @@ export const LoginForm = ({ setIsLoggingIn, setTabKey }) => {
       })
       .finally(() => {
         setPassword("");
-        setIsLoggingIn(false);
+        setIsLoading(false);
       });
   };
   return (

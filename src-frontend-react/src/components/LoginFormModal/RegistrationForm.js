@@ -10,7 +10,6 @@ import {
   Stack,
 } from "react-bootstrap";
 
-import LoadingOverlay from "react-loading-overlay-ts";
 import { customFetch } from "../../utils";
 import { useGoogleLogin } from "@react-oauth/google";
 import { toast } from "react-toastify";
@@ -30,7 +29,7 @@ const DEFAULT_FORM_VALUES = {
   otp: "",
 };
 
-const RegistrationForm = ({ setTabKey }) => {
+const RegistrationForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
   const [userTypes, setUserTypes] = useState([]);
 
   const [formData, setFormData] = useState({ ...DEFAULT_FORM_VALUES });
@@ -39,8 +38,6 @@ const RegistrationForm = ({ setTabKey }) => {
   const [showNotif, setShowNotif] = useState(false);
   const [responseHeader, setResponseHeader] = useState("");
   const [responseBody, setResponseBody] = useState("");
-
-  const [isLoading, setIsLoading] = useState(true);
 
   const resetToDefault = () => {
     setFormData({ ...DEFAULT_FORM_VALUES });
@@ -53,6 +50,7 @@ const RegistrationForm = ({ setTabKey }) => {
 
   const fetchAll = () => {
     setIsLoading(true);
+    setLoadingText("Fetching data...");
     Promise.all([
       customFetch(`${global.server_backend_url}/backend/auth/usertypes`)
         .then((response) => {
@@ -232,6 +230,7 @@ const RegistrationForm = ({ setTabKey }) => {
       gaccesstoken: response.access_token,
     });
     setIsLoading(true);
+    setLoadingText("Sending OTP to your email...");
 
     customFetch(`${global.server_backend_url}/backend/auth/emailfromgoogle`, {
       headers: { Authorization: `Bearer ${response.access_token}` },
@@ -252,7 +251,7 @@ const RegistrationForm = ({ setTabKey }) => {
       .finally(() => setIsLoading(false));
   };
   return (
-    <LoadingOverlay active={isLoading} spinner text="Waiting for update...">
+    <>
       <Form className="mb-3" onSubmit={handleSubmit}>
         <Row className="mb-3">
           <Form.Group as={Col} md="4" controlId="firstName">
@@ -431,7 +430,7 @@ const RegistrationForm = ({ setTabKey }) => {
           <Toast.Body>{responseBody}</Toast.Body>
         </Toast>
       </ToastContainer>
-    </LoadingOverlay>
+    </>
   );
 };
 

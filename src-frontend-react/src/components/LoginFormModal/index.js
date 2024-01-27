@@ -10,9 +10,10 @@ import { LoginForm } from "./LoginForm";
 export const LoginFormModal = ({ show, onHide }) => {
   const [cookies] = useCookies(["darkmode"]);
 
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [tabKey, setTabKey] = useState("login");
+  const [loadingText, setLoadingText] = useState("Trying to log in...");
 
   return (
     <Modal
@@ -31,28 +32,28 @@ export const LoginFormModal = ({ show, onHide }) => {
           })}
         </Modal.Title>
       </Modal.Header>
-      <LoadingOverlay
-        spinner
-        active={isLoggingIn}
-        text={"Trying to log in..."}
-        styles={{
-          overlay: (base) => ({
-            ...base,
-            background: "rgba(255, 255, 255, 1)",
-          }),
-          spinner: (base) => ({
-            ...base,
-            "& svg circle": {
-              stroke: "#000000",
-            },
-          }),
-          content: (base) => ({
-            ...base,
-            color: "#000000",
-          }),
-        }}
-      >
-        <Modal.Body>
+      <Modal.Body>
+        <LoadingOverlay
+          spinner
+          active={isLoading}
+          text={loadingText}
+          styles={{
+            overlay: (base) => ({
+              ...base,
+              background: "rgba(255, 255, 255, 1)",
+            }),
+            spinner: (base) => ({
+              ...base,
+              "& svg circle": {
+                stroke: "#000000",
+              },
+            }),
+            content: (base) => ({
+              ...base,
+              color: "#000000",
+            }),
+          }}
+        >
           <Tab.Container
             id="login-tabs"
             defaultActiveKey="login"
@@ -64,12 +65,17 @@ export const LoginFormModal = ({ show, onHide }) => {
                 <Tab.Content>
                   <Tab.Pane eventKey="login">
                     <LoginForm
-                      setIsLoggingIn={setIsLoggingIn}
+                      setIsLoading={setIsLoading}
+                      setLoadingText={setLoadingText}
                       setTabKey={setTabKey}
                     />
                   </Tab.Pane>
                   <Tab.Pane eventKey="register">
-                    <RegistrationForm setTabKey={setTabKey} />
+                    <RegistrationForm
+                      setIsLoading={setIsLoading}
+                      setLoadingText={setLoadingText}
+                      setTabKey={setTabKey}
+                    />
                   </Tab.Pane>
                   <Tab.Pane eventKey="Data Privacy Acknowledge and Consent">
                     <p>
@@ -99,8 +105,8 @@ export const LoginFormModal = ({ show, onHide }) => {
               </Col>
             </Row>
           </Tab.Container>
-        </Modal.Body>
-      </LoadingOverlay>
+        </LoadingOverlay>
+      </Modal.Body>
     </Modal>
   );
 };
