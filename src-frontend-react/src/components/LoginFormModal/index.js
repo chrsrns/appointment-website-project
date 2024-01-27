@@ -158,6 +158,10 @@ export const LoginFormModal = ({ show, onHide }) => {
               stroke: "#000000",
             },
           }),
+          content: (base) => ({
+            ...base,
+            color: "#000000",
+          }),
         }}
       >
         <Modal.Body>
@@ -195,6 +199,10 @@ export const LoginFormModal = ({ show, onHide }) => {
                         <Toast.Body>{responseBody}</Toast.Body>
                       </Toast>
                     </ToastContainer>
+                    <Button className="w-100" onClick={() => glogin()}>
+                      <i class="bi bi-google"></i> &ensp; Continue with Google
+                    </Button>
+                    <div className="text-center mt-2">or</div>
                     <Form
                       className="d-grid gap-3 w-100 mb-3"
                       noValidate
@@ -218,24 +226,9 @@ export const LoginFormModal = ({ show, onHide }) => {
                           onChange={(e) => setPassword(e.target.value)}
                         />
                       </Form.Group>
-                      <Container>
-                        <Row>
-                          <Col xs={8} className="ps-0">
-                            <Button
-                              className="w-100"
-                              variant="primary"
-                              type="submit"
-                            >
-                              <b>LOGIN</b>
-                            </Button>
-                          </Col>
-                          <Col className="pe-0">
-                            <Button className="w-100" onClick={() => glogin()}>
-                              <i class="bi bi-google"></i>
-                            </Button>
-                          </Col>
-                        </Row>
-                      </Container>
+                      <Button className="w-100" variant="primary" type="submit">
+                        <b>Log in</b>
+                      </Button>
                     </Form>
                     <Stack
                       direction="horizontal"
@@ -244,6 +237,8 @@ export const LoginFormModal = ({ show, onHide }) => {
                       <Button
                         variant="link"
                         onClick={() => setTabKey("register")}
+                        className="fw-semibold"
+                        style={{ "text-decoration": "none" }}
                       >
                         Register
                       </Button>
@@ -255,6 +250,7 @@ export const LoginFormModal = ({ show, onHide }) => {
                             "Please contact an administrator to reset your password.",
                           )
                         }
+                        style={{ "text-decoration": "none" }}
                       >
                         Forgot Password
                       </Button>
