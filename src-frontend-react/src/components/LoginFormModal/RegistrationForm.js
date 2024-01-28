@@ -1,5 +1,5 @@
 import moment from "moment";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Form,
   Button,
@@ -12,7 +12,6 @@ import {
 
 import { customFetch } from "../../utils";
 import { useGoogleLogin } from "@react-oauth/google";
-import { toast } from "react-toastify";
 
 const DEFAULT_FORM_VALUES = {
   id: "",
@@ -48,7 +47,8 @@ const RegistrationForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
     onSuccess: (tokenResponse) => handleGoogleLoginSuccess(tokenResponse),
   });
 
-  const fetchAll = () => {
+  const [isFetchingAll, setIsFetchingAll] = useState(true);
+  const fetchAll = useCallback(() => {
     setIsLoading(true);
     setLoadingText("Fetching data...");
     Promise.all([
@@ -64,10 +64,14 @@ const RegistrationForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
     ]).then(() => {
       setIsLoading(false);
     });
-  };
+  }, [setIsLoading, setLoadingText]);
 
   useEffect(() => {
-    fetchAll();
+    if (isFetchingAll) fetchAll();
+  }, [fetchAll, isFetchingAll]);
+
+  useEffect(() => {
+    setIsFetchingAll(true);
   }, []);
 
   const handleChange = (e) => {
