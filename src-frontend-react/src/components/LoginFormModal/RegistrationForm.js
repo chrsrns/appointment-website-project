@@ -251,6 +251,12 @@ const RegistrationForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
         });
         return data;
       })
+      .catch(async (err) => {
+        const errorBody = await err.json();
+        setResponseHeader("Registration Failed");
+        setResponseBody(errorBody.error);
+        setShowNotif(true);
+      })
       .finally(() => setIsLoading(false));
   };
   return (

@@ -22,6 +22,7 @@ const router = express.Router();
 const {
   findUserByUsername,
   findUserById,
+  findUserByEmail,
   createUser,
 } = require("../routes/users.services");
 
@@ -118,6 +119,12 @@ router.post("/register", async (req, res, next) => {
     ) {
       res.status(400);
       throw new Error(`You must provide an all required fields.`);
+    }
+    if (await findUserByEmail(emailaddr)) {
+      res.status(400);
+      throw new Error(
+        "That email is already registered. If that is not you, please contact the developers.",
+      );
     }
 
     const existingUser = await findUserByUsername(login_username);
@@ -390,6 +397,13 @@ router.get("/saveemailfromgoogle", async (req, res, next) => {
     console.log(profile);
 
     const email = profile.email;
+    if (await findUserByEmail(email)) {
+      console.log(await findUserByEmail(email));
+      res.status(400);
+      throw new Error(
+        "Email is already registered. If you think this is a mistake, please contact the developers.",
+      );
+    }
     const wherequery = {
       where: {
         emailaddr: email,
@@ -408,7 +422,7 @@ router.get("/saveemailfromgoogle", async (req, res, next) => {
     res.json({ status: "Email sent", email: email, verif: randomOtp });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "An error occurred." });
+    res.status(500).json({ error: error.message });
   }
 });
 

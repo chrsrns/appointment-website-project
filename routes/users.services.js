@@ -28,6 +28,14 @@ function findUserById(id) {
   });
 }
 
+function findUserByEmail(emailaddr) {
+  return db.user.findUnique({
+    where: {
+      emailaddr,
+    },
+  });
+}
+
 function createUser(user) {
   user.login_password = bcrypt.hashSync(user.login_password, 12);
   console.log(user);
@@ -46,6 +54,7 @@ function createUserByEmailAndPassword(user) {
 module.exports = {
   findUserByUsername,
   findUserById,
+  findUserByEmail,
   findUserIdByAccessToken,
   createUser,
 };
