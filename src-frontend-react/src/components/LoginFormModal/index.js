@@ -29,7 +29,7 @@ export const LoginFormModal = ({ show, onHide }) => {
       size={tabKey === "register" ? "lg" : ""}
     >
       <Modal.Header
-        closeButton
+        closeButton={tabKey !== "Data Privacy Acknowledge and Consent"}
         data-bs-theme={cookies.darkmode ? "dark" : "light"}
       >
         <Modal.Title>
