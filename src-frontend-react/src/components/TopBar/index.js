@@ -91,14 +91,16 @@ export const TopBar = () => {
             }}
             className="me-auto"
           >
-            {radios.map((radio, idx) => (
-              <TopBarNavLink
-                idx={idx}
-                key={idx}
-                name={radio.name}
-                link={radio.link}
-              />
-            ))}
+            {cookies.login_username
+              ? radios.map((radio, idx) => (
+                  <TopBarNavLink
+                    idx={idx}
+                    key={idx}
+                    name={radio.name}
+                    link={radio.link}
+                  />
+                ))
+              : ""}
           </Nav>
           <Navbar.Text as="div" className="">
             <Stack
