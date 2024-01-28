@@ -53,7 +53,11 @@ const App: React.FC = () => {
   const [isLandingPageActive, setIsLandingPageActive] = useState(true);
   const [isModalShow, setIsModalShow] = useState(false);
 
-  const [cookies, setCookies] = useCookies(["accessToken", "darkmode"]);
+  const [cookies, setCookies] = useCookies([
+    "accessToken",
+    "refreshToken",
+    "darkmode",
+  ]);
 
   // useEffect(() => {
   //   document.documentElement.setAttribute(
@@ -195,14 +199,18 @@ const App: React.FC = () => {
       // console.log('This code runs every 1 minute');
     }, 60000);
     const socketinterval = setInterval(() => {
-      if (!socketConnected.current) attemptSocketConnection();
+      if (
+        !socketConnected.current &&
+        (cookies.accessToken || cookies.refreshToken)
+      )
+        attemptSocketConnection();
     }, 1000);
     // Clean up the interval when the component unmounts
     return () => {
       clearInterval(intervalId);
       clearInterval(socketinterval);
     };
-  }, []);
+  }, [cookies.accessToken, cookies.refreshToken]);
 
   const handleLandingPageClick = () => {
     setIsLandingPageActive(false);
