@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Modal, Button, Tab, Col, Row } from "react-bootstrap";
 import { useCookies } from "react-cookie";
 
@@ -14,6 +14,12 @@ export const LoginFormModal = ({ show, onHide }) => {
 
   const [tabKey, setTabKey] = useState("login");
   const [loadingText, setLoadingText] = useState("Trying to log in...");
+
+  useEffect(() => {
+    if (show === true) {
+      setTabKey("login");
+    }
+  }, [show]);
 
   return (
     <Modal
