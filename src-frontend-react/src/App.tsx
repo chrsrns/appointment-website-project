@@ -249,7 +249,7 @@ const App: React.FC = () => {
       >
         <TopBar />
         <LoginFormModal show={isModalShow} onHide={handleModalClose} />
-        {isLandingPageActive || !isLoggedIn ? (
+        {isLandingPageActive || !isLoggedIn || !isLogInDone ? (
           <div className="flex-grow-1">
             <LandingPage onButtonClick={handleLandingPageClick} />
           </div>
