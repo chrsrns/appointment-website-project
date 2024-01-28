@@ -50,7 +50,7 @@ type sort_obj = {
   username: string;
 };
 const App: React.FC = () => {
-  const [isLandingPageActive, setIsLandingPageActive] = useState(true);
+  const [isLandingPageActive, setIsLandingPageActive] = useState(false);
   const [isModalShow, setIsModalShow] = useState(false);
 
   const [cookies, setCookies] = useCookies([
@@ -101,17 +101,12 @@ const App: React.FC = () => {
         if (response.ok) {
           console.log("login successful");
           return response.json();
-        } else {
-          setIsLoggedIn(false);
-          setIsLogInDone(true);
         }
         throw response;
       })
       .then((data) => {
         Cookies.set("accessToken", data.accessToken);
         Cookies.set("refreshToken", data.refreshToken);
-        setIsLoggedIn(true);
-        setIsLogInDone(true);
       })
       .catch(() => {
         Cookies.set("refreshToken", "");
@@ -119,6 +114,9 @@ const App: React.FC = () => {
         Cookies.set("userid", "");
         Cookies.set("usertype", "");
         Cookies.set("login_username", "");
+      })
+      .finally(() => {
+        setIsLogInDone(true);
       });
   };
 
@@ -136,7 +134,10 @@ const App: React.FC = () => {
   };
   useEffect(() => {
     document.title = "Scheduler System using React-Bootstrap";
-    getLoggedInStatus();
+    if (!cookies.accessToken) {
+      console.log("bypass");
+      setIsLogInDone(true);
+    } else getLoggedInStatus();
     socket.onAny((event, ...args) => {
       console.log("Socket onAny: ");
       console.log(event, args);
@@ -186,12 +187,11 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!cookies.accessToken) {
-      setIsLandingPageActive(true);
-      setIsLoggedIn(false);
-      disconnectSocketConnection();
-    } else attemptSocketConnection();
-  }, [cookies]);
+    setIsLandingPageActive(!cookies.accessToken || isModalShow);
+    setIsLoggedIn(cookies.accessToken);
+    if (!cookies.accessToken) disconnectSocketConnection();
+    else attemptSocketConnection();
+  }, [cookies.accessToken, isModalShow]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -218,18 +218,34 @@ const App: React.FC = () => {
   };
 
   /// TODO Improve/clarify how states represent logged in status (LoginFormModal should set state here if login/registration offured or the close button is merely clicked.)
-  const handleModalClose = (isCloseButtonClicked: boolean) => {
+  const handleModalClose = () => {
     setIsModalShow(false);
-    if (!isCloseButtonClicked) setIsLoggedIn(true);
-    else setIsLandingPageActive(true);
+    // if (cookies.accessToken) setIsLoggedIn(true);
+    // else setIsLandingPageActive(true);
   };
 
   return (
     <BrowserRouter>
       <LoadingOverlay
-        className="d-flex flex-column min-vh-100"
         spinner
         active={!isLogInDone}
+        text={"Loading your profile..."}
+        styles={{
+          overlay: (base) => ({
+            ...base,
+            background: "rgba(255, 255, 255, 1)",
+          }),
+          spinner: (base) => ({
+            ...base,
+            "& svg circle": {
+              stroke: "#000000",
+            },
+          }),
+          content: (base) => ({
+            ...base,
+            color: "#000000",
+          }),
+        }}
       >
         <TopBar />
         <LoginFormModal show={isModalShow} onHide={handleModalClose} />

@@ -25,7 +25,7 @@ export const LoginFormModal = ({ show, onHide }) => {
     <Modal
       show={show}
       backdrop="static"
-      onHide={() => onHide(true)}
+      onHide={() => onHide()}
       size={tabKey === "register" ? "lg" : ""}
     >
       <Modal.Header
@@ -100,7 +100,7 @@ export const LoginFormModal = ({ show, onHide }) => {
                     <Button
                       className="w-100"
                       onClick={() => {
-                        onHide(false);
+                        onHide();
                         setTabKey("login");
                       }}
                     >
