@@ -7,7 +7,7 @@ const {
   findRefreshTokenById,
   deleteRefreshToken,
   revokeTokens,
-  verifyOtp,
+  verifySession,
 } = require("./auth.services");
 const jwt = require("jsonwebtoken");
 
@@ -90,29 +90,6 @@ router.post("/sendotp", async (req, res) => {
   }
 });
 
-router.get("/verifyotp", async (req, res) => {
-  try {
-    const { email, otp: otpInReq } = req.body;
-    const wherequery = {
-      where: {
-        emailaddr: email,
-      },
-    };
-
-    let otp = await prisma.otp.findUnique(wherequery);
-
-    verifyOtp(otp, otpInReq);
-
-    console.log("Verified");
-    res.status(200).json({
-      msg: "OTP Verified",
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ err: err.message });
-  }
-});
-
 router.post("/register", async (req, res, next) => {
   try {
     const {
@@ -156,7 +133,7 @@ router.post("/register", async (req, res, next) => {
       },
     });
 
-    verifyOtp(otpInDatabase, otpInReq);
+    verifySession(otpInDatabase, otpInReq);
 
     if (type == user_type.Admin) {
       res.status(400);
