@@ -255,8 +255,8 @@ const App: React.FC = () => {
           </div>
         ) : (
           <Container fluid className="overflow-x-hidden pt-4 px-4 bg-body">
-            <Row id="sidebar-container">
-              <Col sm={12} xl={{ span: 6, order: 3 }} id="ui-body">
+            <Row>
+              <Col sm={12} xl={{ span: 9, order: 3 }} id="ui-body">
                 <Routes>
                   <Route path="/" element={<Dashboard />} />
                   <Route path="/appointments" element={<Appointments />} />
@@ -269,7 +269,6 @@ const App: React.FC = () => {
                   <Route path="/admin" element={<AdminTools />} />
                 </Routes>
               </Col>
-              <SideBar />
               <Col
                 sm={12}
                 xl={{ span: 3, order: "last" }}
