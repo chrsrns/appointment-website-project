@@ -338,6 +338,7 @@ router.get("/decodeoauth", async (req, res, next) => {
   }
 });
 
+// Deprecated in favour of ust using OAuth
 router.get("/emailfromgoogle", async (req, res, next) => {
   try {
     const authorizationheader = req.headers.authorization;
@@ -387,6 +388,47 @@ router.get("/emailfromgoogle", async (req, res, next) => {
       }
     });
     console.log(otp);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "An error occurred." });
+  }
+});
+
+// This is a copy of the method above BUT with the emailing removed AND also sending the OTP as a response. The OTP will be used by the client UI to verify if they really did go through the OAuth to enter the email and not just used the browser's Inspector to bypass the disabled form input.
+router.get("/saveemailfromgoogle", async (req, res, next) => {
+  try {
+    const authorizationheader = req.headers.authorization;
+    const token = authorizationheader.replace("Bearer ", "");
+    const profile = await axios
+      .get(
+        `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${token}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        },
+      )
+      .then((res) => res.data);
+    console.log(profile);
+
+    const email = profile.email;
+    const wherequery = {
+      where: {
+        emailaddr: email,
+      },
+    };
+
+    const randomOtp = Math.floor(Math.random() * 900000 + 100000);
+    let otp = await prisma.otp.findUnique(wherequery);
+    if (otp) await prisma.otp.delete(wherequery);
+    otp = await prisma.otp.create({
+      data: {
+        emailaddr: email,
+        otp: randomOtp,
+      },
+    });
+    res.json({ status: "Email sent", email: email, verif: randomOtp });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "An error occurred." });

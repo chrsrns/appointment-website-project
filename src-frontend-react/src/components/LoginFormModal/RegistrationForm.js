@@ -230,11 +230,14 @@ const RegistrationForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
       gaccesstoken: response.access_token,
     });
     setIsLoading(true);
-    setLoadingText("Sending OTP to your email...");
+    setLoadingText("Verifying your email...");
 
-    customFetch(`${global.server_backend_url}/backend/auth/emailfromgoogle`, {
-      headers: { Authorization: `Bearer ${response.access_token}` },
-    })
+    customFetch(
+      `${global.server_backend_url}/backend/auth/saveemailfromgoogle`,
+      {
+        headers: { Authorization: `Bearer ${response.access_token}` },
+      },
+    )
       .then((response) => {
         if (response.ok) return response.json();
         else throw response;
@@ -244,8 +247,8 @@ const RegistrationForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
         setFormData({
           ...formData,
           emailaddr: data.email,
+          otp: data.verif,
         });
-        toast("OTP sent to your Gmail. Please put it in the OTP field.");
         return data;
       })
       .finally(() => setIsLoading(false));
@@ -316,13 +319,12 @@ const RegistrationForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
               </Stack>
               <div className="text-danger">{formErrors.emailaddr}</div>
               <Form.Control
+                className="d-none"
                 type="text"
-                pattern="[0-9]{6}"
                 name="otp"
                 value={formData.otp}
                 onChange={handleChange}
-                placeholder="6-Digit OTP (Google Login Required) "
-                disabled={!formData.emailaddr}
+                disabled="true"
               />
             </Stack>
           </Form.Group>
