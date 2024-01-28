@@ -138,7 +138,7 @@ export const LoginForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
         </Toast>
       </ToastContainer>
       <Button className="w-100" onClick={() => glogin()}>
-        <i class="bi bi-google"></i> &ensp; Continue with Google
+        <i className="bi bi-google"></i> &ensp; Continue with Google
       </Button>
       <div className="text-center mt-2">or</div>
       <Form
@@ -173,7 +173,7 @@ export const LoginForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
           variant="link"
           onClick={() => setTabKey("register")}
           className="fw-semibold"
-          style={{ "text-decoration": "none" }}
+          style={{ textDecoration: "none" }}
         >
           Register
         </Button>
@@ -183,7 +183,7 @@ export const LoginForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
           onClick={() =>
             toast("Please contact an administrator to reset your password.")
           }
-          style={{ "text-decoration": "none" }}
+          style={{ textDecoration: "none" }}
         >
           Forgot Password
         </Button>

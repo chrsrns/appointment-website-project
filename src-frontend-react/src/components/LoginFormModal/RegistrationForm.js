@@ -324,7 +324,7 @@ const RegistrationForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
                   disabled
                 />
                 <Button onClick={() => glogin()}>
-                  <i class="bi bi-google"></i>
+                  <i className="bi bi-google"></i>
                 </Button>
               </Stack>
               <div className="text-danger">{formErrors.emailaddr}</div>
@@ -334,7 +334,7 @@ const RegistrationForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
                 name="otp"
                 value={formData.otp}
                 onChange={handleChange}
-                disabled="true"
+                disabled={true}
               />
             </Stack>
           </Form.Group>
@@ -417,7 +417,7 @@ const RegistrationForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
           className="mx-auto fw-semibold"
           variant="link"
           onClick={() => setTabKey("login")}
-          style={{ "text-decoration": "none" }}
+          style={{ textDecoration: "none" }}
         >
           Login
         </Button>
