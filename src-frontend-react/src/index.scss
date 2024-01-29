@@ -1,0 +1,43 @@
+@import "../node_modules/bootstrap/scss/bootstrap";
+
+$today-highlight-bg: rgba(var(--bs-tertiary-bg-rgb), var(--bs-bg-opacity));
+$out-of-range-bg-color: var(--bs-dark-bg-subtle);
+
+@import "react-big-calendar/lib/sass/styles";
+@import "react-big-calendar/lib/addons/dragAndDrop/styles";
+
+// Overriding styles from react-big-calendar/lib/sass/toolbar
+@import "react-big-calendar/lib/sass/variables";
+$active-background: var(--bs-primary-bg-subtle);
+$active-border: darken($btn-border, 12%);
+
+.rbc-toolbar {
+  & button {
+    color: $btn-color;
+    border: 1px solid $btn-border;
+    &:active,
+    &.rbc-active {
+      background-color: $active-background;
+      border-color: $active-border;
+
+      &:hover,
+      &:focus {
+        color: $btn-color;
+        background-color: var(--bs-primary-bg-subtle);
+        border-color: darken($btn-border, 25%);
+      }
+    }
+
+    &:focus {
+      color: $btn-color;
+      background-color: $active-background;
+      border-color: $active-border;
+    }
+
+    &:hover {
+      color: $btn-color;
+      background-color: $active-background;
+      border-color: $active-border;
+    }
+  }
+}

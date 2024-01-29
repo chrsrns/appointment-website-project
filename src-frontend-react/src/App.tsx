@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
-import "./Custom.scss";
 
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import {
