@@ -1,5 +1,5 @@
 import { user_type } from "@prisma/client";
-import { Card, Col, InputGroup, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import Cookies from "js-cookie";
 import { Jumbotron } from "../Jumbotron";
 import { FeedbackForm } from "./FeedbackForm";
