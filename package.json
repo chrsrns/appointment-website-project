@@ -1,7 +1,7 @@
 {
-  "name": "jb-project",
+  "name": "Scheduler-System-Demo",
   "version": "1.0.0",
-  "description": "",
+  "description": "A scheduler system utilizing multiple JS technologies.",
   "keywords": [],
   "author": "",
   "private": true,
