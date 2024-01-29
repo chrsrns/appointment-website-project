@@ -75,7 +75,10 @@ export const TopBar = () => {
   const location = useLocation();
 
   return (
-    <Navbar expand="lg" className="bg-body-tertiary shadow-sm">
+    <Navbar
+      expand={cookies.login_username ? "lg" : true}
+      className="bg-body-tertiary shadow-sm"
+    >
       <Container>
         <Navbar.Brand href="/">
           <i className="bi bi-calendar2-week me-2"></i>
