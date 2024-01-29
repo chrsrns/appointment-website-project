@@ -46,17 +46,17 @@ export const LoginFormModal = ({ show, onHide }) => {
           styles={{
             overlay: (base) => ({
               ...base,
-              background: "rgba(255, 255, 255, 1)",
+              background: "var(--bs-body-bg)",
             }),
             spinner: (base) => ({
               ...base,
               "& svg circle": {
-                stroke: "#000000",
+                stroke: "var(--bs-body-color)",
               },
             }),
             content: (base) => ({
               ...base,
-              color: "#000000",
+              color: "var(--bs-body-color)",
             }),
           }}
         >
