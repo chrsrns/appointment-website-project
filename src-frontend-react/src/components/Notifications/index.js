@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Alert, ListGroup } from "react-bootstrap";
+import { useCookies } from "react-cookie";
 import { toast } from "react-toastify";
 import { socket } from "../../socket";
 import { customFetch } from "../../utils";
@@ -8,28 +9,35 @@ const SideNotifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [dismissedNotifications, setDismissedNotifications] = useState([]);
 
+  const [cookies] = useCookies(["accessToken"]);
+  const accessToken = useRef("");
+  useEffect(() => {
+    accessToken.current = cookies.accessToken;
+  }, [cookies.accessToken]);
+
   const fetchAll = () => {
-    customFetch(
-      `${global.server_backend_url}/backend/notifications/notifications`,
-      {},
-    )
-      .then((response) => {
-        if (response.ok) return response.json();
-        throw response;
-      })
-      .then((data) => {
-        console.log(data);
-        setNotifications(
-          data
-            .slice()
-            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)),
-        );
-        setDismissedNotifications([]);
-      })
-      .catch((error) => {
-        console.error(error);
-        toast("Something went wrong when fetching notifications.");
-      });
+    if (accessToken.current)
+      customFetch(
+        `${global.server_backend_url}/backend/notifications/notifications`,
+        {},
+      )
+        .then((response) => {
+          if (response.ok) return response.json();
+          throw response;
+        })
+        .then((data) => {
+          console.log(data);
+          setNotifications(
+            data
+              .slice()
+              .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)),
+          );
+          setDismissedNotifications([]);
+        })
+        .catch((error) => {
+          console.error(error);
+          toast("Something went wrong when fetching notifications.");
+        });
   };
 
   useEffect(() => {
