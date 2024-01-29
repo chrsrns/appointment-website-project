@@ -13,20 +13,6 @@ export const Profile = () => {
       <Jumbotron header="Profile">Browse things related to only you.</Jumbotron>
       <Row>
         <Col>
-          <Card className="mb-3">
-            <Card.Header as={"h2"}>Settings</Card.Header>
-            <Card.Body>
-              <InputGroup>
-                <InputGroup.Text id="btnGroupDarkMode">
-                  Toggle dark mode for the system
-                </InputGroup.Text>
-              </InputGroup>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-      <Row>
-        <Col>
           <MyMedicalRecords />
         </Col>
       </Row>
