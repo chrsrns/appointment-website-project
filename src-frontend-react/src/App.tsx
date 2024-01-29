@@ -261,7 +261,12 @@ const App: React.FC = () => {
         ) : (
           <Container fluid className="overflow-x-hidden pt-4 px-4 bg-body">
             <Row>
-              <Col sm={12} xl={{ span: 9, order: 3 }} id="ui-body">
+              <Col
+                sm={12}
+                lg={{ span: 8, order: 3 }}
+                xl={{ span: 9, order: 3 }}
+                id="ui-body"
+              >
                 <Routes>
                   <Route path="/" element={<Dashboard />} />
                   <Route path="/appointments" element={<Appointments />} />
@@ -276,6 +281,7 @@ const App: React.FC = () => {
               </Col>
               <Col
                 sm={12}
+                lg={{ span: 4, order: "last" }}
                 xl={{ span: 3, order: "last" }}
                 style={{ marginBottom: "3rem" }}
               >
