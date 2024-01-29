@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-import { Button } from "react-bootstrap";
 import { useCookies } from "react-cookie";
 import "./index.css";
 
