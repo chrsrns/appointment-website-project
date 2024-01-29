@@ -31,15 +31,9 @@ import SideNotifications from "./components/Notifications";
 import { LandingPage } from "./components/LandingPage";
 import { TopBar } from "./components/TopBar";
 import { Profile } from "./components/Profile";
-
-import {
-  enable as enableDarkMode,
-  disable as disableDarkMode,
-} from "darkreader";
 import { GuidanceRecords } from "./components/GuidanceRecords";
 
 /// TODO Separate components to other files
-
 type user = {
   self: boolean;
   login_username: string;
@@ -77,16 +71,13 @@ const App: React.FC = () => {
   const onFirstRunLoginChecked = useRef(false);
 
   useEffect(() => {
+    const htmlEl = document.getElementsByTagName("html");
     if (cookies.darkmode === undefined) setCookies("darkmode", false);
 
-    if (cookies.darkmode) {
-      enableDarkMode({
-        brightness: 100,
-        contrast: 100,
-      });
-    } else {
-      disableDarkMode();
-    }
+    htmlEl[0].setAttribute(
+      "data-bs-theme",
+      cookies.darkmode ? "dark" : "light",
+    );
   }, [cookies.darkmode, setCookies]);
 
   const getLoggedInStatus = () => {
