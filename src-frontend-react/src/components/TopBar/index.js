@@ -102,7 +102,7 @@ export const TopBar = () => {
             onSelect={(link) => {
               navigate(link);
             }}
-            className="me-auto"
+            className="me-auto gap-1"
           >
             {cookies.login_username
               ? radios.map((radio, idx) => (
