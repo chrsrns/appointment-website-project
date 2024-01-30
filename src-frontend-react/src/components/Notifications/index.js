@@ -70,20 +70,24 @@ const SideNotifications = () => {
 
   return (
     <ListGroup className="overflow-scroll" style={{ maxHeight: "38rem" }}>
-      {notifications.map(
-        (notification) =>
-          !dismissedNotifications.includes(notification.id) && (
-            <Alert
-              key={notification.id}
-              dismissible
-              onClose={() => dismissNotification(notification.id)}
-            >
-              <p className="fw-bold mb-2 border-bottom border-secondary pb-2">
-                {notification.title}
-              </p>
-              {notification.message}
-            </Alert>
-          ),
+      {notifications.length === 0 ? (
+        <div className="text-secondary align-self-center">Nothing to show</div>
+      ) : (
+        notifications.map(
+          (notification) =>
+            !dismissedNotifications.includes(notification.id) && (
+              <Alert
+                key={notification.id}
+                dismissible
+                onClose={() => dismissNotification(notification.id)}
+              >
+                <p className="fw-bold mb-2 border-bottom border-secondary pb-2">
+                  {notification.title}
+                </p>
+                {notification.message}
+              </Alert>
+            ),
+        )
       )}
     </ListGroup>
   );
