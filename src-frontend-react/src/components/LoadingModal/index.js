@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Modal, Spinner } from 'react-bootstrap';
+import { useState, useEffect } from "react";
+import { Modal, Spinner } from "react-bootstrap";
 
 const FullscreenLoaderModal = ({ show }) => {
   const [isLoading, setIsLoading] = useState(true);
