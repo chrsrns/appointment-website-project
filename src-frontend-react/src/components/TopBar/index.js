@@ -84,6 +84,22 @@ export const TopBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  const isBelowLgBreakpoint = windowWidth < 992;
+
   return (
     <Navbar
       expand={cookies.login_username ? "lg" : true}
@@ -102,7 +118,7 @@ export const TopBar = () => {
             onSelect={(link) => {
               navigate(link);
             }}
-            className="me-auto gap-1"
+            className={`me-auto ${isBelowLgBreakpoint ? "gap-1" : ""}`}
           >
             {cookies.login_username
               ? radios.map((radio, idx) => (
