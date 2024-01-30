@@ -224,7 +224,9 @@ export const Dashboard = () => {
                           </thead>
                           <tbody>
                             {nonAvailableSchedules.map((appointment) => (
-                              <tr>
+                              <tr
+                                key={`${appointment.title}-${appointment.fromDate}-${appointment.toDate}-${appointment.state}`}
+                              >
                                 <td>
                                   <Nav.Link
                                     as={Link}

@@ -465,6 +465,7 @@ export const UserManagementForm = () => {
                   name="type"
                   type="radio"
                   id={`inline-radio-${userType}`}
+                  key={`inline-radio-${userType}`}
                   label={userType}
                   value={userType}
                   onChange={handleChange}
@@ -523,7 +524,7 @@ export const UserManagementForm = () => {
             <Accordion>
               {archivedUsersList.map((user) => {
                 return (
-                  <Accordion.Item eventKey={`${user.id}`}>
+                  <Accordion.Item key={`${user.id}`} eventKey={`${user.id}`}>
                     <Stack
                       direction="horizontal"
                       className="w-100 px-3 justify-content-between"
