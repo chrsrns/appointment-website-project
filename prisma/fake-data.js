@@ -11,7 +11,6 @@ function fakeStudentUser() {
     cnum: faker.phone.number(),
     emailaddr: faker.internet.email(),
     bdate: faker.date.birthdate(),
-    rating: 0,
     updatedAt: faker.datatype.datetime(),
     type: faker.helpers.arrayElement([user_type.Student]),
     login_username: faker.internet.userName(),
@@ -27,7 +26,6 @@ function fakeStaffUser() {
     cnum: faker.phone.number(),
     emailaddr: faker.internet.email(),
     bdate: faker.date.birthdate(),
-    rating: 0,
     updatedAt: faker.datatype.datetime(),
     type: faker.helpers.arrayElement([
       user_type.Teacher,
@@ -50,7 +48,6 @@ function fakeUserComplete() {
     cnum: faker.lorem.words(5),
     emailaddr: faker.lorem.words(5),
     bdate: faker.datatype.datetime(),
-    rating: faker.datatype.number(),
     createdAt: new Date(),
     updatedAt: new Date(),
     type: faker.helpers.arrayElement([
