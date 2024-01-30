@@ -361,6 +361,17 @@ export const UserManagementForm = () => {
         {/* </Form.Group> */}
         <Select
           className="fs-5 mb-3"
+          classNames={{
+            control: () => "bg-body text-body",
+            menu: () => "bg-body text-body",
+            multiValue: () => "bg-body text-body",
+            option: (state) =>
+              state.isFocused
+                ? "bg-primary-subtle text-body"
+                : "bg-body text-body",
+            singleValue: () => "bg-body text-body",
+            valueContainer: () => "bg-body text-body",
+          }}
           options={usersListOptions}
           value={selectedUser}
           onChange={handleUserSelectionChange}
