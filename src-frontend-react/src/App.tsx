@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
-import "./Custom.scss";
 
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import {
@@ -8,7 +7,6 @@ import {
   Col,
   Container,
   Row,
-  Stack,
   ListGroup,
   ListGroupItem,
 } from "react-bootstrap";
@@ -31,17 +29,10 @@ import SideNotifications from "./components/Notifications";
 
 import { LandingPage } from "./components/LandingPage";
 import { TopBar } from "./components/TopBar";
-import { SideBar } from "./components/SideBar";
 import { Profile } from "./components/Profile";
-
-import {
-  enable as enableDarkMode,
-  disable as disableDarkMode,
-} from "darkreader";
 import { GuidanceRecords } from "./components/GuidanceRecords";
 
 /// TODO Separate components to other files
-
 type user = {
   self: boolean;
   login_username: string;
@@ -51,15 +42,14 @@ type sort_obj = {
   username: string;
 };
 const App: React.FC = () => {
-  const [isActive, setIsActive] = useState(false);
-  const [isLandingPageActive, setIsLandingPageActive] = useState(true);
+  const [isLandingPageActive, setIsLandingPageActive] = useState(false);
   const [isModalShow, setIsModalShow] = useState(false);
 
-  const sidebarbtn_onClick = () => setIsActive(!isActive);
-  const mainRowClassName = `row-offcanvas row-offcanvas-left ${
-    isActive ? "active" : ""
-  }`;
-  const [cookies, setCookies] = useCookies(["accessToken", "darkmode"]);
+  const [cookies, setCookies] = useCookies([
+    "accessToken",
+    "refreshToken",
+    "darkmode",
+  ]);
 
   // useEffect(() => {
   //   document.documentElement.setAttribute(
@@ -77,18 +67,16 @@ const App: React.FC = () => {
 
   const [onlineUsers, setOnlineUsers] = useState([]);
   const socketConnected = useRef(false);
+  const onFirstRunLoginChecked = useRef(false);
 
   useEffect(() => {
+    const htmlEl = document.getElementsByTagName("html");
     if (cookies.darkmode === undefined) setCookies("darkmode", false);
 
-    if (cookies.darkmode) {
-      enableDarkMode({
-        brightness: 100,
-        contrast: 100,
-      });
-    } else {
-      disableDarkMode();
-    }
+    htmlEl[0].setAttribute(
+      "data-bs-theme",
+      cookies.darkmode ? "dark" : "light",
+    );
   }, [cookies.darkmode, setCookies]);
 
   const getLoggedInStatus = () => {
@@ -103,17 +91,12 @@ const App: React.FC = () => {
         if (response.ok) {
           console.log("login successful");
           return response.json();
-        } else {
-          setIsLoggedIn(false);
-          setIsLogInDone(true);
         }
         throw response;
       })
       .then((data) => {
         Cookies.set("accessToken", data.accessToken);
         Cookies.set("refreshToken", data.refreshToken);
-        setIsLoggedIn(true);
-        setIsLogInDone(true);
       })
       .catch(() => {
         Cookies.set("refreshToken", "");
@@ -121,6 +104,9 @@ const App: React.FC = () => {
         Cookies.set("userid", "");
         Cookies.set("usertype", "");
         Cookies.set("login_username", "");
+      })
+      .finally(() => {
+        setIsLogInDone(true);
       });
   };
 
@@ -137,8 +123,16 @@ const App: React.FC = () => {
     socket.disconnect();
   };
   useEffect(() => {
-    document.title = "Kapayapaan Integrated School Scheduler System";
-    getLoggedInStatus();
+    if (!onFirstRunLoginChecked.current) {
+      if (!cookies.accessToken) {
+        console.log("bypass");
+        setIsLogInDone(true);
+      } else getLoggedInStatus();
+      onFirstRunLoginChecked.current = true;
+    }
+  }, [cookies.accessToken]);
+  useEffect(() => {
+    document.title = "Scheduler System using React-Bootstrap";
     socket.onAny((event, ...args) => {
       console.log("Socket onAny: ");
       console.log(event, args);
@@ -188,12 +182,11 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!cookies.accessToken) {
-      setIsLandingPageActive(true);
-      setIsLoggedIn(false);
-      disconnectSocketConnection();
-    } else attemptSocketConnection();
-  }, [cookies]);
+    setIsLandingPageActive(!cookies.accessToken || isModalShow);
+    setIsLoggedIn(cookies.accessToken);
+    if (!cookies.accessToken) disconnectSocketConnection();
+    else attemptSocketConnection();
+  }, [cookies.accessToken, isModalShow]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -201,14 +194,18 @@ const App: React.FC = () => {
       // console.log('This code runs every 1 minute');
     }, 60000);
     const socketinterval = setInterval(() => {
-      if (!socketConnected.current) attemptSocketConnection();
+      if (
+        !socketConnected.current &&
+        (cookies.accessToken || cookies.refreshToken)
+      )
+        attemptSocketConnection();
     }, 1000);
     // Clean up the interval when the component unmounts
     return () => {
       clearInterval(intervalId);
       clearInterval(socketinterval);
     };
-  }, []);
+  }, [cookies.accessToken, cookies.refreshToken]);
 
   const handleLandingPageClick = () => {
     setIsLandingPageActive(false);
@@ -216,105 +213,95 @@ const App: React.FC = () => {
   };
 
   /// TODO Improve/clarify how states represent logged in status (LoginFormModal should set state here if login/registration offured or the close button is merely clicked.)
-  const handleModalClose = (isCloseButtonClicked: boolean) => {
+  const handleModalClose = () => {
     setIsModalShow(false);
-    if (!isCloseButtonClicked) setIsLoggedIn(true);
-    else setIsLandingPageActive(true);
+    // if (cookies.accessToken) setIsLoggedIn(true);
+    // else setIsLandingPageActive(true);
   };
 
   return (
     <BrowserRouter>
-      <LoadingOverlay spinner active={!isLogInDone}>
+      <LoadingOverlay
+        spinner
+        active={!isLogInDone}
+        text={"Loading your profile..."}
+        styles={{
+          overlay: (base) => ({
+            ...base,
+            background: "var(--bs-body-bg)",
+          }),
+          spinner: (base) => ({
+            ...base,
+            "& svg circle": {
+              stroke: "var(--bs-body-color)",
+            },
+          }),
+          content: (base) => ({
+            ...base,
+            color: "var(--bs-body-color)",
+          }),
+        }}
+      >
         <TopBar />
-        <LoginFormModal
-          show={isModalShow}
-          onHide={handleModalClose}
-          isLoggingIn={!isLogInDone}
-        />
-        {isLandingPageActive || !isLoggedIn ? (
-          <LandingPage onButtonClick={handleLandingPageClick} />
+        <LoginFormModal show={isModalShow} onHide={handleModalClose} />
+        {isLandingPageActive || !isLoggedIn || !isLogInDone ? (
+          <div className="flex-grow-1">
+            <LandingPage onButtonClick={handleLandingPageClick} />
+          </div>
         ) : (
-          <Stack className="pt-4 px-2 bg-body">
-            <Container fluid>
-              <Row className={mainRowClassName}>
-                <Col sm={12} lg={{ span: 6, order: 3 }} id="ui-body">
-                  <Routes>
-                    <Route
-                      path="/"
-                      element={
-                        <Dashboard sidebarbtn_onClick={sidebarbtn_onClick} />
-                      }
-                    />
-                    <Route
-                      path="/appointments"
-                      element={
-                        <Appointments sidebarbtn_onClick={sidebarbtn_onClick} />
-                      }
-                    />
-                    <Route
-                      path="/medrecords"
-                      element={
-                        <MedicalRecords
-                          sidebarbtn_onClick={sidebarbtn_onClick}
-                        />
-                      }
-                    />
-                    <Route
-                      path="/guidancerecords"
-                      element={
-                        <GuidanceRecords
-                          sidebarbtn_onClick={sidebarbtn_onClick}
-                        />
-                      }
-                    />
-                    <Route
-                      path="/profile"
-                      element={
-                        <Profile sidebarbtn_onClick={sidebarbtn_onClick} />
-                      }
-                    />
-                    <Route
-                      path="/admin"
-                      element={
-                        <AdminTools sidebarbtn_onClick={sidebarbtn_onClick} />
-                      }
-                    />
-                  </Routes>
-                </Col>
-                <SideBar />
-                <Col
-                  sm={12}
-                  lg={{ span: 3, order: "last" }}
-                  style={{ marginBottom: "3rem" }}
-                >
-                  <Card className="shadow-sm mb-3">
-                    <Card.Header as={"h2"}>Users Online</Card.Header>
-                    <Card.Body>
-                      <ListGroup>
-                        {onlineUsers.map((user) => {
-                          return (
-                            <ListGroupItem
-                              key={
-                                user.fname + user.mname + user.lname + user.type
-                              }
-                            >{`[${user.type}] ${user.lname}, ${user.fname} ${
-                              user.mname ? user.mname[0] + "." : ""
-                            }`}</ListGroupItem>
-                          );
-                        })}
-                      </ListGroup>
-                    </Card.Body>
-                  </Card>
-                  <Card className="shadow-sm mb-3">
-                    <Card.Header as={"h2"}>Notifications</Card.Header>
-                    <Card.Body>
-                      <SideNotifications />
-                    </Card.Body>
-                  </Card>
-                </Col>
-              </Row>
-            </Container>
-          </Stack>
+          <Container fluid className="overflow-x-hidden pt-4 px-4 bg-body">
+            <Row>
+              <Col
+                sm={12}
+                lg={{ span: 8, order: 3 }}
+                xl={{ span: 9, order: 3 }}
+                id="ui-body"
+              >
+                <Routes>
+                  <Route path="/" element={<Dashboard />} />
+                  <Route path="/appointments" element={<Appointments />} />
+                  <Route path="/medrecords" element={<MedicalRecords />} />
+                  <Route
+                    path="/guidancerecords"
+                    element={<GuidanceRecords />}
+                  />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/admin" element={<AdminTools />} />
+                </Routes>
+              </Col>
+              <Col
+                sm={12}
+                lg={{ span: 4, order: "last" }}
+                xl={{ span: 3, order: "last" }}
+                style={{ marginBottom: "3rem" }}
+              >
+                <Card className="shadow-sm mb-3">
+                  <Card.Header as={"h2"}>Users Online</Card.Header>
+                  <Card.Body>
+                    <ListGroup>
+                      {onlineUsers.map((user) => {
+                        return (
+                          <ListGroupItem
+                            key={
+                              user.fname + user.mname + user.lname + user.type
+                            }
+                          >{`[${user.type}] ${user.lname}, ${user.fname} ${
+                            user.mname ? user.mname[0] + "." : ""
+                          }`}</ListGroupItem>
+                        );
+                      })}
+                    </ListGroup>
+                  </Card.Body>
+                </Card>
+                <Card className="shadow-sm mb-3">
+                  <Card.Header as={"h2"}>Notifications</Card.Header>
+                  <Card.Body>
+                    <SideNotifications />
+                  </Card.Body>
+                </Card>
+              </Col>
+            </Row>
+          </Container>
         )}
       </LoadingOverlay>
       <ToastContainer />

@@ -1,73 +1,90 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Alert, ListGroup } from "react-bootstrap";
+import { useCookies } from "react-cookie";
 import { toast } from "react-toastify";
 import { socket } from "../../socket";
 import { customFetch } from "../../utils";
 
 const SideNotifications = () => {
-  const [notifications, setNotifications] = useState([])
+  const [notifications, setNotifications] = useState([]);
   const [dismissedNotifications, setDismissedNotifications] = useState([]);
 
+  const [cookies] = useCookies(["accessToken"]);
+  const accessToken = useRef("");
+  useEffect(() => {
+    accessToken.current = cookies.accessToken;
+  }, [cookies.accessToken]);
+
   const fetchAll = () => {
-    customFetch(`${global.server_backend_url}/backend/notifications/notifications`, {})
-      .then((response) => {
-        if (response.ok) return response.json();
-        throw response;
-      })
-      .then((data) => {
-        console.log(data)
-        setNotifications(data
-          .slice()
-          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-        );
-        setDismissedNotifications([])
-      })
-      .catch((error) => {
-        console.error(error);
-        toast("Something went wrong when fetching notifications.");
-      });
-  }
+    if (accessToken.current)
+      customFetch(
+        `${global.server_backend_url}/backend/notifications/notifications`,
+        {},
+      )
+        .then((response) => {
+          if (response.ok) return response.json();
+          throw response;
+        })
+        .then((data) => {
+          console.log(data);
+          setNotifications(
+            data
+              .slice()
+              .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)),
+          );
+          setDismissedNotifications([]);
+        })
+        .catch((error) => {
+          console.error(error);
+          toast("Something went wrong when fetching notifications.");
+        });
+  };
 
   useEffect(() => {
-    fetchAll()
+    fetchAll();
     socket.on("notify", () => {
-      fetchAll()
+      fetchAll();
     });
-  }, [])
+  }, []);
 
   const dismissNotification = (id) => {
     setDismissedNotifications([...dismissedNotifications, id]);
-    customFetch(`${global.server_backend_url}/backend/notifications/removeFromUsersToNotify/${id}`, {
-      method: 'PUT'
-    })
+    customFetch(
+      `${global.server_backend_url}/backend/notifications/removeFromUsersToNotify/${id}`,
+      {
+        method: "PUT",
+      },
+    )
       .then((response) => {
         if (response.ok) {
-          fetchAll()
-          return
-        };
+          fetchAll();
+          return;
+        }
         throw response;
       })
       .catch((error) => {
         console.error(error);
         toast("Something went wrong when removing from notification.");
       });
-
   };
 
   return (
     <ListGroup className="overflow-scroll" style={{ maxHeight: "38rem" }}>
-      {notifications.map((notification) => (
-        !dismissedNotifications.includes(notification.id) && (
-          <Alert
-            key={notification.id}
-            dismissible
-            onClose={() => dismissNotification(notification.id)}
-          >
-            <p className="fw-bold mb-2 border-bottom border-secondary pb-2">{notification.title}</p>
-            {notification.message}
-          </Alert>
-        )
-      ))}
+      {notifications.map(
+        (notification) =>
+          !dismissedNotifications.includes(notification.id) && (
+            <Alert
+              key={notification.id}
+              dismissible
+              onClose={() => dismissNotification(notification.id)}
+            >
+              <p className="fw-bold mb-2 border-bottom border-secondary pb-2">
+                {notification.title}
+              </p>
+              {notification.message}
+            </Alert>
+          ),
+      )}
     </ListGroup>
   );
 };

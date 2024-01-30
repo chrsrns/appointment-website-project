@@ -1,4 +1,4 @@
-import { Button, Card, Col, Row } from "react-bootstrap";
+import { Card, Col, Row } from "react-bootstrap";
 import { Jumbotron } from "../Jumbotron";
 import { AnnouncementsForm } from "./AnnouncementsForm";
 import UserManagementForm from "./UserManagementForm";
@@ -6,18 +6,13 @@ import UserApprovalComponent from "./UserApproval";
 import Cookies from "js-cookie";
 import FeedbackAnalytics from "./FeedbackAnalytics";
 
-export const AdminTools = ({ sidebarbtn_onClick }) => {
-  const usertype = Cookies.get("usertype")
+export const AdminTools = () => {
+  const usertype = Cookies.get("usertype");
 
   return (
     <>
-      {usertype === "Admin" ?
+      {usertype === "Admin" ? (
         <>
-          <p className="float-start d-lg-none d-md-block">
-            <Button variant="primary" size="sm" onClick={sidebarbtn_onClick}>
-              <i className="bi bi-chevron-right"></i>
-            </Button>
-          </p>
           <Jumbotron header="Admin Tools">
             Create and update database details
           </Jumbotron>
@@ -50,8 +45,7 @@ export const AdminTools = ({ sidebarbtn_onClick }) => {
             <UserApprovalComponent />
           </Row>
         </>
-        : null
-      }
+      ) : null}
     </>
   );
 };

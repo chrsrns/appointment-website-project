@@ -25,9 +25,8 @@ router.get("/announcements", async (req, res, next) => {
         createdAt: true,
         title: true,
         content: true,
-      }
-    }
-    );
+      },
+    });
     res.json(announcements);
   } catch (err) {
     console.error(err);
@@ -40,21 +39,21 @@ router.get("/announcements", async (req, res, next) => {
 router.get("/appointments", async (req, res, next) => {
   try {
     // const appointments = awa
-  } catch { }
+  } catch {}
 });
 
 router.get("/onlineusers", async (req, res, next) => {
   try {
     const user = await prisma.user.findMany({
       where: {
-        isOnline: true
+        isOnline: true,
       },
       select: {
         fname: true,
         mname: true,
         lname: true,
         type: true,
-      }
+      },
     });
     res.json(user);
   } catch (err) {
@@ -63,6 +62,6 @@ router.get("/onlineusers", async (req, res, next) => {
       .status(500)
       .json({ error: "An error occurred while fetching online users" });
   }
-})
+});
 
 module.exports = router;

@@ -1,6 +1,10 @@
-const { PrismaClient, user_type, user_approval_type } = require("@prisma/client");
+const {
+  PrismaClient,
+  user_type,
+  user_approval_type,
+} = require("@prisma/client");
 const prisma = new PrismaClient();
-const express = require('express');
+const express = require("express");
 const { isAuthenticated } = require("../middlewares");
 const { findUserIdByAccessToken } = require("../routes/users.services");
 
@@ -10,14 +14,14 @@ router.get("/records", async (req, res, next) => {
   try {
     const authorizationheader = req.headers.authorization;
 
-    const token = authorizationheader.replace('Bearer ', '');
-    const userId = findUserIdByAccessToken(token)
+    const token = authorizationheader.replace("Bearer ", "");
+    const userId = findUserIdByAccessToken(token);
     const medRecordsToGet = await prisma.medicalRecord.findMany({
       where: {
-        userId: userId
-      }
-    })
-    res.json(medRecordsToGet)
+        userId: userId,
+      },
+    });
+    res.json(medRecordsToGet);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "an error occurred!" });
@@ -26,32 +30,32 @@ router.get("/records", async (req, res, next) => {
 
 router.get("/records-by/:id", isAuthenticated, async (req, res, next) => {
   try {
-    const { id } = req.params
-    const authorizationheader = req.headers.authorization
+    const { id } = req.params;
+    const authorizationheader = req.headers.authorization;
 
-    const token = authorizationheader.replace('Bearer ', '')
-    const userId = findUserIdByAccessToken(token)
+    const token = authorizationheader.replace("Bearer ", "");
+    const userId = findUserIdByAccessToken(token);
 
     const user = await prisma.user.findUnique({
       where: {
         id: userId,
-        approved: { not: user_approval_type.Archived }
+        approved: { not: user_approval_type.Archived },
       },
       select: {
-        type: true
-      }
+        type: true,
+      },
     });
     if (user.type == user_type.Student) {
-      res.sendStatus(401)
-      return
+      res.sendStatus(401);
+      return;
     }
 
     const medRecordsToGet = await prisma.medicalRecord.findMany({
       where: {
-        userId: id
-      }
-    })
-    res.json(medRecordsToGet)
+        userId: id,
+      },
+    });
+    res.json(medRecordsToGet);
   } catch (err) {
     console.error(err);
     res.json({ error: err.message });
@@ -62,17 +66,17 @@ router.get("/users", async (req, res, next) => {
   try {
     const users = await prisma.user.findMany({
       where: {
-        approved: { not: user_approval_type.Archived }
+        approved: { not: user_approval_type.Archived },
       },
       select: {
         id: true,
         fname: true,
         mname: true,
         lname: true,
-        type: true
-      }
-    })
-    res.json(users)
+        type: true,
+      },
+    });
+    res.json(users);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "an error occurred!" });
@@ -81,40 +85,41 @@ router.get("/users", async (req, res, next) => {
 
 router.post("/record", async (req, res, next) => {
   try {
-    const data = req.body
+    const data = req.body;
 
     const record = await prisma.medicalRecord.create({
       data: data,
       include: {
         user: true,
-      }
+      },
     });
     const authorizationheader = req.headers.authorization;
-    const token = authorizationheader.replace('Bearer ', '');
-    const userId = findUserIdByAccessToken(token)
+    const token = authorizationheader.replace("Bearer ", "");
+    const userId = findUserIdByAccessToken(token);
     const user = await prisma.user.findUnique({
       where: {
-        id: userId
-      }
-    })
+        id: userId,
+      },
+    });
     createNotification({
       title: `Medical Record Added`,
       message: `Medical Record created by ${user.login_username} for ${record.user.login_username}`,
-      users: [record.user]
-    })
-    getSocketInstance().to(record.userId).emit("notify", {
-      title: `Medical Record Added`,
-      message: `Medical Record created by ${user.login_username} for ${record.user.login_username}`,
-    })
-    getSocketInstance().emit("update medrecords")
+      users: [record.user],
+    });
+    getSocketInstance()
+      .to(record.userId)
+      .emit("notify", {
+        title: `Medical Record Added`,
+        message: `Medical Record created by ${user.login_username} for ${record.user.login_username}`,
+      });
+    getSocketInstance().emit("update medrecords");
     res.json(record);
   } catch (error) {
     console.error(error);
     res
       .status(500)
       .json({ error: "An error occurred while creating a medical record" });
-
   }
-})
+});
 
-module.exports = router
+module.exports = router;
