@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main  # Adjust this branch name to your needs
+      - LifeWatcher123-patch-1
 
 jobs:
   build:
@@ -11,10 +12,10 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18  # Adjust the Node.js version as needed
 
