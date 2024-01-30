@@ -2,35 +2,45 @@ import { useCookies } from "react-cookie";
 import Cookies from "js-cookie";
 import { Button, Container, Nav, Navbar, Stack } from "react-bootstrap";
 import { DarkModeToggleButton } from "./DarkModeToggleButton";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { user_type } from "@prisma/client";
 
-export const TopBar = () => {
-  const [cookies] = useCookies(["login_username"]);
+const DEFAULT_RADIOS = [
+  {
+    name: "Dashboard",
+    value: "1",
+    link: "/",
+  },
+  {
+    name: "Appointments",
+    value: "2",
+    link: "/appointments",
+  },
+  {
+    name: "Profile",
+    value: "3",
+    link: "/profile",
+  },
+];
 
-  const [radios, setRadios] = useState([
-    {
-      name: "Dashboard",
-      value: "1",
-      link: "/",
-    },
-    {
-      name: "Appointments",
-      value: "2",
-      link: "/appointments",
-    },
-    {
-      name: "Profile",
-      value: "3",
-      link: "/profile",
-    },
-  ]);
+export const TopBar = () => {
+  const [cookies] = useCookies(["login_username", "usertype"]);
+
+  const [radios, setRadios] = useState(DEFAULT_RADIOS);
+
+  const radiosRef = useRef();
+
+  useEffect(() => {
+    radiosRef.current = radios;
+  }, [radios]);
 
   const updateRadios = useCallback(() => {
+    setRadios(DEFAULT_RADIOS);
+    console.log("updating radios");
     if (
-      Cookies.get("usertype") === user_type.Admin &&
-      !radios.some((e) => e.name === "Admin Tools")
+      cookies.usertype === user_type.Admin &&
+      !radiosRef.current.some((e) => e.name === "Admin Tools")
     )
       setRadios((prevRadios) => [
         ...prevRadios,
@@ -41,8 +51,8 @@ export const TopBar = () => {
         },
       ]);
     if (
-      Cookies.get("usertype") === user_type.Clinic &&
-      !radios.some((e) => e.name === "Medical Records")
+      cookies.usertype === user_type.Clinic &&
+      !radiosRef.current.some((e) => e.name === "Medical Records")
     )
       setRadios((prevRadios) => [
         ...prevRadios,
@@ -53,8 +63,8 @@ export const TopBar = () => {
         },
       ]);
     if (
-      Cookies.get("usertype") === user_type.Guidance &&
-      !radios.some((e) => e.name === "Guidance Records")
+      cookies.usertype === user_type.Guidance &&
+      !radiosRef.current.some((e) => e.name === "Guidance Records")
     )
       setRadios((prevRadios) => [
         ...prevRadios,
@@ -65,7 +75,7 @@ export const TopBar = () => {
         },
       ]);
     console.log("updating sidebar");
-  }, [radios]);
+  }, [cookies.usertype]);
 
   useEffect(() => {
     updateRadios();
