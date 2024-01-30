@@ -82,6 +82,8 @@ export const Dashboard = () => {
               x.dateString = `${moment(x.fromDate).format("dddd")}, ${moment(
                 x.fromDate,
               ).format("hh:mm A")} to ${moment(x.toDate).format("hh:mm A")}`;
+              x.fromDateISO = x.fromDate;
+              x.toDateISO = x.toDate;
               x.fromDate = moment(x.fromDate).format("MMM DD, YYYY hh:mm A");
               x.toDate = moment(x.toDate).format("MMM DD, YYYY hh:mm A");
               return x;
@@ -230,9 +232,7 @@ export const Dashboard = () => {
                                 <td>
                                   <Nav.Link
                                     as={Link}
-                                    to={`/appointments?datetime=${moment(
-                                      appointment.fromDate,
-                                    ).toISOString()}`}
+                                    to={`/appointments?datetime=${appointment.fromDateISO}`}
                                   >
                                     {appointment.title}
                                   </Nav.Link>
