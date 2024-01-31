@@ -188,6 +188,9 @@ export const LoginForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
           Forgot Password
         </Button>
       </Stack>
+      <p className="text-center text-secondary">
+        Demo user: demoer | Password: demo_1234
+      </p>
     </>
   );
 };
