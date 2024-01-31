@@ -45,6 +45,13 @@ const appointmentsTypesColors = {
 
 const CalendarWithDragAndDrop = withDragAndDrop(Calendar);
 
+// eslint-disable-next-line no-extend-native
+Date.prototype.addDays = function (days) {
+  var date = new Date(this.valueOf());
+  date.setDate(date.getDate() + days);
+  return date;
+};
+
 export default function DragAndDropCalendar({ localizer }) {
   let [searchParams] = useSearchParams();
 
@@ -216,21 +223,7 @@ export default function DragAndDropCalendar({ localizer }) {
         new RRule({
           freq: repeatRule,
           dtstart: new Date(event.start),
-          until: new Date(
-            new Date(date).getFullYear(),
-            new Date(date).getMonth() + 1,
-          ),
-        }),
-      );
-      start_rruleset.exrule(
-        new RRule({
-          freq: repeatRule,
-          dtstart: new Date(event.start),
-          until: new Date(
-            new Date(date).getFullYear(),
-            new Date(date).getMonth(),
-            0,
-          ),
+          until: new Date(date).addDays(30),
         }),
       );
 
@@ -239,38 +232,28 @@ export default function DragAndDropCalendar({ localizer }) {
         new RRule({
           freq: repeatRule,
           dtstart: new Date(event.end),
-          until: new Date(
-            new Date(date).getFullYear(),
-            new Date(date).getMonth() + 1,
-          ),
-        }),
-      );
-      end_rruleset.exrule(
-        new RRule({
-          freq: repeatRule,
-          dtstart: new Date(event.end),
-          until: new Date(
-            new Date(date).getFullYear(),
-            new Date(date).getMonth(),
-            0,
-          ),
+          until: new Date(date).addDays(30),
         }),
       );
 
-      const start_dates = start_rruleset.all();
-      const end_dates = end_rruleset.all();
-      console.log(start_dates);
+      const start_dates = start_rruleset.between(
+        new Date(new Date(date).toDateString()).addDays(-30),
+        new Date(new Date(date).toDateString()).addDays(30),
+      );
+      const end_dates = end_rruleset.between(
+        new Date(new Date(date).toDateString()).addDays(-30),
+        new Date(new Date(date).toDateString()).addDays(30),
+      );
 
-      // console.log(`starts: ${start_dates}`)
-      // console.log(`ends: ${end_dates}`)
-
-      return start_dates.map((date, index) => {
+      const newEvents = start_dates.map((date, index) => {
         return {
           ...event,
           start: new Date(date),
           end: new Date(end_dates[index]),
         };
       });
+
+      return newEvents;
     },
     [date],
   );
