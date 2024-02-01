@@ -344,6 +344,7 @@ router.get("/emailfromgoogle", async (req, res, next) => {
       }
     });
     console.log(otp)
+    res.json()
   } catch (error) {
     console.error(error);
     res
