@@ -77,6 +77,7 @@ const App: React.FC = () => {
 
   const [onlineUsers, setOnlineUsers] = useState([]);
   const socketConnected = useRef(false);
+  const onFirstRunLoginChecked = useRef(false);
 
   useEffect(() => {
     if (cookies.darkmode === undefined) setCookies("darkmode", false);
@@ -137,8 +138,20 @@ const App: React.FC = () => {
     socket.disconnect();
   };
   useEffect(() => {
+    if (!onFirstRunLoginChecked.current) {
+      if (!cookies.accessToken) {
+        console.log("bypass");
+        setIsLogInDone(true);
+      } else getLoggedInStatus();
+      onFirstRunLoginChecked.current = true;
+    }
+  }, [cookies.accessToken]);
+  useEffect(() => {
     document.title = "Kapayapaan Integrated School Scheduler System";
-    getLoggedInStatus();
+    if (!cookies.accessToken) {
+      console.log("bypass");
+      setIsLogInDone(true);
+    } else getLoggedInStatus();
     socket.onAny((event, ...args) => {
       console.log("Socket onAny: ");
       console.log(event, args);
