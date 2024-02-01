@@ -214,7 +214,8 @@ const App: React.FC = () => {
       // console.log('This code runs every 1 minute');
     }, 60000);
     const socketinterval = setInterval(() => {
-      if (!socketConnected.current) attemptSocketConnection();
+      if (!socketConnected.current && cookies.accessToken)
+        attemptSocketConnection();
     }, 1000);
     // Clean up the interval when the component unmounts
     return () => {
