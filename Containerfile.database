@@ -1,0 +1,11 @@
+FROM mysql/mysql-server:latest as base
+
+VOLUME ./mysqldata /var/lib/mysql
+
+ENV MYSQL_ROOT_PASSWORD=root_pw
+ENV MYSQL_ROOT_HOST=% 
+ENV MYSQL_USER=infodb_user 
+ENV MYSQL_PASSWORD=infodb_pw_123
+ENV MYSQL_DATABASE=infodb
+
+EXPOSE 3306 

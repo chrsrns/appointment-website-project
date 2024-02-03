@@ -1,0 +1,12 @@
+# Change this as necessary for your own project(s)
+Containerfile*
+README.md
+node_modules
+*/node_modules
+*.log
+.dockerignore
+.env*
+mysqldata*
+.vscode
+.github
+.git
