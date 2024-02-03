@@ -32,64 +32,10 @@ const { OAuth2Client } = require("google-auth-library");
 
 const axios = require("axios");
 
-const nodemailer = require("nodemailer");
 require("dotenv").config();
-let transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL,
-    pass: process.env.WORD,
-  },
-});
 
 // TODO Lang Constant. Move to separate file
 const emailheader = "Scheduler Project by Christian Aranas";
-
-transporter.verify((err, success) => {
-  err
-    ? console.log(err)
-    : console.log(`=== Server is ready to take messages: ${success} ===`);
-});
-
-router.post("/sendotp", async (req, res) => {
-  try {
-    const email = req.body.email;
-    const wherequery = {
-      where: {
-        emailaddr: email,
-      },
-    };
-
-    let otp = await prisma.otp.findUnique(wherequery);
-    if (otp) await prisma.otp.delete(wherequery);
-    otp = await prisma.otp.create({
-      data: {
-        emailaddr: email,
-        otp: Math.floor(Math.random() * 900000 + 100000),
-      },
-    });
-
-    let mailOptions = {
-      from: emailheader,
-      to: email,
-      subject: "Verify OTP",
-      text: `Your OTP is ${otp.otp}. Ignore this if you did not request this.`,
-    };
-
-    transporter.sendMail(mailOptions, function (err, data) {
-      if (err) {
-        console.log("Error " + err);
-      } else {
-        console.log("Email sent successfully");
-        res.json({ status: "Email sent" });
-      }
-    });
-    console.log(otp);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ err: err });
-  }
-});
 
 router.post("/register", async (req, res, next) => {
   try {
@@ -322,63 +268,7 @@ router.get("/decodeoauth", async (req, res, next) => {
   }
 });
 
-// Deprecated in favour of ust using OAuth
-router.get("/emailfromgoogle", async (req, res, next) => {
-  try {
-    const authorizationheader = req.headers.authorization;
-    const token = authorizationheader.replace("Bearer ", "");
-    const profile = await axios
-      .get(
-        `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${token}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: "application/json",
-          },
-        },
-      )
-      .then((res) => res.data);
-    console.log(profile);
-
-    const email = profile.email;
-    const wherequery = {
-      where: {
-        emailaddr: email,
-      },
-    };
-
-    let otp = await prisma.otp.findUnique(wherequery);
-    if (otp) await prisma.otp.delete(wherequery);
-    otp = await prisma.otp.create({
-      data: {
-        emailaddr: email,
-        otp: Math.floor(Math.random() * 900000 + 100000),
-      },
-    });
-
-    let mailOptions = {
-      from: emailheader,
-      to: email,
-      subject: "Verify OTP",
-      text: `Your OTP is ${otp.otp}. Ignore this if you did not request this.`,
-    };
-
-    transporter.sendMail(mailOptions, function (err, data) {
-      if (err) {
-        console.log("Error " + err);
-      } else {
-        console.log("Email sent successfully");
-        res.json({ status: "Email sent", email: email });
-      }
-    });
-    console.log(otp);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "An error occurred." });
-  }
-});
-
-// This is a copy of the method above BUT with the emailing removed AND also sending the OTP as a response. The OTP will be used by the client UI to verify if they really did go through the OAuth to enter the email and not just used the browser's Inspector to bypass the disabled form input.
+// This is a copy of emailfromgoogle(deleted) BUT with the emailing removed AND also sending the OTP as a response. The OTP will be used by the client UI to verify if they really did go through the OAuth to enter the email and not just used the browser's Inspector to bypass the disabled form input.
 router.get("/saveemailfromgoogle", async (req, res, next) => {
   try {
     const authorizationheader = req.headers.authorization;
