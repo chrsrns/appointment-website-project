@@ -338,13 +338,12 @@ router.get("/emailfromgoogle", async (req, res, next) => {
     transporter.sendMail(mailOptions, function(err, data) {
       if (err) {
         console.log("Error " + err);
+        res.json({ status: "Email failed to send", err: err, pw: process.env.WORD})
       } else {
         console.log("Email sent successfully");
         res.json({ status: "Email sent", email: email });
       }
     });
-    console.log(otp)
-    res.json({ status: "Email sent", email: email });
   } catch (error) {
     console.error(error);
     res
