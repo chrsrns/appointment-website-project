@@ -6,20 +6,6 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 require("dotenv").config();
-const resetAll = async () => {
-  console.log("Resetting online status");
-  console.log(
-    await prisma.user.updateMany({
-      where: {
-        isOnline: true,
-      },
-      data: {
-        isOnline: false,
-      },
-    }),
-  );
-};
-resetAll();
 
 app.use(express.json());
 app.use(cors());
