@@ -147,10 +147,9 @@ export const LoginForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
         onSubmit={handleLogin}
       >
         <Form.Group controlId="formBasicEmail">
-          <Form.Label>Username/LRN</Form.Label>
+          <Form.Label>Username</Form.Label>
           <Form.Control
-            type="email"
-            placeholder="Enter your username or LRN"
+            placeholder="Enter a username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
@@ -158,6 +157,7 @@ export const LoginForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
         <Form.Group controlId="formBasicPassword">
           <Form.Label>Password</Form.Label>
           <Form.Control
+            disabled
             type="password"
             placeholder="Password"
             value={password}
@@ -189,7 +189,8 @@ export const LoginForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
         </Button>
       </Stack>
       <p className="text-center text-secondary">
-        Demo user: demoer | Password: demo_1234
+        This is a public version. Logging in is oversimplified to allow testing
+        of the application. No need to register nor input a password.
       </p>
     </>
   );
