@@ -75,26 +75,17 @@ router.post("/register", async (req, res, next) => {
 
 router.post("/login", async (req, res, next) => {
   try {
-    const { login_username, login_password } = req.body;
-    if (!login_username || !login_password) {
+    const { login_username } = req.body;
+    if (!login_username) {
       res.status(400);
-      throw new Error("You must provide an email and a password.");
+      throw new Error("You must provide your username.");
     }
 
     const existingUser = await findUserByUsername(login_username);
 
     if (!existingUser) {
       res.status(403);
-      throw new Error("Invalid login credentials.");
-    }
-
-    const validPassword = await bcrypt.compareSync(
-      login_password,
-      existingUser.login_password,
-    );
-    if (!validPassword) {
-      res.status(403);
-      throw new Error("Invalid login credentials.");
+      throw new Error("Invalid username used.");
     }
 
     switch (existingUser.approved) {
