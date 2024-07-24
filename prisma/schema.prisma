@@ -124,11 +124,11 @@ model Notifications {
   usersToNotify User[]
 }
 
+// TODO: Remove references to removed field Clinic
 enum user_type {
   Student
   Teacher
   Guidance
-  Clinic
   Admin
 }
 
