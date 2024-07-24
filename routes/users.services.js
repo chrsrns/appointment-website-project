@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const { db } = require("../db");
 const jwt = require("jsonwebtoken");
+const { user_approval_type } = require("@prisma/client");
 
 function findUserByUsername(login_username) {
   return db.user.findUnique({
@@ -38,6 +39,7 @@ function findUserByEmail(emailaddr) {
 
 function createUser(user) {
   user.login_password = bcrypt.hashSync(user.login_password, 12);
+  user.approved = user_approval_type.Approved;
   console.log(user);
   return db.user.create({
     data: user,
