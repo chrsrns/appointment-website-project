@@ -25,7 +25,6 @@ model User {
   type user_type
 
   login_username String @unique
-  login_password String
 
   approved user_approval_type @default(Pending)
 
