@@ -13,17 +13,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// TODO: Remove references to the removed fields
 model User {
-  id       String   @id @default(uuid())
-  fname    String   @db.VarChar(30)
-  mname    String?  @db.VarChar(30)
-  lname    String   @db.VarChar(30)
-  isOnline Boolean? @default(false)
+  id    String @id @default(uuid())
+  fname String @db.VarChar(30)
+  lname String @db.VarChar(30)
 
-  addr      String   @db.VarChar(255)
-  cnum      String   @db.VarChar(50)
-  emailaddr String   @unique @db.VarChar(50)
-  bdate     DateTime @db.Date
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
@@ -42,8 +37,6 @@ model User {
   Notifications     Notifications[]
   Feedback          Feedback?
   GuidanceRecord    GuidanceRecord[]
-
-  @@unique([fname, mname, lname])
 }
 
 model RefreshToken {
