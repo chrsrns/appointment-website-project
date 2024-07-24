@@ -139,7 +139,7 @@ const RegistrationForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
           if (response.ok) {
             setResponseHeader("Registration Successful");
             setResponseBody(
-              "Please wait for the admin to approve your registration before you can sign in.",
+              "Registration successful! No need for admin to approve the registration. Feel free to login using your username.",
             );
             resetToDefault();
             setShowNotif(true);
