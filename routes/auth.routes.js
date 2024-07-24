@@ -39,60 +39,24 @@ const emailheader = "Scheduler Project by Christian Aranas";
 
 router.post("/register", async (req, res, next) => {
   try {
-    const {
-      fname,
-      lname,
-      login_username,
-      login_password,
-      addr,
-      cnum,
-      emailaddr,
-      bdate,
-      type,
-      otp: otpInReq,
-    } = req.body;
+    const { fname, lname, login_username, login_password, type } = req.body;
     console.log(req.body);
-    if (
-      !login_username ||
-      !login_password ||
-      !fname ||
-      !lname ||
-      !addr ||
-      !cnum ||
-      !emailaddr ||
-      !bdate ||
-      !type
-    ) {
+    if (!login_username || !login_password || !fname || !lname || !type) {
       res.status(400);
       throw new Error(`You must provide an all required fields.`);
-    }
-    if (await findUserByEmail(emailaddr)) {
-      res.status(400);
-      throw new Error(
-        "That email is already registered. If that is not you, please contact the developers.",
-      );
     }
 
     const existingUser = await findUserByUsername(login_username);
 
     if (existingUser) {
       res.status(400);
-      throw new Error("LRN/Username already in use");
+      throw new Error("Username already in use");
     }
-
-    let otpInDatabase = await prisma.otp.findUnique({
-      where: {
-        emailaddr: emailaddr,
-      },
-    });
-
-    verifySession(otpInDatabase, otpInReq);
 
     if (type == user_type.Admin) {
       res.status(400);
       throw new Error("Unauthorized");
     }
-    delete req.body.otp;
 
     const user = await createUser(req.body);
     createNotification({
