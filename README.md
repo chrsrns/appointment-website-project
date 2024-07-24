@@ -1,5 +1,9 @@
 # Scheduler Project
 
+> Note: Since commit 7dc3403, the auth process is overhauled. This removes some processes that the original website version showcased, including email OTPs, password hashing, and user registration approval.
+
+This is a functional, full-stack website that is complete with an interactible calendar, a websocket notification and chat system and roles. 
+
 ## Installation
 
 ### Install required Nodejs dependencies
