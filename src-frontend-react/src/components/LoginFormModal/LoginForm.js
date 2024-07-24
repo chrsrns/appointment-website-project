@@ -140,6 +140,10 @@ export const LoginForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
       <Button className="w-100" onClick={() => glogin()}>
         <i className="bi bi-google"></i> &ensp; Continue with Google
       </Button>
+      <p className="text-center text-secondary">
+        Note: This only works if your username matches your Google's email
+        address.
+      </p>
       <div className="text-center mt-2">or</div>
       <Form
         className="d-grid gap-3 w-100 mb-3"
@@ -190,7 +194,8 @@ export const LoginForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
       </Stack>
       <p className="text-center text-secondary">
         This is a public version. Logging in is oversimplified to allow testing
-        of the application. No need to register nor input a password.
+        of the application. No need to input a password, but a quick
+        registration is still required.
       </p>
     </>
   );
