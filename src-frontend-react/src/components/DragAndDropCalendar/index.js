@@ -20,7 +20,6 @@ import moment from "moment";
 const DEFAULT_USER_TO_FILTER_VALUES = {
   id: "",
   fname: "",
-  mname: "",
   lname: "",
   type: "",
 };
@@ -159,9 +158,7 @@ export default function DragAndDropCalendar({ localizer }) {
             ...data.map((staff) => {
               return {
                 value: staff,
-                label: `[${staff.type}] ${staff.lname}, ${staff.fname} ${
-                  staff.mname ? staff.mname[0] + "." : ""
-                }`,
+                label: `[${staff.type}] ${staff.lname}, ${staff.fname}`,
               };
             }),
           ]);

@@ -12,7 +12,6 @@ import { user_type } from "@prisma/client";
 const DEFAULT_FORM_VALUES = {
   id: "",
   fname: "",
-  mname: "",
   lname: "",
   addr: "",
   cnum: "",
@@ -102,9 +101,7 @@ export const UserManagementForm = () => {
       ...usersList.map((user) => {
         return {
           value: user,
-          label: `[${user.type}] ${user.lname}, ${user.fname}${
-            user.mname ? " " + user.mname : ""
-          }`,
+          label: `[${user.type}] ${user.lname}, ${user.fname}`,
         };
       }),
     ]);
@@ -128,7 +125,7 @@ export const UserManagementForm = () => {
 
   const handleChange = (e) => {
     let { name, value } = e.target;
-    if (name === "fname" || name === "mname" || name === "lname") {
+    if (name === "fname" || name === "lname") {
       console.log("triggered");
       value = value.replace(/\w\S*/g, function (txt) {
         return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
@@ -236,7 +233,6 @@ export const UserManagementForm = () => {
       // Handle form submission here (e.g., send data to a server).
       const formatted = {
         fname: formData.fname,
-        mname: formData.mname,
         lname: formData.lname,
         addr: formData.addr,
         cnum: formData.cnum,
@@ -388,15 +384,6 @@ export const UserManagementForm = () => {
             />
             <div className="text-danger">{formErrors.fname}</div>
           </Form.Group>
-          <Form.Group as={Col} md="4" controlId="middleName">
-            <Form.Label>Middle Name</Form.Label>
-            <Form.Control
-              type="text"
-              name="mname"
-              value={formData.mname}
-              onChange={handleChange}
-            />
-          </Form.Group>
           <Form.Group as={Col} md="4" controlId="lastName">
             <Form.Label>Last Name</Form.Label>
             <Form.Control
@@ -530,7 +517,7 @@ export const UserManagementForm = () => {
                       className="w-100 px-3 justify-content-between"
                     >
                       <Accordion.Header className="w-100 pe-3">
-                        {`[${user.type}] ${user.lname}, ${user.fname} ${user.mname}`}
+                        {`[${user.type}] ${user.lname}, ${user.fname}`}
                       </Accordion.Header>
                       <Button onClick={() => handleUnArchive(user.id)}>
                         Unarchive

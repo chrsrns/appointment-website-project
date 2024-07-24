@@ -98,8 +98,6 @@ export const PrintModal = ({ show, onClose, records }) => {
                     {record.Users.map((user) => (
                       <ListGroup.Item>{`[${user.type}] ${user.lname}, ${
                         user.fname
-                      } ${
-                        user.mname ? user.mname[0] + "." : ""
                       }`}</ListGroup.Item>
                     ))}
                   </ListGroup>
@@ -147,8 +145,6 @@ export const PrintModal = ({ show, onClose, records }) => {
                         {record.Users.map((user) => (
                           <ListGroup.Item>{`[${user.type}] ${user.lname}, ${
                             user.fname
-                          } ${
-                            user.mname ? user.mname[0] + "." : ""
                           }`}</ListGroup.Item>
                         ))}
                       </ListGroup>

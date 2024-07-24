@@ -72,7 +72,6 @@ router.get("/students", async (req, res, next) => {
       select: {
         id: true,
         fname: true,
-        mname: true,
         lname: true,
         type: true,
       },

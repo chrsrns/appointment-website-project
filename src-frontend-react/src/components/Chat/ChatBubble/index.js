@@ -118,9 +118,7 @@ const Chat = ({ scheduleId, hideTextBox = false }) => {
               >
                 <Card.Body>
                   <p className="fw-bold mb-2 border-bottom border-secondary pb-2">
-                    {`${message.User.lname}, ${message.User.fname} ${
-                      message.mname ? message.mname[0] + "." : ""
-                    }`}
+                    {`${message.User.lname}, ${message.User.fname}`}
                   </p>
                   {message.content}
                   <p

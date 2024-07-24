@@ -102,11 +102,9 @@ const FeedbackAnalytics = () => {
                   return (
                     <ListGroupItem eventKey={`${user.id}`}>
                       <p className="fw-bold mb-2 border-bottom border-secondary pb-2">
-                        {`[${user.type}] ${user.lname}, ${user.fname} ${
-                          user.mname
-                        } (${moment(feedback.createdAt).format(
-                          "MMM DD, YYYY hh:mm A",
-                        )})`}
+                        {`[${user.type}] ${user.lname}, ${user.fname} (${moment(
+                          feedback.createdAt,
+                        ).format("MMM DD, YYYY hh:mm A")})`}
                       </p>
                       {feedback.feedbackText}
                     </ListGroupItem>

@@ -50,7 +50,6 @@ router.get("/onlineusers", async (req, res, next) => {
       },
       select: {
         fname: true,
-        mname: true,
         lname: true,
         type: true,
       },

@@ -22,7 +22,6 @@ router.get("/users", async (req, res, next) => {
       select: {
         id: true,
         fname: true,
-        mname: true,
         lname: true,
         addr: true,
         cnum: true,
@@ -47,7 +46,6 @@ router.get("/archivedusers", async (req, res, next) => {
       select: {
         id: true,
         fname: true,
-        mname: true,
         lname: true,
         addr: true,
         cnum: true,
@@ -71,7 +69,6 @@ router.get("/feedbacks", async (req, res, next) => {
           select: {
             id: true,
             fname: true,
-            mname: true,
             lname: true,
             type: true,
           },
@@ -94,7 +91,6 @@ router.get("/pendingusers", async (req, res, next) => {
       select: {
         id: true,
         fname: true,
-        mname: true,
         lname: true,
         addr: true,
         cnum: true,
