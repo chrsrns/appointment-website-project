@@ -208,12 +208,10 @@ router.post("/unarchive/:id", async (req, res) => {
     res.json(message);
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .json({
-        error: "An error occurred while unarchiving the user",
-        errbody: error,
-      });
+    res.status(500).json({
+      error: "An error occurred while unarchiving the user",
+      errbody: error,
+    });
   }
 });
 
@@ -323,12 +321,10 @@ router.delete("/user/:id", async (req, res) => {
     }
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .json({
-        error: "An error occurred while deleting the user",
-        errbody: error,
-      });
+    res.status(500).json({
+      error: "An error occurred while deleting the user",
+      errbody: error,
+    });
   }
 });
 
