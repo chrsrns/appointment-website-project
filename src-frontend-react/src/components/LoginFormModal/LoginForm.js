@@ -183,6 +183,7 @@ export const LoginForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
         </Button>
         <div className="vr" />
         <Button
+          disabled
           variant="link"
           onClick={() =>
             toast("Please contact an administrator to reset your password.")
