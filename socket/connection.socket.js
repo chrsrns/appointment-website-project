@@ -32,7 +32,6 @@ class Connection {
             userId: socket.userId,
             login_username: socket.login_username,
             fname: socket.fname,
-            mname: socket.mname,
             lname: socket.lname,
             type: socket.type,
           });
@@ -67,7 +66,6 @@ function connect(io) {
       select: {
         login_username: true,
         fname: true,
-        mname: true,
         lname: true,
         type: true,
       },
@@ -76,7 +74,6 @@ function connect(io) {
     socket.userId = userId;
     socket.login_username = user.login_username;
     socket.fname = user.fname;
-    socket.mname = user.mname;
     socket.lname = user.lname;
     socket.type = user.type;
     next();
