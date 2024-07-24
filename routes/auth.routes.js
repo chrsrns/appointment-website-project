@@ -297,13 +297,15 @@ router.post("/googlelogin", async (req, res, next) => {
 
     const existingUser = await prisma.user.findUnique({
       where: {
-        emailaddr: email,
+        login_username: email,
       },
     });
 
     if (!existingUser) {
       res.status(403);
-      throw new Error("Invalid login credentials.");
+      throw new Error(
+        "Invalid login credentials. Make sure that the email of your Google account matches your registered username.",
+      );
     }
 
     switch (existingUser.approved) {
