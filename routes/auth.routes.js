@@ -39,9 +39,10 @@ const emailheader = "Scheduler Project by Christian Aranas";
 
 router.post("/register", async (req, res, next) => {
   try {
-    const { fname, lname, login_username, login_password, type } = req.body;
+    const { fname, lname, login_username, type } = req.body;
+    //
     console.log(req.body);
-    if (!login_username || !login_password || !fname || !lname || !type) {
+    if (!login_username || !fname || !lname || !type) {
       res.status(400);
       throw new Error(`You must provide an all required fields.`);
     }
