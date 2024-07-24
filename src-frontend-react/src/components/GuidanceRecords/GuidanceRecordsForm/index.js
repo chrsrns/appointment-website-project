@@ -119,9 +119,7 @@ export const GuidanceRecordsForm = () => {
       ...usersList.map((user) => {
         return {
           value: user,
-          label: `[${user.type}] ${user.lname}, ${user.fname} ${
-            user.mname ? user.mname[0] + "." : ""
-          }`,
+          label: `[${user.type}] ${user.lname}, ${user.fname}`,
         };
       }),
     ]);

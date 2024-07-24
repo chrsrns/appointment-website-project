@@ -282,12 +282,8 @@ const App: React.FC = () => {
                       {onlineUsers.map((user) => {
                         return (
                           <ListGroupItem
-                            key={
-                              user.fname + user.mname + user.lname + user.type
-                            }
-                          >{`[${user.type}] ${user.lname}, ${user.fname} ${
-                            user.mname ? user.mname[0] + "." : ""
-                          }`}</ListGroupItem>
+                            key={user.fname + user.lname + user.type}
+                          >{`[${user.type}] ${user.lname}, ${user.fname}`}</ListGroupItem>
                         );
                       })}
                     </ListGroup>

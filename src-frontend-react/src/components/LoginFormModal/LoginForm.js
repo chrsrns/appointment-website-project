@@ -140,6 +140,10 @@ export const LoginForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
       <Button className="w-100" onClick={() => glogin()}>
         <i className="bi bi-google"></i> &ensp; Continue with Google
       </Button>
+      <p className="text-center text-secondary">
+        Note: This only works if your username matches your Google's email
+        address.
+      </p>
       <div className="text-center mt-2">or</div>
       <Form
         className="d-grid gap-3 w-100 mb-3"
@@ -147,10 +151,9 @@ export const LoginForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
         onSubmit={handleLogin}
       >
         <Form.Group controlId="formBasicEmail">
-          <Form.Label>Username/LRN</Form.Label>
+          <Form.Label>Username</Form.Label>
           <Form.Control
-            type="email"
-            placeholder="Enter your username or LRN"
+            placeholder="Enter a username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
@@ -158,6 +161,7 @@ export const LoginForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
         <Form.Group controlId="formBasicPassword">
           <Form.Label>Password</Form.Label>
           <Form.Control
+            disabled
             type="password"
             placeholder="Password"
             value={password}
@@ -179,6 +183,7 @@ export const LoginForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
         </Button>
         <div className="vr" />
         <Button
+          disabled
           variant="link"
           onClick={() =>
             toast("Please contact an administrator to reset your password.")
@@ -189,7 +194,9 @@ export const LoginForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
         </Button>
       </Stack>
       <p className="text-center text-secondary">
-        Demo user: demoer | Password: demo_1234
+        This is a public version. Logging in is oversimplified to allow testing
+        of the application. No need to input a password, but a quick
+        registration is still required.
       </p>
     </>
   );

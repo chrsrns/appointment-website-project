@@ -19,14 +19,13 @@ import { useCookies } from "react-cookie";
 
 const AppointmentFormUserList = ({
   fname,
-  mname,
   lname,
   isDeletable,
   onButtonClick,
 }) => {
   return (
     <ListGroup.Item className="d-flex justify-content-between align-items-center">
-      <>{`${fname} ${mname ? mname : ""} ${lname}`}</>
+      <>{`${fname} ${lname}`}</>
       {isDeletable ? (
         <Button variant="danger" size="sm" onClick={onButtonClick}>
           Remove
@@ -417,9 +416,7 @@ export const AppointmentFormModal = ({
               return (
                 <option key={student.id} value={student.id}>{`${
                   student.fname
-                } ${student.mname ? student.mname + " " : ""}${
-                  student.lname
-                }`}</option>
+                } ${student.lname}`}</option>
               );
             })}
           </Form.Select>
@@ -442,7 +439,6 @@ export const AppointmentFormModal = ({
               <AppointmentFormUserList
                 key={selectedStudent.id}
                 fname={selectedStudent.fname}
-                mname={selectedStudent.mname}
                 lname={selectedStudent.lname}
                 isDeletable={Cookies.get("userid") === authorUserId || !id}
                 onButtonClick={() => {
@@ -481,9 +477,10 @@ export const AppointmentFormModal = ({
             </option>
             {staffList.map((staff) => {
               return (
-                <option key={staff.id} value={staff.id}>{`${staff.fname} ${
-                  staff.mname ? staff.mname + " " : ""
-                }${staff.lname}`}</option>
+                <option
+                  key={staff.id}
+                  value={staff.id}
+                >{`${staff.fname} ${staff.lname}`}</option>
               );
             })}
           </Form.Select>
@@ -498,9 +495,8 @@ export const AppointmentFormModal = ({
           {selectedStaffList.map((selectedStaff) => {
             return (
               <AppointmentFormUserList
-                key={`${selectedStaff.fname}.${selectedStaff.mname}.${selectedStaff.lname}`}
+                key={`${selectedStaff.fname}.${selectedStaff.lname}`}
                 fname={selectedStaff.fname}
-                mname={selectedStaff.mname}
                 lname={selectedStaff.lname}
                 isDeletable={Cookies.get("userid") === authorUserId || !id}
                 onButtonClick={() => {

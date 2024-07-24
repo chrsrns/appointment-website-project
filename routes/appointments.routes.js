@@ -27,7 +27,6 @@ router.get("/students", async (req, res, next) => {
       select: {
         id: true,
         fname: true,
-        mname: true,
         lname: true,
       },
     });
@@ -60,7 +59,6 @@ router.get("/staff", async (req, res, next) => {
       select: {
         id: true,
         fname: true,
-        mname: true,
         lname: true,
         type: true,
       },
@@ -152,7 +150,6 @@ router.get("/schedules", async (req, res, next) => {
           select: {
             id: true,
             fname: true,
-            mname: true,
             lname: true,
             type: true,
           },
@@ -236,7 +233,6 @@ router.get("/staff-availability", async (req, res, next) => {
           select: {
             id: true,
             fname: true,
-            mname: true,
             lname: true,
           },
         },
@@ -292,7 +288,6 @@ router.get("/schedules/by-user/:id", async (req, res, next) => {
           select: {
             id: true,
             fname: true,
-            mname: true,
             lname: true,
             type: true,
           },
@@ -319,7 +314,6 @@ router.get("/schedule/:id", async (req, res) => {
           select: {
             id: true,
             fname: true,
-            mname: true,
             lname: true,
             type: true,
           },
@@ -525,7 +519,6 @@ router.get("/messages/by-schedule/:id", async (req, res, next) => {
           select: {
             login_username: true,
             fname: true,
-            mname: true,
             lname: true,
           },
         },

@@ -39,60 +39,25 @@ const emailheader = "Scheduler Project by Christian Aranas";
 
 router.post("/register", async (req, res, next) => {
   try {
-    const {
-      fname,
-      lname,
-      login_username,
-      login_password,
-      addr,
-      cnum,
-      emailaddr,
-      bdate,
-      type,
-      otp: otpInReq,
-    } = req.body;
+    const { fname, lname, login_username, type } = req.body;
+    //
     console.log(req.body);
-    if (
-      !login_username ||
-      !login_password ||
-      !fname ||
-      !lname ||
-      !addr ||
-      !cnum ||
-      !emailaddr ||
-      !bdate ||
-      !type
-    ) {
+    if (!login_username || !fname || !lname || !type) {
       res.status(400);
       throw new Error(`You must provide an all required fields.`);
-    }
-    if (await findUserByEmail(emailaddr)) {
-      res.status(400);
-      throw new Error(
-        "That email is already registered. If that is not you, please contact the developers.",
-      );
     }
 
     const existingUser = await findUserByUsername(login_username);
 
     if (existingUser) {
       res.status(400);
-      throw new Error("LRN/Username already in use");
+      throw new Error("Username already in use");
     }
-
-    let otpInDatabase = await prisma.otp.findUnique({
-      where: {
-        emailaddr: emailaddr,
-      },
-    });
-
-    verifySession(otpInDatabase, otpInReq);
 
     if (type == user_type.Admin) {
       res.status(400);
       throw new Error("Unauthorized");
     }
-    delete req.body.otp;
 
     const user = await createUser(req.body);
     createNotification({
@@ -110,26 +75,17 @@ router.post("/register", async (req, res, next) => {
 
 router.post("/login", async (req, res, next) => {
   try {
-    const { login_username, login_password } = req.body;
-    if (!login_username || !login_password) {
+    const { login_username } = req.body;
+    if (!login_username) {
       res.status(400);
-      throw new Error("You must provide an email and a password.");
+      throw new Error("You must provide your username.");
     }
 
     const existingUser = await findUserByUsername(login_username);
 
     if (!existingUser) {
       res.status(403);
-      throw new Error("Invalid login credentials.");
-    }
-
-    const validPassword = await bcrypt.compareSync(
-      login_password,
-      existingUser.login_password,
-    );
-    if (!validPassword) {
-      res.status(403);
-      throw new Error("Invalid login credentials.");
+      throw new Error("Invalid username used.");
     }
 
     switch (existingUser.approved) {
@@ -341,13 +297,15 @@ router.post("/googlelogin", async (req, res, next) => {
 
     const existingUser = await prisma.user.findUnique({
       where: {
-        emailaddr: email,
+        login_username: email,
       },
     });
 
     if (!existingUser) {
       res.status(403);
-      throw new Error("Invalid login credentials.");
+      throw new Error(
+        "Invalid login credentials. Make sure that the email of your Google account matches your registered username.",
+      );
     }
 
     switch (existingUser.approved) {

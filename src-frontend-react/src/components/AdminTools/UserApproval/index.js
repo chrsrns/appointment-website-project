@@ -77,9 +77,7 @@ const UserApprovalComponent = () => {
               <Row>
                 <Col>
                   <p className="fw-bold mb-2 border-bottom border-secondary pb-2">
-                    {`${user.lname} , ${user.fname} ${
-                      user.mname ? user.mname : ""
-                    }`}
+                    {`${user.lname} , ${user.fname} `}
                   </p>
                   <div className="ms-4">
                     <div>User Type: {user.type}</div>

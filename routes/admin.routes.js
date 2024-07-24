@@ -22,12 +22,7 @@ router.get("/users", async (req, res, next) => {
       select: {
         id: true,
         fname: true,
-        mname: true,
         lname: true,
-        addr: true,
-        cnum: true,
-        emailaddr: true,
-        bdate: true,
         type: true,
         login_username: true,
       },
@@ -47,12 +42,7 @@ router.get("/archivedusers", async (req, res, next) => {
       select: {
         id: true,
         fname: true,
-        mname: true,
         lname: true,
-        addr: true,
-        cnum: true,
-        emailaddr: true,
-        bdate: true,
         type: true,
         login_username: true,
       },
@@ -71,7 +61,6 @@ router.get("/feedbacks", async (req, res, next) => {
           select: {
             id: true,
             fname: true,
-            mname: true,
             lname: true,
             type: true,
           },
@@ -94,12 +83,7 @@ router.get("/pendingusers", async (req, res, next) => {
       select: {
         id: true,
         fname: true,
-        mname: true,
         lname: true,
-        addr: true,
-        cnum: true,
-        emailaddr: true,
-        bdate: true,
         type: true,
         login_username: true,
       },
@@ -224,12 +208,10 @@ router.post("/unarchive/:id", async (req, res) => {
     res.json(message);
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .json({
-        error: "An error occurred while unarchiving the user",
-        errbody: error,
-      });
+    res.status(500).json({
+      error: "An error occurred while unarchiving the user",
+      errbody: error,
+    });
   }
 });
 
@@ -339,12 +321,10 @@ router.delete("/user/:id", async (req, res) => {
     }
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .json({
-        error: "An error occurred while deleting the user",
-        errbody: error,
-      });
+    res.status(500).json({
+      error: "An error occurred while deleting the user",
+      errbody: error,
+    });
   }
 });
 

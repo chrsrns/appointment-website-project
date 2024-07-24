@@ -13,24 +13,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// TODO: Remove references to the removed fields
 model User {
-  id       String   @id @default(uuid())
-  fname    String   @db.VarChar(30)
-  mname    String?  @db.VarChar(30)
-  lname    String   @db.VarChar(30)
-  isOnline Boolean? @default(false)
+  id    String @id @default(uuid())
+  fname String @db.VarChar(30)
+  lname String @db.VarChar(30)
 
-  addr      String   @db.VarChar(255)
-  cnum      String   @db.VarChar(50)
-  emailaddr String   @unique @db.VarChar(50)
-  bdate     DateTime @db.Date
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
   type user_type
 
   login_username String @unique
-  login_password String
 
   approved user_approval_type @default(Pending)
 
@@ -42,8 +36,6 @@ model User {
   Notifications     Notifications[]
   Feedback          Feedback?
   GuidanceRecord    GuidanceRecord[]
-
-  @@unique([fname, mname, lname])
 }
 
 model RefreshToken {
@@ -131,19 +123,11 @@ model Notifications {
   usersToNotify User[]
 }
 
-model Otp {
-  id        String   @id @default(uuid())
-  revoked   Boolean  @default(false)
-  emailaddr String   @unique
-  otp       Int
-  createdAt DateTime @default(now())
-}
-
+// TODO: Remove references to removed field Clinic
 enum user_type {
   Student
   Teacher
   Guidance
-  Clinic
   Admin
 }
 

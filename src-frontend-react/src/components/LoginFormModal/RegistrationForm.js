@@ -16,16 +16,9 @@ import { useGoogleLogin } from "@react-oauth/google";
 const DEFAULT_FORM_VALUES = {
   id: "",
   fname: "",
-  mname: "",
   lname: "",
-  addr: "",
-  cnum: "",
-  emailaddr: "",
-  bdate: "",
   type: "",
-  login_username: "", // Add username field
-  login_password: "", // Add password field
-  otp: "",
+  login_username: "",
 };
 
 const RegistrationForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
@@ -42,10 +35,6 @@ const RegistrationForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
     setFormData({ ...DEFAULT_FORM_VALUES });
     setFormErrors({ ...DEFAULT_FORM_VALUES });
   };
-
-  const glogin = useGoogleLogin({
-    onSuccess: (tokenResponse) => handleGoogleLoginSuccess(tokenResponse),
-  });
 
   const [isFetchingAll, setIsFetchingAll] = useState(true);
   const fetchAll = useCallback(() => {
@@ -76,7 +65,7 @@ const RegistrationForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
 
   const handleChange = (e) => {
     let { name, value } = e.target;
-    if (name === "fname" || name === "mname" || name === "lname") {
+    if (name === "fname" || name === "lname") {
       console.log("triggered");
       value = value.replace(/\w\S*/g, function (txt) {
         return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
@@ -108,75 +97,20 @@ const RegistrationForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
       newFormErrors.lname = "";
     }
 
-    // Validate Address
-    if (formData.addr.trim() === "") {
-      newFormErrors.addr = "Address is required";
+    // Validate User Type
+    if (formData.type.trim() === "") {
+      newFormErrors.type = "User type is required";
       isValid = false;
     } else {
-      newFormErrors.addr = "";
-    }
-
-    // Validate Email
-    const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
-    if (!formData.emailaddr.trim().match(emailPattern)) {
-      newFormErrors.emailaddr = "Invalid email address";
-      isValid = false;
-    } else {
-      newFormErrors.emailaddr = "";
-    }
-
-    // Validate Phone Number
-    const phonepattern = /^(09|\+639)\d{9}$/;
-    if (!formData.cnum.trim().match(phonepattern)) {
-      newFormErrors.cnum =
-        "phone number must be in 09xxxxxxxxx or in +639xxxxxxxxx format";
-      isValid = false;
-    } else {
-      newFormErrors.cnum = "";
-    }
-
-    // Validate Birthday (you can add custom date validation logic)
-    if (formData.bdate.trim() === "") {
-      newFormErrors.bdate = "Birthday is required";
-      isValid = false;
-    } else {
-      newFormErrors.bdate = "";
+      newFormErrors.type = "";
     }
 
     // Validate Username
-    const lrnPattern = /^\d{12}$/;
     if (formData.login_username.trim() === "") {
       newFormErrors.login_username = "Username is required";
       isValid = false;
-    } else if (
-      formData.type === "Student" &&
-      !formData.login_username.trim().match(lrnPattern)
-    ) {
-      newFormErrors.login_username = "LRN must be a 12-digit LRN";
-      isValid = false;
     } else {
       newFormErrors.login_username = "";
-    }
-
-    // Validate Password
-    const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@#$%^&+=!_]).{8,}$/;
-    if (
-      !formData.login_password.trim().match(passwordPattern) &&
-      formData.login_password.length !== 0 &&
-      formData.id
-    ) {
-      newFormErrors.login_password =
-        "Password must be left blank to leave unchanged or:\n- be at least 8 characters long\n- contain at least 1 alphabet and 1 numeric character\n- contain at least 1 special character (@#$%^&+=!_)";
-      isValid = false;
-    } else if (
-      !formData.login_password.trim().match(passwordPattern) &&
-      !formData.id
-    ) {
-      newFormErrors.login_password =
-        "Password must be:\n- be at least 8 characters long\n- contain at least 1 alphabet and 1 numeric character\n- contain at least 1 special character (@#$%^&+=!_)";
-      isValid = false;
-    } else {
-      newFormErrors.login_password = "";
     }
 
     setFormErrors(newFormErrors);
@@ -191,16 +125,9 @@ const RegistrationForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
       // Handle form submission here (e.g., send data to a server).
       const formatted = {
         fname: formData.fname,
-        mname: formData.mname,
         lname: formData.lname,
-        addr: formData.addr,
-        cnum: formData.cnum,
-        emailaddr: formData.emailaddr,
-        bdate: moment(new Date(formData.bdate)).toISOString(),
         type: formData.type,
         login_username: formData.login_username,
-        login_password: formData.login_password,
-        otp: formData.otp,
       };
 
       customFetch(`${global.server_backend_url}/backend/auth/register`, {
@@ -212,7 +139,7 @@ const RegistrationForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
           if (response.ok) {
             setResponseHeader("Registration Successful");
             setResponseBody(
-              "Please wait for the admin to approve your registration before you can sign in.",
+              "Registration successful! No need for admin to approve the registration. Feel free to login using your username.",
             );
             resetToDefault();
             setShowNotif(true);
@@ -227,47 +154,11 @@ const RegistrationForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
     }
   };
 
-  // TODO Enhance security by sending access_token to register endpoint then verifying again if the email from field is similar from email fetched by access token from Google.
-  const handleGoogleLoginSuccess = (response) => {
-    setFormData({
-      ...formData,
-      gaccesstoken: response.access_token,
-    });
-    setIsLoading(true);
-    setLoadingText("Verifying your email...");
-
-    customFetch(
-      `${global.server_backend_url}/backend/auth/saveemailfromgoogle`,
-      {
-        headers: { Authorization: `Bearer ${response.access_token}` },
-      },
-    )
-      .then((response) => {
-        if (response.ok) return response.json();
-        else throw response;
-      })
-      .then((data) => {
-        console.log("Data: ", data);
-        setFormData({
-          ...formData,
-          emailaddr: data.email,
-          otp: data.verif,
-        });
-        return data;
-      })
-      .catch(async (err) => {
-        const errorBody = await err.json();
-        setResponseHeader("Registration Failed");
-        setResponseBody(errorBody.error);
-        setShowNotif(true);
-      })
-      .finally(() => setIsLoading(false));
-  };
   return (
     <>
       <Form className="mb-3" onSubmit={handleSubmit}>
         <Row className="mb-3">
-          <Form.Group as={Col} md="4" controlId="firstName">
+          <Form.Group as={Col} md="6" controlId="firstName">
             <Form.Label>First Name</Form.Label>
             <Form.Control
               type="text"
@@ -278,16 +169,7 @@ const RegistrationForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
             />
             <div className="text-danger">{formErrors.fname}</div>
           </Form.Group>
-          <Form.Group as={Col} md="4" controlId="middleName">
-            <Form.Label>Middle Name</Form.Label>
-            <Form.Control
-              type="text"
-              name="mname"
-              value={formData.mname}
-              onChange={handleChange}
-            />
-          </Form.Group>
-          <Form.Group as={Col} md="4" controlId="lastName">
+          <Form.Group as={Col} md="6" controlId="lastName">
             <Form.Label>Last Name</Form.Label>
             <Form.Control
               type="text"
@@ -299,71 +181,13 @@ const RegistrationForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
             <div className="text-danger">{formErrors.lname}</div>
           </Form.Group>
         </Row>
-        <Form.Group controlId="addr" className="mb-3">
-          <Form.Label>Address</Form.Label>
-          <Form.Control
-            type="text"
-            name="addr"
-            value={formData.addr}
-            onChange={handleChange}
-            required
-          />
-          <div className="text-danger">{formErrors.addr}</div>
-        </Form.Group>
         <Row className="mb-3">
-          <Form.Group as={Col} lg="6" controlId="emailaddr">
-            <Form.Label>Email</Form.Label>
-            <Stack gap={2}>
-              <Stack direction="horizontal" gap={2}>
-                <Form.Control
-                  type="email"
-                  name="emailaddr"
-                  value={formData.emailaddr}
-                  onChange={handleChange}
-                  placeholder="Use Google Login..."
-                  disabled
-                />
-                <Button onClick={() => glogin()}>
-                  <i className="bi bi-google"></i>
-                </Button>
-              </Stack>
-              <div className="text-danger">{formErrors.emailaddr}</div>
-              <Form.Control
-                className="d-none"
-                type="text"
-                name="otp"
-                value={formData.otp}
-                onChange={handleChange}
-                disabled={true}
-              />
-            </Stack>
-          </Form.Group>
-          <Form.Group as={Col} lg="6" controlId="cnum">
-            <Form.Label>Phone Number</Form.Label>
-            <Form.Control
-              type="tel"
-              name="cnum"
-              value={formData.cnum}
-              onChange={handleChange}
-              required
-            />
-            <div className="text-danger">{formErrors.cnum}</div>
-          </Form.Group>
-        </Row>
-        <Row className="mb-3">
-          <Form.Group as={Col} md="4" controlId="bdate" className="mb-3">
-            <Form.Label>Birthday</Form.Label>
-            <Form.Control
-              type="date"
-              name="bdate"
-              value={formData.bdate}
-              onChange={handleChange}
-              required
-            />
-            <div className="text-danger">{formErrors.bdate}</div>
-          </Form.Group>
-          <Form.Group as={Col} md="8">
+          <Form.Group as={Col}>
             <Form.Label>User Type</Form.Label>
+            <p className="text-secondary">
+              Each users has their own restrictions. For example, some Teacher
+              features don't show up to Student user types.
+            </p>
             <div key="inline-radio" defaultValue={"Student"} className="mb-3">
               {userTypes.map((userType) => (
                 <Form.Check
@@ -379,14 +203,13 @@ const RegistrationForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
                 />
               ))}
             </div>
+            <div className="text-danger">{formErrors.type}</div>
           </Form.Group>
         </Row>
 
         <Row className="mb-3">
           <Form.Group as={Col} md="6" controlId="login_username">
-            <Form.Label>{`${
-              formData.type === "Student" ? "LRN" : "Username"
-            }`}</Form.Label>
+            <Form.Label>Username</Form.Label>
             <Form.Control
               type="text"
               name="login_username"
@@ -400,12 +223,12 @@ const RegistrationForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
           <Form.Group as={Col} md="6" controlId="login_password">
             <Form.Label>Password</Form.Label>
             <Form.Control
+              disabled
               type="password"
               name="login_password"
-              value={formData.login_password}
               onChange={handleChange}
+              placeholder="Public demo version. Not Required."
             />
-            <div className="text-danger">{formErrors.login_password}</div>
           </Form.Group>
         </Row>
         <Button className="w-100 mt-2" variant="primary" type="submit">
@@ -414,7 +237,7 @@ const RegistrationForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
       </Form>
       <div className="d-flex w-100 justify-content-center">
         <Button
-          className="mx-auto fw-semibold"
+          className="mx-auto fw-semibold mb-3"
           variant="link"
           onClick={() => setTabKey("login")}
           style={{ textDecoration: "none" }}
@@ -422,6 +245,10 @@ const RegistrationForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
           Login
         </Button>
       </div>
+      <p className="text-center text-secondary">
+        This is a public version. Logging in is oversimplified to allow testing
+        of the application. No need to input a password.
+      </p>
       <ToastContainer className="p-3" position="top-end" style={{ zIndex: 1 }}>
         <Toast
           show={showNotif}
