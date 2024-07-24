@@ -18,8 +18,7 @@ const DEFAULT_FORM_VALUES = {
   fname: "",
   lname: "",
   type: "",
-  login_username: "", // Add username field
-  login_password: "", // Add password field
+  login_username: "",
 };
 
 const RegistrationForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
@@ -129,7 +128,6 @@ const RegistrationForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
         lname: formData.lname,
         type: formData.type,
         login_username: formData.login_username,
-        login_password: formData.login_password,
       };
 
       customFetch(`${global.server_backend_url}/backend/auth/register`, {
@@ -228,11 +226,9 @@ const RegistrationForm = ({ setIsLoading, setLoadingText, setTabKey }) => {
               disabled
               type="password"
               name="login_password"
-              value={formData.login_password}
               onChange={handleChange}
               placeholder="Public demo version. Not Required."
             />
-            <div className="text-danger">{formErrors.login_password}</div>
           </Form.Group>
         </Row>
         <Button className="w-100 mt-2" variant="primary" type="submit">
