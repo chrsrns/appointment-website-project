@@ -1,19 +1,16 @@
-import { Button, Col, Container, Row } from "react-bootstrap";
+import { Button, Col, Container, Image, Row } from "react-bootstrap";
 
 export const LandingPage = ({ onButtonClick }) => {
   return (
     <Container className="d-flex flex-column align-items-center justify-content-center">
-      <Row className="justify-contents-center">
-        <Col className="text-center">
-          <i className="bi bi-calendar2-week" style={{ fontSize: "10rem" }}></i>
-          <br />
-          <h3 className="mt-3 mb-5">
-            WEB-BASED APPOINTMENT AND SCHEDULING SYSTEM WITH INFORMATION
-            MANAGEMENT USING REACT-BOOTSTRAP PRISMA AND EXPRESS
+      <Row className="align-items-center mx-0 mx-sm-5 my-5">
+        <Col className="text-center" sm={12} md={6}>
+          <h3 className="mt-3 mb-3">
+            WEB-BASED APPOINTMENT AND SCHEDULING SYSTEM
           </h3>
           <p>Powered by:</p>
           <div
-            className="rounded-pill mb-5 p-3 d-inline-block"
+            className="rounded-pill mb-4 p-3 d-inline-block"
             ref={(node) => {
               if (node) {
                 node.style.setProperty(
@@ -24,9 +21,9 @@ export const LandingPage = ({ onButtonClick }) => {
               }
             }}
           >
-            <img
-              className="mx-4"
-              style={{ height: "2rem" }}
+            <Image
+              fluid
+              className="w-auto"
               src={process.env.PUBLIC_URL + "/landing-page.svg"}
               alt="Logo"
             />
@@ -36,6 +33,12 @@ export const LandingPage = ({ onButtonClick }) => {
               Get Started
             </Button>
           </p>
+        </Col>
+        <Col sm={12} md={6} className="px-6 px-md-0">
+          <Image
+            src={process.env.PUBLIC_URL + "/landing-img.svg"}
+            fluid
+          ></Image>
         </Col>
       </Row>
     </Container>
