@@ -28,7 +28,7 @@ export const LandingPage = ({ onButtonClick }) => {
               alt="Logo"
             />
           </div>
-          <p>
+          <p className="mb-5">
             <Button variant="primary" onClick={onButtonClick}>
               Get Started
             </Button>
