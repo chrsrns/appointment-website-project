@@ -34,8 +34,13 @@ export const LandingPage = ({ onButtonClick }) => {
             </Button>
           </p>
         </Col>
-        <Col sm={12} md={6} className="px-6 px-md-0">
+        <Col
+          className="d-flex justify-content-center justify-content-md-end"
+          sm={12}
+          md={6}
+        >
           <Image
+            style={{ width: "75%" }}
             src={process.env.PUBLIC_URL + "/landing-img.svg"}
             fluid
           ></Image>
