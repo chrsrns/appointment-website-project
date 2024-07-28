@@ -3,7 +3,7 @@ import { Button, Col, Container, Image, Row } from "react-bootstrap";
 export const LandingPage = ({ onButtonClick }) => {
   return (
     <Container className="d-flex flex-column align-items-center justify-content-center">
-      <Row className="align-items-center mx-0 mx-sm-5 my-5">
+      <Row className="align-items-center mx-2 my-5">
         <Col className="text-center" sm={12} md={6}>
           <h3 className="mt-3 mb-3">
             WEB-BASED APPOINTMENT AND SCHEDULING SYSTEM
@@ -34,11 +34,7 @@ export const LandingPage = ({ onButtonClick }) => {
             </Button>
           </p>
         </Col>
-        <Col
-          className="d-flex justify-content-center justify-content-md-end"
-          sm={12}
-          md={6}
-        >
+        <Col className="d-flex justify-content-center" sm={12} md={6}>
           <Image
             style={{ width: "75%" }}
             src={process.env.PUBLIC_URL + "/landing-img.svg"}
