@@ -1,0 +1,23 @@
+.rbc-events-container {
+  pointer-events: none;
+}
+
+.rbc-event {
+  pointer-events: auto;
+}
+
+.time-slot {
+  flex: 1 0;
+}
+
+.time-slot-button {
+  position: absolute;
+}
+
+.time-slot:hover .time-slot-button {
+  display: block;
+}
+
+.time-slot .time-slot-button {
+  display: none;
+}

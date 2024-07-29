@@ -17,6 +17,8 @@ import { socket } from "../../socket";
 import { useSearchParams } from "react-router-dom";
 import moment from "moment";
 
+import "./index.css";
+
 const DEFAULT_USER_TO_FILTER_VALUES = {
   id: "",
   fname: "",
@@ -49,6 +51,16 @@ Date.prototype.addDays = function (days) {
   var date = new Date(this.valueOf());
   date.setDate(date.getDate() + days);
   return date;
+};
+
+// removed value and onClick fields respectively
+const CustomTimeSlot = ({ children, resource }) => {
+  if (resource === undefined) return children;
+  return (
+    <div className="time-slot d-flex justify-content-center">
+      <button className="time-slot-button btn p-0">+</button>
+    </div>
+  );
 };
 
 export default function DragAndDropCalendar({ localizer }) {
@@ -499,6 +511,9 @@ export default function DragAndDropCalendar({ localizer }) {
           backgroundEvents={eventsForBG}
           events={eventsForRender}
           eventPropGetter={eventPropGetter}
+          components={{
+            timeSlotWrapper: (props) => <CustomTimeSlot {...props} />,
+          }}
           localizer={localizer}
           min={new Date(1972, 0, 1, 8)}
           max={new Date(1972, 0, 1, 17)}
