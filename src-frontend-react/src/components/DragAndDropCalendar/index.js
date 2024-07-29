@@ -9,7 +9,7 @@ import LoadingOverlay from "react-loading-overlay-ts";
 import { RRule, RRuleSet } from "rrule";
 import Select from "react-select";
 import { customFetch } from "../../utils";
-import { Button, Col, Container, Row, Accordion } from "react-bootstrap";
+import { Button, Col, Container, Row, Accordion, Stack } from "react-bootstrap";
 import { PrintModal } from "../PrintModal";
 import { schedule_state, user_type } from "@prisma/client";
 import Cookies from "js-cookie";
@@ -427,7 +427,7 @@ export default function DragAndDropCalendar({ localizer }) {
 
   const handleSelectSlot = useCallback(
     ({ start, end }) => {
-      // const title = window.prompt(`New Event name ${start} ${end}`)
+      // const title = window.prompt(`New Event name ${start} ${end}`);
       if (start > Date.now() && end > Date.now()) {
         setIsLoading(true);
         setEventRange({ fromDate: start, toDate: end });
@@ -465,6 +465,12 @@ export default function DragAndDropCalendar({ localizer }) {
     (newView) => setCalendarView(newView),
     [setCalendarView],
   );
+
+  Date.prototype.addAndRoundMin = function (h) {
+    this.setTime(this.getTime() + h * 60 * 60 * 1000);
+    this.setMinutes(0, 0, 0);
+    return this;
+  };
 
   return (
     <LoadingOverlay active={isLoading} spinner text="Waiting for update...">
@@ -557,9 +563,23 @@ export default function DragAndDropCalendar({ localizer }) {
           views={views}
           style={{ height: "40rem" }}
         />
-        <Button className="mt-3" onClick={() => setShowPrintModal(true)}>
-          Print
-        </Button>
+        <Stack>
+          <Button className="mt-3" onClick={() => setShowPrintModal(true)}>
+            Print
+          </Button>
+          <Button
+            className="mt-3"
+            onClick={() => {
+              const currentTimeRounded = new Date(Date.now()).addAndRoundMin(1);
+              handleSelectSlot({
+                start: currentTimeRounded,
+                end: currentTimeRounded,
+              });
+            }}
+          >
+            Add new schedule
+          </Button>
+        </Stack>
       </div>
     </LoadingOverlay>
   );
