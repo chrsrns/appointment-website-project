@@ -6,6 +6,10 @@
   pointer-events: auto;
 }
 
+.rbc-toolbar * {
+  padding-top: 0.5rem !important;
+}
+
 .time-slot {
   flex: 1 0;
 }
