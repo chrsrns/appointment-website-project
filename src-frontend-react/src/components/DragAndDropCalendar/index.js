@@ -57,7 +57,7 @@ Date.prototype.addDays = function (days) {
 const CustomTimeSlot = ({ children, resource }) => {
   if (resource === undefined) return children;
   return (
-    <div className="time-slot d-flex justify-content-center">
+    <div className="time-slot d-flex justify-content-center align-items-center">
       <button className="time-slot-button btn p-0">+</button>
     </div>
   );
@@ -529,6 +529,8 @@ export default function DragAndDropCalendar({ localizer }) {
           draggableAccessor="isDraggable"
           resizable
           selectable
+          step={60}
+          timeslots={1}
           style={{ height: "40rem" }}
         />
         <Button className="mt-3" onClick={() => setShowPrintModal(true)}>
