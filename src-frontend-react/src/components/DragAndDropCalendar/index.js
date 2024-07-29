@@ -16,6 +16,7 @@ import Cookies from "js-cookie";
 import { socket } from "../../socket";
 import { useSearchParams } from "react-router-dom";
 import moment from "moment";
+import { useMediaQuery } from "react-responsive";
 
 import "./index.css";
 
@@ -66,9 +67,16 @@ const CustomTimeSlot = ({ children, resource }) => {
 export default function DragAndDropCalendar({ localizer }) {
   let [searchParams] = useSearchParams();
 
+  const isSmall = useMediaQuery({ maxWidth: 576 });
   const [showPrintModal, setShowPrintModal] = useState(false);
   const [date, setDate] = useState(new Date());
-  const [calendarView, setCalendarView] = useState(Views.WEEK);
+  const [calendarView, setCalendarView] = useState(
+    isSmall ? Views.DAY : Views.WEEK,
+  );
+  if (isSmall) {
+    if (calendarView == Views.WEEK || calendarView == Views.MONTH)
+      setCalendarView(Views.DAY);
+  }
 
   const [eventsFull, setEventsFull] = useState([]);
   const [eventsMapped, setEventsMapped] = useState([]);
@@ -85,6 +93,13 @@ export default function DragAndDropCalendar({ localizer }) {
   const [selectedStaffToFilter, setSelectedStaffToFilter] = useState({
     ...DEFAULT_STAFF_TO_FILTER_VALUE,
   });
+
+  const views = {
+    day: true,
+    week: !isSmall,
+    month: !isSmall,
+    agenda: true,
+  };
 
   const [eventRange, setEventRange] = useState({
     fromDate: Date.now(),
@@ -507,7 +522,6 @@ export default function DragAndDropCalendar({ localizer }) {
           </Row>
         </Container>
         <CalendarWithDragAndDrop
-          defaultView={Views.WEEK}
           backgroundEvents={eventsForBG}
           events={eventsForRender}
           eventPropGetter={eventPropGetter}
@@ -531,6 +545,7 @@ export default function DragAndDropCalendar({ localizer }) {
           selectable
           step={60}
           timeslots={1}
+          views={views}
           style={{ height: "40rem" }}
         />
         <Button className="mt-3" onClick={() => setShowPrintModal(true)}>
