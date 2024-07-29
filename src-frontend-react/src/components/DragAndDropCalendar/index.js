@@ -9,7 +9,7 @@ import LoadingOverlay from "react-loading-overlay-ts";
 import { RRule, RRuleSet } from "rrule";
 import Select from "react-select";
 import { customFetch } from "../../utils";
-import { Button, Col, Container, Row } from "react-bootstrap";
+import { Button, Col, Container, Row, Accordion } from "react-bootstrap";
 import { PrintModal } from "../PrintModal";
 import { schedule_state, user_type } from "@prisma/client";
 import Cookies from "js-cookie";
@@ -506,19 +506,28 @@ export default function DragAndDropCalendar({ localizer }) {
         />
         <Container className="justify-content-center mb-2">
           <Row>
-            {Object.keys(appointmentsTypesColors).map((key) => (
-              <Col key={key}>
-                <i
-                  className="bi bi-caret-down-fill"
-                  style={{
-                    color: appointmentsTypesColors[key],
-                    fontSize: "2rem",
-                  }}
-                ></i>
-                <br />
-                {key}
-              </Col>
-            ))}
+            <Accordion>
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>Legend</Accordion.Header>
+                <Accordion.Body>
+                  <Row direction="horizontal">
+                    {Object.keys(appointmentsTypesColors).map((key) => (
+                      <Col key={key}>
+                        <i
+                          className="bi bi-caret-down-fill"
+                          style={{
+                            color: appointmentsTypesColors[key],
+                            fontSize: "2rem",
+                          }}
+                        ></i>
+                        <br />
+                        {key}
+                      </Col>
+                    ))}
+                  </Row>
+                </Accordion.Body>
+              </Accordion.Item>
+            </Accordion>
           </Row>
         </Container>
         <CalendarWithDragAndDrop
