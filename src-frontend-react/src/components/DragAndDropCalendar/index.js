@@ -59,7 +59,7 @@ const CustomTimeSlot = ({ children, resource }) => {
   if (resource === undefined) return children;
   return (
     <div className="time-slot d-flex justify-content-center align-items-center">
-      <button className="time-slot-button btn p-0">+</button>
+      <button className="time-slot-button btn p-0 fs-3">+</button>
     </div>
   );
 };
