@@ -74,7 +74,7 @@ export default function DragAndDropCalendar({ localizer }) {
     isSmall ? Views.DAY : Views.WEEK,
   );
   if (isSmall) {
-    if (calendarView == Views.WEEK || calendarView == Views.MONTH)
+    if (calendarView === Views.WEEK || calendarView === Views.MONTH)
       setCalendarView(Views.DAY);
   }
 
