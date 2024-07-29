@@ -3,9 +3,11 @@ import moment from "moment";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Button,
+  Col,
   Form,
   ListGroup,
   Modal,
+  Row,
   Stack,
   Tab,
   Tabs,
@@ -568,8 +570,8 @@ export const AppointmentFormModal = ({
         />
       </Form.Group>
 
-      <Form.Group className="hstack gap-3 mb-3">
-        <>
+      <Form.Group as={Row} className="gap-3 mb-3">
+        <Col>
           <Form.Label>Start Date</Form.Label>
           <Form.Control
             type="datetime-local"
@@ -579,8 +581,8 @@ export const AppointmentFormModal = ({
             onChange={handleChange}
             required
           />
-        </>
-        <>
+        </Col>
+        <Col>
           <Form.Label>End Date</Form.Label>
           <Form.Control
             type="datetime-local"
@@ -590,27 +592,29 @@ export const AppointmentFormModal = ({
             onChange={handleChange}
             required
           />
-        </>
+        </Col>
       </Form.Group>
 
       <Form.Group className="mb-3">
         <Form.Label className="me-4">Repeat</Form.Label>
-        {scheduleRepeatTypes.map((scheduleRepeatType) => {
-          return (
-            <Form.Check
-              key={scheduleRepeatType}
-              inline
-              name="repeat"
-              type="radio"
-              id={`inline-radio-${scheduleRepeatType}`}
-              label={scheduleRepeatType}
-              value={scheduleRepeatType}
-              disabled={disableForms}
-              onChange={handleChange}
-              checked={formData.repeat === scheduleRepeatType}
-            />
-          );
-        })}
+        <div className="mx-3">
+          {scheduleRepeatTypes.map((scheduleRepeatType) => {
+            return (
+              <Form.Check
+                key={scheduleRepeatType}
+                inline
+                name="repeat"
+                type="radio"
+                id={`inline-radio-${scheduleRepeatType}`}
+                label={scheduleRepeatType}
+                value={scheduleRepeatType}
+                disabled={disableForms}
+                onChange={handleChange}
+                checked={formData.repeat === scheduleRepeatType}
+              />
+            );
+          })}
+        </div>
       </Form.Group>
 
       <Stack direction="horizontal" className="gap-3 justify-content-between">
