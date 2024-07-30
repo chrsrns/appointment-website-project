@@ -54,6 +54,13 @@ Date.prototype.addDays = function (days) {
   return date;
 };
 
+// eslint-disable-next-line no-extend-native
+Date.prototype.addAndRoundMin = function (h) {
+  this.setTime(this.getTime() + h * 60 * 60 * 1000);
+  this.setMinutes(0, 0, 0);
+  return this;
+};
+
 // removed value and onClick fields respectively
 const CustomTimeSlot = ({ children, resource }) => {
   if (resource === undefined) return children;
@@ -465,12 +472,6 @@ export default function DragAndDropCalendar({ localizer }) {
     (newView) => setCalendarView(newView),
     [setCalendarView],
   );
-
-  Date.prototype.addAndRoundMin = function (h) {
-    this.setTime(this.getTime() + h * 60 * 60 * 1000);
-    this.setMinutes(0, 0, 0);
-    return this;
-  };
 
   return (
     <LoadingOverlay active={isLoading} spinner text="Waiting for update...">
