@@ -27,6 +27,7 @@ export const LoginFormModal = ({ show, onHide }) => {
       backdrop="static"
       onHide={() => onHide()}
       size={tabKey === "register" ? "lg" : ""}
+      centered
     >
       <div className="position-relative">
         <div
