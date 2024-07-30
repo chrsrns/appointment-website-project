@@ -9,7 +9,16 @@ import LoadingOverlay from "react-loading-overlay-ts";
 import { RRule, RRuleSet } from "rrule";
 import Select from "react-select";
 import { customFetch } from "../../utils";
-import { Button, Col, Container, Row, Accordion, Stack } from "react-bootstrap";
+import {
+  Button,
+  Col,
+  Container,
+  Row,
+  Accordion,
+  Stack,
+  ToastContainer,
+  Toast,
+} from "react-bootstrap";
 import { PrintModal } from "../PrintModal";
 import { schedule_state, user_type } from "@prisma/client";
 import Cookies from "js-cookie";
@@ -74,6 +83,9 @@ const CustomTimeSlot = ({ children, resource }) => {
 export default function DragAndDropCalendar({ localizer }) {
   let [searchParams] = useSearchParams();
 
+  const [showNotif, setShowNotif] = useState(false);
+  const [responseHeader, setResponseHeader] = useState("");
+  const [responseBody, setResponseBody] = useState("");
   const isSmall = useMediaQuery({ maxWidth: 576 });
   const [showPrintModal, setShowPrintModal] = useState(false);
   const [date, setDate] = useState(new Date());
@@ -440,6 +452,12 @@ export default function DragAndDropCalendar({ localizer }) {
         setEventRange({ fromDate: start, toDate: end });
         setModalId("");
         setShowModal(true);
+      } else {
+        setResponseHeader("Cannot create an appointment on the past.");
+        setResponseBody(
+          "Currently, you can only create appointments ahead the time right now.",
+        );
+        setShowNotif(true);
       }
       // console.log(`new modal id: ${modalId}`)
       // if (title) {
@@ -537,33 +555,59 @@ export default function DragAndDropCalendar({ localizer }) {
             </Accordion>
           </Row>
         </Container>
-        <CalendarWithDragAndDrop
-          backgroundEvents={eventsForBG}
-          events={eventsForRender}
-          eventPropGetter={eventPropGetter}
-          components={{
-            timeSlotWrapper: (props) => <CustomTimeSlot {...props} />,
-          }}
-          localizer={localizer}
-          min={new Date(1972, 0, 1, 8)}
-          max={new Date(1972, 0, 1, 17)}
-          date={date}
-          view={calendarView}
-          onNavigate={onNavigate}
-          onView={onView}
-          onEventDrop={moveEvent}
-          onEventResize={resizeEvent}
-          onSelectEvent={handleSelectEvent}
-          onSelectSlot={handleSelectSlot}
-          popup
-          draggableAccessor="isDraggable"
-          resizable
-          selectable
-          step={60}
-          timeslots={1}
-          views={views}
-          style={{ height: "40rem" }}
-        />
+        <div className="position-relative">
+          <ToastContainer
+            className="p-3"
+            position="top-end"
+            style={{ zIndex: 1 }}
+          >
+            <Toast
+              show={showNotif}
+              onClose={() => {
+                setShowNotif(false);
+              }}
+              delay={10000}
+              autohide
+            >
+              <Toast.Header>
+                <img
+                  src="holder.js/20x20?text=%20"
+                  className="rounded me-2"
+                  alt=""
+                />
+                <strong className="me-auto">{responseHeader}</strong>
+              </Toast.Header>
+              <Toast.Body>{responseBody}</Toast.Body>
+            </Toast>
+          </ToastContainer>
+          <CalendarWithDragAndDrop
+            backgroundEvents={eventsForBG}
+            events={eventsForRender}
+            eventPropGetter={eventPropGetter}
+            components={{
+              timeSlotWrapper: (props) => <CustomTimeSlot {...props} />,
+            }}
+            localizer={localizer}
+            min={new Date(1972, 0, 1, 8)}
+            max={new Date(1972, 0, 1, 17)}
+            date={date}
+            view={calendarView}
+            onNavigate={onNavigate}
+            onView={onView}
+            onEventDrop={moveEvent}
+            onEventResize={resizeEvent}
+            onSelectEvent={handleSelectEvent}
+            onSelectSlot={handleSelectSlot}
+            popup
+            draggableAccessor="isDraggable"
+            resizable
+            selectable
+            step={60}
+            timeslots={1}
+            views={views}
+            style={{ height: "40rem" }}
+          />
+        </div>
         <Stack>
           <Button className="mt-3" onClick={() => setShowPrintModal(true)}>
             Print
