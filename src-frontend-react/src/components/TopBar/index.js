@@ -105,7 +105,7 @@ export const TopBar = () => {
       expand={cookies.login_username ? "lg" : true}
       className="bg-body-tertiary shadow-sm"
     >
-      <Container>
+      <Container className="px-4">
         <Navbar.Brand href="/">
           <i className="bi bi-calendar2-week me-2"></i>
           Scheduler Project
